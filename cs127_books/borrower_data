@@ -1,0 +1,32 @@
+CREATE TABLE BORROWER_DATA (
+    BORROWER_ID VARCHAR(5) NOT NULL UNIQUE,
+    BORROWER_LASTNAME VARCHAR(255) NOT NULL,
+    BORROWER_FIRSTNAME VARCHAR(255) NOT NULL,
+    BORROWER_MIDDLEINITIAL CHAR(2),
+    BORROWER_STATUS VARCHAR(255) NOT NULL,
+    BORROWER_CONTACTNUMBER CHAR(14) UNIQUE,
+    PRIMARY KEY (BORROWER_ID)
+);
+
+INSERT INTO `borrower_data`(`BORROWER_ID`, `BORROWER_LASTNAME`, `BORROWER_FIRSTNAME`, `BORROWER_MIDDLEINITIAL`, `BORROWER_STATUS`, `BORROWER_CONTACTNUMBER`)
+VALUES
+("7K8L2","Tuquero","Jedric","C","LOA","0917-555-2498"),
+("M4N9P","Abiera","Cyrus Kael","S","Good","(02) 8798-1234"),
+("Q5R0S","Nabo","Frian Karl","C","LOA","0998-101-3751"),
+("T1U6V","Factora","Miguel Jr.","P","Did not pay fines","032-411-9021"),
+("W8X3Y","Novesteras","Jessica Bea","A","Did not pay fines","0991-802-5670"),
+("Z2A7B","Villagracia","Marionne","T","Good","0936-224-8893"),
+("C9D4E","Graneta","Mahalia","G","Did not pay fines","082-299-4467"),
+("F0G5H","Joaquin","Maxwell","B","Book overdue","0920-781-6014"),
+("J7K1L","Cardenas","Alexis Harriet","G","Good","(02) 8503-7255"),
+("M3N8P","Santos","Maria","L","Did not pay fines","0977-430-9112"),
+("Q9R4S","Gomez","Ricardo","B","Did not pay fines","088-854-3195"),
+("U0V5W","Reyes","Sophia","A","Good","0918-996-5432"),
+("X6Y1Z","De Guzman ","Miguel","D","Did not pay fines","0895-305-1689"),
+("3A8B6","Cruz","Jennie","K","Book overdue","(02) 8233-0478"),
+("5C0D9","Perez","Daniel","B","Good","0905-648-2301"),
+("7E2F1","Zamora","Wayne Aiden","C","Did not pay fines","045-640-0579"),
+("0G4H5","Tan","Kairo Jade","F","Did not pay fines","0929-317-9876"),
+("2J6K8","Lee","Jiro Devon","C","Good","043-752-1145"),
+("4L9M0","Yu","Karina","A","Did not pay fines","0997-123-4567"),
+("6N1P3","Kim","Winter","C","Book overdue","0949-880-6925");

@@ -1,0 +1,29 @@
+CREATE TABLE GENRE_DATA(
+    GENRE_ID INTEGER(11) NOT NULL UNIQUE,
+    GENRE_NAME VARCHAR(255) NOT NULL,
+    GENRE_LOCATION VARCHAR(255) NOT NULL,
+    PRIMARY KEY (GENRE_ID)
+);
+
+INSERT INTO `genre_data`(`GENRE_ID`, `GENRE_NAME`, `GENRE_LOCATION`)
+VALUES
+(7052005,"Mystery","Aisle A"),
+(7052006,"Romance","Aisle B"),
+(7052007,"Fantasy","Aisle C"),
+(7052008,"Science Fiction","Aisle D"),
+(7052009,"Horror","Aisle E"),
+(7052010,"Poetry","Aisle F"),
+(7052011,"Japanese Manga","Aisle G"),
+(7052012,"Children's Literature","Aisle H"),
+(7052013,"History","Aisle I"),
+(7052014,"Philosophy","Aisle J"),
+(7052015,"Political Science","Aisle K"),
+(7052016,"Self-Help","Aisle L"),
+(7052017,"Biography","Aisle M"),
+(7052018,"Literary Fiction","Aisle N"),
+(7052019,"Young Adult","Aisle O"),
+(7052020,"Travel Guides","Aisle P"),
+(7052021,"Art and Photography","Aisle Q"),
+(7052022,"Languages","Aisle R"),
+(7052023,"Computer Science","Aisle S"),
+(7052024,"Cookbooks","Aisle T");

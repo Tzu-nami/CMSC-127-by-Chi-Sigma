@@ -1,0 +1,30 @@
+CREATE TABLE AUTHOR_DATA (
+    AUTHOR_ID INTEGER(11) NOT NULL UNIQUE,
+    AUTHOR_LASTNAME VARCHAR(255) NOT NULL,
+    AUTHOR_FIRSTNAME VARCHAR(255) NOT NULL,
+    AUTHOR_MIDDLEINITIAL CHAR(2),
+    PRIMARY KEY (AUTHOR_ID)
+);
+
+INSERT INTO `author_data` (`AUTHOR_ID`, `AUTHOR_LASTNAME`, `AUTHOR_FIRSTNAME`, `AUTHOR_MIDDLEINITIAL`)
+VALUES
+(16520, "Osman", "Richard", NULL),
+(16521, "Billions", "Marisa", NULL),
+(16522, "Martin", "George", 'R'),
+(16523, "Herbert", "Frank", NULL),
+(16524, "Koike", "Mariko", NULL),
+(16525, "Silverstein", "Shel", NULL),
+(16526, "Arai", "Sumiko", NULL),
+(16527, "Carle", "Eric", NULL),
+(16528, "Constantino", "Renato", NULL),
+(16529, "Gaarder", "Jostein", NULL),
+(16530, "Marx", "Karl", NULL),
+(16531, "Clear", "James", NULL),
+(16532, "Zaide", "Gregorio", 'F'),
+(16533, "Fitzgerald", "F.Scott", NULL),
+(16534, "Jackson", "Holly", NULL),
+(16535, "Atkinson", "Brett", NULL),
+(16536, "Lucas", "Mai", NULL),
+(16537, "Jung", "Charlie", NULL),
+(16538, "Martin", "Robert", 'C'),
+(16539, "McKenney", "Sally", NULL);

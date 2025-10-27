@@ -1,0 +1,31 @@
+CREATE TABLE BOOKS_DATA (
+    BOOK_ID VARCHAR(5) NOT NULL UNIQUE,
+    BOOK_TITLE VARCHAR(255) NOT NULL,
+    BOOK_YEAR YEAR NOT NULL,
+    BOOK_PUBLISHER VARCHAR(255) NOT NULL,
+    BOOK_COPIES INTEGER(6) NOT NULL,
+    PRIMARY KEY (BOOK_ID)
+);
+
+INSERT INTO `books_data`(`BOOK_ID`, `BOOK_TITLE`, `BOOK_YEAR`, `BOOK_PUBLISHER`, `BOOK_COPIES`)
+VALUES
+("F3G5A","The Thursday Murder Club","2021","Penguin Publishing Group",2),
+("H6J9B","Like Sapphire Blue","2025","Kindle",5),
+("L0M7C","A Game of Thrones","1996","Bantam Books",3),
+("P4Q2D","Dune","1965","Chilton Books",4),
+("R8S6E","The Graveyard Apartment","2016","Thomas Dunne Books",5),
+("5SZYA","A Light in the Attic Shel Silverstein","1981","Harper & Row",13),
+("V5W8G","The Guy She Was Interested In Wasn't A Guy At All Vol.2","2025","Yen Press",3),
+("X9Y0H","The Very Hungry Caterpillar","1969","Penguin Random House",42),
+("Z4A2I","The Philippines: A Past Revisited","1975","Tala Pub. Services",6),
+("0B6C3","Sophie's World","1991","FSG Classics",2),
+("T1U3F","The Communist Manifesto","2002","Penguin Books",75),
+("8F1G7","Atomic Habits","2018","Avery",6),
+("2H5J0","José Rizal: Life, Works, and Writings of a Genius, Writer, Scientist, and National Hero","2014","Anvil Publishing, Inc",120),
+("6K0L4","The Great Gatsby","1925","Charles Scribner's Sons",3),
+("9M3N8","A Good Girl's Guide to Murder","2020","Electric Monkey",2),
+("1P7Q2","Lonely Planet Malta & Gozo","2025","Lonely Planet ",4),
+("5R0S6","Maï Lucas: All Eyes On Me","2006","Edition Patrick Frey",2),
+("3T4U9","Learning Korean with the Little Prince","2022","PublishDrive",10),
+("7V8W1","Clean Code: A Handbook of Agile Software Craftsmanship","2008","Pearson",5),
+("0X2Y5","Sally's Baking 101: Foolproof Recipes from Easy to Advanced","2025","Clarkson Potter",4);

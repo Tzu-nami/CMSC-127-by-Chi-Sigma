@@ -1,0 +1,31 @@
+CREATE TABLE STAFF_DATA (
+    STAFF_ID VARCHAR(5) NOT NULL UNIQUE,
+    STAFF_LASTNAME VARCHAR(255) NOT NULL,
+    STAFF_FIRSTNAME VARCHAR(255) NOT NULL,
+    STAFF_MIDDLEINITIAL CHAR(2),
+    STAFF_JOB VARCHAR(255) NOT NULL,
+    PRIMARY KEY (STAFF_ID)
+);
+
+INSERT INTO `staff_data`(`STAFF_ID`, `STAFF_LASTNAME`, `STAFF_FIRSTNAME`, `STAFF_MIDDLEINITIAL`, `STAFF_JOB`)
+VALUES 
+("Z1B9A", "Libatique", "Criselda", 'P', "Department Manager"),
+("Y2X8W", "Sinco", "Chezka", 'C', "Department Secretary"),
+("V3U7T", "Javellana", "Lee", 'J', "Department Staff"),
+("S4R6Q", "Balangcod", "Ashlyn", 'D', "Department Staff"),
+("P5O5N", "Lumague", "Achim", 'A', "Department Staff"),
+("M6L4K", "Novesteras", "Jessica Bea", 'A', "Department Staff"),
+("J7I3H", "Nabo", "Frian Karl", 'C', "Department Staff"),
+("G8F2E", "Graneta", "Mahalia Jasmine", 'G', "Department Staff"),
+("D9C1B", "Amador", "Gabryelle Doreen", 'A', "Department Staff"),
+("A0Z0Y", "De Guzman", "Duncan Red Benedict", 'C', "Department Staff"),
+("X1W9V", "Abiva", "Shaun Julius", 'B', "Department Staff"),
+("T2S8R", "Tuquero", "Jedric", 'C', "Department Staff"),
+("Q3P7O", "Conchada", "Ax'l Jhone David", 'P', "Department Staff"),
+("N4M6L", "Digman", "Lavinah Kate", 'C', "Department Staff"),
+("K5J5I", "Salazar", "Allahna", 'D', "Department Staff"),
+("H6G4F", "Romero", "Jshia", 'S', "Department Staff"),
+("E7D3C", "Tulic", "Janine", 'B', "Department Staff"),
+("B8A29", "Villagracia", "Marionne", 'T', "Department Staff"),
+("8Z7Y6", "Dela Cruz", "Denise", 'A', "Department Staff"),
+("5X4W3", "Cruz", "Veron Joel", 'A', "Department Staff");
