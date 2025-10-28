@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { Folder, LayoutGrid, BookOpenText, BookUser, User, BriefcaseBusiness, ScanBarcode } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -22,19 +22,39 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Current Loans',
+        href: '/currentloans',
+        icon: ScanBarcode,
+    },
+    {
+        title: 'Books Database',
+        href: '/booksdatabase',
+        icon: BookOpenText,
+    },
+    {
+        title: 'Authors Database',
+        href: '/authorsdatabase',
+        icon: BookUser,
+    },
+    {
+        title: 'Borrowers Database',
+        href: '/borrowersdatabase',
+        icon: User,
+    },
+    {
+        title: 'Staff Database',
+        href: '/staffdatabase',
+        icon: BriefcaseBusiness,
+    }
 ];
 
 const footerNavItems: NavItem[] = [
     {
         title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
+        href: 'https://github.com/Tzu-nami/CMSC-127-by-Chi-Sigma',
         icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
+    }
 ];
 
 export function AppSidebar() {
