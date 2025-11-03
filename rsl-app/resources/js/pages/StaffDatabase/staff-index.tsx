@@ -4,17 +4,17 @@ import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Books Database',
-        href: '/booksdatabase',
+        title: 'Staff',
+        href: '/staffdatabase',
     },
 ];
 
-export default function Index() {
+export default function StaffIndex() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Books Database" />
+            <Head title="Staff" />
             <div>
-                Hello Books Database
+                Hello Staff
             </div>
         </AppLayout>
     );

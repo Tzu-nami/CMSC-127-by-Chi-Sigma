@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class BooksDatabaseController extends Controller
+class CurrentLoansDatabaseController extends Controller
 {
     public function index() {
-        return Inertia::render('BooksDatabase/books-index', []);
+        return Inertia::render('CurrentLoans/currentloans-index', []);
     }
 }
