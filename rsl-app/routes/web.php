@@ -22,7 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/booksdatabase',[BooksDatabaseController::class,'index'])->name('booksdatabase.index');
     Route::get('/authorsdatabase',[AuthorsDatabaseController::class,'index'])->name('authorsdatabase.index');
     Route::get('/borrowersdatabase',[BorrowersDatabaseController::class,'index'])->name('borrowersdatabase.index');
-    Route::get('/currentloansdatabase',[CurrentLoansController::class,'index'])->name('currentloans.index');
+    Route::get('/currentloans',[CurrentLoansController::class,'index'])->name('currentloans.index');
     Route::get('/staffdatabase',[StaffDatabaseController::class,'index'])->name('staffdatabase.index');
 });
 
