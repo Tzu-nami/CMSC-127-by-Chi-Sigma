@@ -58,7 +58,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                 variant="ghost"
                                 asChild
                                 className={cn('w-full justify-start', {
-                                    'bg-muted': isSameUrl(
+                                    'bg-muted text-secondary-foreground': isSameUrl(
                                         currentPath,
                                         item.href,
                                     ),
