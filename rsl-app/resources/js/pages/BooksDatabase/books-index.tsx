@@ -1,3 +1,4 @@
+import React from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -103,7 +104,6 @@ export default function BooksIndex() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Books Database" />
 
-            
             <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
                 
                 <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
