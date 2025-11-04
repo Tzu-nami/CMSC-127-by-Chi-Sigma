@@ -1,33 +1,12 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import React, { useState, useMemo } from 'react';
 
 import {
     Search as SearchIcon,
-    ChevronDown as ChevronDownIcon,
     SlidersHorizontal as SlidersHorizontalIcon,
     Plus as PlusIcon,
-    MoreHorizontal as MoreHorizontalIcon,
-    ChevronLeft as ChevronLeftIcon,
-    ChevronRight as ChevronRightIcon
 } from 'lucide-react';
-
-
-interface Book {
-    id: string;
-    title: string;
-    author: string;
-    publisher: string;
-    year: number;
-    copiesTotal: number;
-    copiesAvailable: number;
-}
-
-interface BooksIndexProps {
-    books: Book[];
-    authors: string[];
-}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

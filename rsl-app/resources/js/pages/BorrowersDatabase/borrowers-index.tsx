@@ -10,28 +10,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 import {
     Search as SearchIcon,
-    ChevronDown as ChevronDownIcon,
-    SlidersHorizontal as SlidersHorizontalIcon,
     Plus as PlusIcon,
-    MoreHorizontal as MoreHorizontalIcon,
-    ChevronLeft as ChevronLeftIcon,
-    ChevronRight as ChevronRightIcon
 } from 'lucide-react';
 import React from 'react';
-
-
-interface Borrower {
-    borrower_id: string;
-    first_name: string;
-    last_name: string;
-    middle_initial: string;
-    contact_number: string;
-}
-
-interface BorrowersIndexProps {
-    borrowers: Borrower[];
-}
-
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
