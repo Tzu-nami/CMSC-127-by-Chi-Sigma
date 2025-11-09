@@ -92,8 +92,7 @@ const Tabs = ({ tabs, activeTab, onTabChange }: TabsProps) => (
 
 
 // --- MAIN PAGE COMPONENT ---
-export default function BooksIndex() {
-
+export default function BooksIndex({ books }: { books: any[] }) {
     const tabOptions: Tab[] = [
         { name: 'All Books' },
         { name: 'Available' },
@@ -102,55 +101,73 @@ export default function BooksIndex() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Books Database" />
+        <Head title="Books Database" />
+        <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
 
-            <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
-                
-                <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        
-                        <div className="relative w-full md:max-w-md">
-                            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
-                            <Input
-                                placeholder="Search by title, author, publisher..."
-                                className="pl-9"
-                            />
-                        </div>
-                        
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <Select
-                                className="w-full sm:w-auto"
-                            >
-                                <option value="all">All Authors</option>{}
-
-                            </Select>
-
-                            <Button variant="outline" className="w-full sm:w-auto">
-                                <SlidersHorizontalIcon className="h-4 w-4 mr-2" />
-                                More Filters
-                            </Button>
-
-                            <Button className="w-full sm:w-auto">
-                                <PlusIcon className="h-4 w-4 mr-2" />
-                                Add New Book
-                            </Button>
-                        </div>
-                    </div>
+            <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="relative w-full md:max-w-md">
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
+                <Input placeholder="Search by title, author, publisher..." className="pl-9" />
                 </div>
-
-                <div className="px-4 sm:px-6">
-                    <Tabs
-                        tabs={tabOptions}
-                        activeTab="All Books" // Hard-coded for now
-                        onTabChange={() => {}} // Empty function 
-                    />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <Select className="w-full sm:w-auto">
+                    <option value="all">All Authors</option>
+                </Select>
+                <Button variant="outline" className="w-full sm:w-auto">
+                    <SlidersHorizontalIcon className="h-4 w-4 mr-2" />
+                    More Filters
+                </Button>
+                <Button className="w-full sm:w-auto">
+                    <PlusIcon className="h-4 w-4 mr-2" />
+                    Add New Book
+                </Button>
                 </div>
-
-                <div className="p-6 text-[#6b7280]">
-                    insert book table insert page
-                </div>
-
             </div>
+            </div>
+
+            
+            <div className="px-4 sm:px-6">
+            <Tabs tabs={tabOptions} activeTab="All Books" onTabChange={() => {}} />
+            </div>
+
+            {/*Display header of table*/}
+            <div className="p-6 overflow-x-auto">
+            <table className="min-w-full border border-gray-200 text-sm text-left">
+                <thead className="bg-gray-100">
+                <tr>
+                    <th className="px-4 py-2 border-b text-black">Book ID</th>
+                    <th className="px-4 py-2 border-b text-black">Title</th>
+                    <th className="px-4 py-2 border-b text-black">Year Published</th>
+                    <th className="px-4 py-2 border-b text-black">Publisher</th>
+                    <th className="px-4 py-2 border-b text-black">Available Copies</th>
+                </tr>
+                </thead>
+
+                {/*Display data of table using map function in a loop, index for future null values*/}
+                <tbody>
+                {books && books.length > 0 ? (
+                    books.map((book, index) => (
+                    <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-green-50 text-black-800">
+                        <td className="px-4 py-2 border-b text-black">{book.BOOK_ID}</td>
+                        <td className="px-4 py-2 border-b text-black">{book.BOOK_TITLE}</td>
+                        <td className="px-4 py-2 border-b text-black">{book.BOOK_YEAR}</td>
+                        <td className="px-4 py-2 border-b text-black">{book.BOOK_PUBLISHER}</td>
+                        <td className="px-4 py-2 border-b text-black">{book.BOOK_COPIES}</td>
+                    </tr>
+                    ))
+                ) : (
+                    <tr>
+                    <td colSpan={5} className="py-4 text-center text-gray-500">
+                        No books found.
+                    </td>
+                    </tr>
+                )}
+                </tbody>
+            </table>
+            </div>
+        </div>
         </AppLayout>
     );
 }
+
