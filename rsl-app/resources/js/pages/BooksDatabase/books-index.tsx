@@ -144,7 +144,7 @@ export default function BooksIndex({ books }: { books: any[] }) {
                 </tr>
                 </thead>
 
-                {/*Display data of table using map function in a loop, index for future null values*/}
+                {/*Display data of table using map function in the array, index for future null values*/}
                 <tbody>
                 {books && books.length > 0 ? (
                     books.map((book, index) => (
