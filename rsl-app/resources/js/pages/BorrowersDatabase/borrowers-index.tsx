@@ -1,3 +1,4 @@
+import React from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -12,7 +13,6 @@ import {
     Search as SearchIcon,
     Plus as PlusIcon,
 } from 'lucide-react';
-import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
@@ -49,7 +49,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', 
 
 
 // --- MAIN PAGE COMPONENT ---
-export default function BorrowersIndex() {
+export default function BorrowersIndex( {borrowers}: { borrowers: any[] }) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -77,8 +77,43 @@ export default function BorrowersIndex() {
                     </div>
                 </div>
 
-                <div className="p-6 text-[#6b7280]">
-                    borrower table
+                {/*Display header of table*/}
+                <div className="p-6 overflow-x-auto">
+                    <table className="min-w-full border border-gray-200 text-sm text-left">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="px-4 py-2 border-b text-black">Borrower ID</th>
+                                <th className="px-4 py-2 border-b text-black">Last Name</th>
+                                <th className="px-4 py-2 border-b text-black">First Name</th>
+                                <th className="px-4 py-2 border-b text-black">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-black">Status</th>
+                                <th className="px-4 py-2 border-b text-black">Contact Number</th>
+                            </tr>
+                        </thead>
+
+                    {/*Display data of table using map function in the array, index for future null values*/}
+                        <tbody> 
+                        {borrowers && borrowers.length > 0 ? (
+                            borrowers.map((borrower, index) => (
+                            <tr key={borrower.BORROWER_ID || `borrower-${index}`} className="hover:bg-green-50 text-black-800">
+                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_ID}</td>
+                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_LASTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_FIRSTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_MIDDLEINITIAL}</td>
+                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_STATUS}</td>
+                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_CONTACTNUMBER}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={6} className="py-4 text-center text-gray-500">
+                                        No borrowers found.
+                                    </td> 
+                                </tr>
+
+                            )}
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
