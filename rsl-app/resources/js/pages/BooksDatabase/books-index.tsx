@@ -1,12 +1,13 @@
-import React from 'react';
+import React,{ useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 
 import {
     Search as SearchIcon,
     SlidersHorizontal as SlidersHorizontalIcon,
     Plus as PlusIcon,
+    Replace,
 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -92,12 +93,37 @@ const Tabs = ({ tabs, activeTab, onTabChange }: TabsProps) => (
 
 
 // --- MAIN PAGE COMPONENT ---
-export default function BooksIndex({ books }: { books: any[] }) {
+export default function BooksIndex({ books, filters }: { books: any[], filters:{search?: string} }) {
     const tabOptions: Tab[] = [
         { name: 'All Books' },
         { name: 'Available' },
         { name: 'On Loan' },
     ];
+
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+
+    useEffect(() =>{
+        const timerId = setTimeout(() => {
+            if (searchTerm === (filters.search || '')) {
+                return;
+            }
+
+            router.get(
+                '/booksdatabase',
+                {search: searchTerm},
+                {
+                    preserveState: true,
+                    replace: true,
+                    preserveScroll: true,
+                }
+            );
+        }, 300);
+        return () => clearTimeout(timerId);
+    }, [searchTerm,filters.search]);
+
+    useEffect(() => {
+        setSearchTerm(filters.search || '');
+    }, [filters.search]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -108,15 +134,19 @@ export default function BooksIndex({ books }: { books: any[] }) {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="relative w-full md:max-w-md">
                 <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
-                <Input placeholder="Search by title, author, publisher..." className="pl-9" />
+                
+                <Input 
+                    placeholder="Search by title, author, publisher..." 
+                    className="pl-9"
+                    value={searchTerm} 
+                    onChange={(e) => setSearchTerm(e.target.value)} 
+                />
                 </div>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <Select className="w-full sm:w-auto">
-                    <option value="all">All Authors</option>
-                </Select>
+                
                 <Button variant="outline" className="w-full sm:w-auto">
                     <SlidersHorizontalIcon className="h-4 w-4 mr-2" />
                     More Filters
+
                 </Button>
                 <Button className="w-full sm:w-auto">
                     <PlusIcon className="h-4 w-4 mr-2" />
@@ -159,14 +189,15 @@ export default function BooksIndex({ books }: { books: any[] }) {
                 ) : (
                     <tr>
                     <td colSpan={5} className="py-4 text-center text-gray-500">
-                        No books found.
+                        {}
+                        {filters.search ? 'No books found for your search.' : 'No books found.'}
                     </td>
                     </tr>
                 )}
                 </tbody>
             </table>
             </div>
-        </div>
+        
         </AppLayout>
     );
 }
