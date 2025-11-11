@@ -1,7 +1,7 @@
-import React from 'react';
+import React,{ useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router} from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -49,7 +49,32 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', 
 
 
 // --- MAIN PAGE COMPONENT ---
-export default function AuthorsIndex( {currentLoans}: { currentLoans: any[] }) {
+export default function AuthorsIndex( {currentLoans, filters}: { currentLoans: any[], filters:{search?: string}} ) {
+
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+
+    useEffect(() =>{
+            const timerId = setTimeout(() => {
+                if (searchTerm === (filters.search || '')) {
+                    return;
+                }
+    
+                router.get(
+                    '/currentloans',
+                    {search: searchTerm},
+                    {
+                        preserveState: true,
+                        replace: true,
+                        preserveScroll: true,
+                    }
+                );
+            }, 300);
+            return () => clearTimeout(timerId);
+        }, [searchTerm,filters.search]);
+
+    useEffect(() => {
+            setSearchTerm(filters.search || '');
+        }, [filters.search]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -65,6 +90,8 @@ export default function AuthorsIndex( {currentLoans}: { currentLoans: any[] }) {
                             <Input
                                 placeholder="Search by name, ID, contact number..."
                                 className="pl-9"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         
@@ -102,8 +129,9 @@ export default function AuthorsIndex( {currentLoans}: { currentLoans: any[] }) {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={4} className="py-4 text-center text-gray-500">
-                                        No Current Loans found.
+                                    <td colSpan={5} className="py-4 text-center text-gray-500">
+                                        {}
+                                        {filters.search ? 'No borrowers found for your search.' : 'No borrowers found.'}
                                     </td> 
                                 </tr>
 
