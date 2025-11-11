@@ -107,14 +107,14 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
 
                 {/*Display header of table*/}
                 <div className="p-6 overflow-x-auto">
-                    <table className="min-w-full border border-gray-200 text-sm text-left">
-                        <thead className="bg-gray-100">
+                    <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
+                        <thead className="bg-foreground">
                             <tr>
-                                <th className="px-4 py-2 border-b text-black">Staff ID</th>
-                                <th className="px-4 py-2 border-b text-black">Last Name</th>
-                                <th className="px-4 py-2 border-b text-black">First Name</th>
-                                <th className="px-4 py-2 border-b text-black">Middle Initial</th>
-                                <th className="px-4 py-2 border-b text-black">Job</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tl-lg">Staff ID</th>
+                                <th className="px-4 py-2 border-b text-background">Last Name</th>
+                                <th className="px-4 py-2 border-b text-background">First Name</th>
+                                <th className="px-4 py-2 border-b text-background">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-background">Job</th>
                             </tr>
                         </thead>
 
@@ -122,12 +122,12 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                         <tbody> 
                         {staff && staff.length > 0 ? (
                             staff.map((stf, index) => (
-                            <tr key={stf.STAFF_ID || `staff-${index}`} className="hover:bg-green-50 text-black-800">
-                                        <td className="px-4 py-2 border-b text-black">{stf.STAFF_ID}</td>
-                                        <td className="px-4 py-2 border-b text-black">{stf.STAFF_LASTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-black">{stf.STAFF_FIRSTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-black">{stf.STAFF_MIDDLEINITIAL}</td>
-                                        <td className="px-4 py-2 border-b text-black">{stf.STAFF_JOB}</td>
+                            <tr key={stf.STAFF_ID || `staff-${index}`} className="hover:bg-muted">
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_LASTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_FIRSTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_MIDDLEINITIAL}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_JOB}</td>
                                     </tr>
                                 ))
                             ) : (

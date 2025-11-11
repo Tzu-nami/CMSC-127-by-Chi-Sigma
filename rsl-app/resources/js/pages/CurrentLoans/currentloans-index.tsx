@@ -106,13 +106,13 @@ export default function AuthorsIndex( {currentLoans, filters}: { currentLoans: a
 
                 {/*Display header of table*/}
                 <div className="p-6 overflow-x-auto">
-                    <table className="min-w-full border border-gray-200 text-sm text-left">
-                        <thead className="bg-gray-100">
+                    <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
+                        <thead className="bg-foreground">
                             <tr>
-                                <th className="px-4 py-2 border-b text-black">Transaction ID</th>
-                                <th className="px-4 py-2 border-b text-black">Book ID</th>
-                                <th className="px-4 py-2 border-b text-black">Borrower ID</th>
-                                <th className="px-4 py-2 border-b text-black">Staff ID</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tl-lg">Transaction ID</th>
+                                <th className="px-4 py-2 border-b text-background">Book ID</th>
+                                <th className="px-4 py-2 border-b text-background">Borrower ID</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tr-lg">Staff ID</th>
                             </tr>
                         </thead>
 
@@ -120,11 +120,11 @@ export default function AuthorsIndex( {currentLoans, filters}: { currentLoans: a
                         <tbody> 
                         {currentLoans && currentLoans.length > 0 ? (
                             currentLoans.map((cLoans, index) => (
-                            <tr key={cLoans.AUTHOR_ID || `currentLoans-${index}`} className="hover:bg-green-50 text-black-800">
-                                        <td className="px-4 py-2 border-b text-black">{cLoans.TRANSACTION_ID}</td>
-                                        <td className="px-4 py-2 border-b text-black">{cLoans.BOOK_ID}</td>
-                                        <td className="px-4 py-2 border-b text-black">{cLoans.BORROWER_ID}</td>
-                                        <td className="px-4 py-2 border-b text-black">{cLoans.STAFF_ID}</td>
+                            <tr key={cLoans.AUTHOR_ID || `currentLoans-${index}`} className="hover:bg-muted">
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.TRANSACTION_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.BOOK_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.BORROWER_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.STAFF_ID}</td>
                                     </tr>
                                 ))
                             ) : (

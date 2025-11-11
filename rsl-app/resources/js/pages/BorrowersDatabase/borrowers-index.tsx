@@ -106,15 +106,15 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
 
                 {/*Display header of table*/}
                 <div className="p-6 overflow-x-auto">
-                    <table className="min-w-full border border-gray-200 text-sm text-left">
-                        <thead className="bg-gray-100">
+                    <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
+                        <thead className="bg-foreground">
                             <tr>
-                                <th className="px-4 py-2 border-b text-black">Borrower ID</th>
-                                <th className="px-4 py-2 border-b text-black">Last Name</th>
-                                <th className="px-4 py-2 border-b text-black">First Name</th>
-                                <th className="px-4 py-2 border-b text-black">Middle Initial</th>
-                                <th className="px-4 py-2 border-b text-black">Status</th>
-                                <th className="px-4 py-2 border-b text-black">Contact Number</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tl-lg">Borrower ID</th>
+                                <th className="px-4 py-2 border-b text-background">Last Name</th>
+                                <th className="px-4 py-2 border-b text-background">First Name</th>
+                                <th className="px-4 py-2 border-b text-background">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-background">Status</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tr-lg">Contact Number</th>
                             </tr>
                         </thead>
 
@@ -122,13 +122,13 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                         <tbody> 
                         {borrowers && borrowers.length > 0 ? (
                             borrowers.map((borrower, index) => (
-                            <tr key={borrower.BORROWER_ID || `borrower-${index}`} className="hover:bg-green-50 text-black-800">
-                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_ID}</td>
-                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_LASTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_FIRSTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_MIDDLEINITIAL}</td>
-                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_STATUS}</td>
-                                        <td className="px-4 py-2 border-b text-black">{borrower.BORROWER_CONTACTNUMBER}</td>
+                            <tr key={borrower.BORROWER_ID || `borrower-${index}`} className="hover:bg-muted">
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_LASTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_FIRSTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_MIDDLEINITIAL}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_STATUS}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_CONTACTNUMBER}</td>
                                     </tr>
                                 ))
                             ) : (
