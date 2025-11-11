@@ -106,13 +106,13 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
 
                 {/*Display header of table*/}
                 <div className="p-6 overflow-x-auto">
-                    <table className="min-w-full border border-gray-200 text-sm text-left">
-                        <thead className="bg-gray-100">
+                    <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
+                        <thead className="bg-foreground">
                             <tr>
-                                <th className="px-4 py-2 border-b text-black">Author ID</th>
-                                <th className="px-4 py-2 border-b text-black">Last Name</th>
-                                <th className="px-4 py-2 border-b text-black">First Name</th>
-                                <th className="px-4 py-2 border-b text-black">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tl-lg">Author ID</th>
+                                <th className="px-4 py-2 border-b text-background">Last Name</th>
+                                <th className="px-4 py-2 border-b text-background">First Name</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tr-lg">Middle Initial</th>
                             </tr>
                         </thead>
 
@@ -120,18 +120,18 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                         <tbody> 
                         {authors && authors.length > 0 ? (
                             authors.map((author, index) => (
-                            <tr key={author.AUTHOR_ID || `author-${index}`} className="hover:bg-green-50 text-black-800">
-                                        <td className="px-4 py-2 border-b text-black">{author.AUTHOR_ID}</td>
-                                        <td className="px-4 py-2 border-b text-black">{author.AUTHOR_LASTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-black">{author.AUTHOR_FIRSTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-black">{author.AUTHOR_MIDDLEINITIAL}</td>
+                            <tr key={author.AUTHOR_ID || `author-${index}`} className="hover:bg-muted">
+                                        <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_LASTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_FIRSTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_MIDDLEINITIAL}</td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
                                     <td colSpan={5} className="py-4 text-center text-gray-500">
                                         {}
-                                        {filters.search ? 'No borrowers found for your search.' : 'No borrowers found.'}
+                                        {filters.search ? 'No authors found for your search.' : 'No authors found.'}
                                     </td> 
                                 </tr>
 

@@ -132,14 +132,14 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
             <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="relative w-full md:max-w-md">
-                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
-                
-                <Input 
-                    placeholder="Search by title, author, publisher..." 
-                    className="pl-9"
-                    value={searchTerm} 
-                    onChange={(e) => setSearchTerm(e.target.value)} 
-                />
+                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
+                    
+                    <Input 
+                        placeholder="Search by title, author, publisher..." 
+                        className="pl-9"
+                        value={searchTerm} 
+                        onChange={(e) => setSearchTerm(e.target.value)} 
+                    />
                 </div>
                 
                 <Button variant="outline" className="w-full sm:w-auto">
@@ -162,14 +162,14 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
             {/*Display header of table*/}
             <div className="p-6 overflow-x-auto">
-            <table className="min-w-full border border-gray-200 text-sm text-left">
-                <thead className="bg-gray-100">
+            <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
+                <thead className="bg-foreground">
                 <tr>
-                    <th className="px-4 py-2 border-b text-black">Book ID</th>
-                    <th className="px-4 py-2 border-b text-black">Title</th>
-                    <th className="px-4 py-2 border-b text-black">Year Published</th>
-                    <th className="px-4 py-2 border-b text-black">Publisher</th>
-                    <th className="px-4 py-2 border-b text-black">Available Copies</th>
+                    <th className="px-4 py-2 border-b text-background rounded-tl-lg">Book ID</th>
+                    <th className="px-4 py-2 border-b text-background">Title</th>
+                    <th className="px-4 py-2 border-b text-background">Year Published</th>
+                    <th className="px-4 py-2 border-b text-background">Publisher</th>
+                    <th className="px-4 py-2 border-b text-background rounded-tr-lg">Available Copies</th>
                 </tr>
                 </thead>
 
@@ -177,12 +177,12 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                 <tbody>
                 {books && books.length > 0 ? (
                     books.map((book, index) => (
-                    <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-green-50 text-black-800">
-                        <td className="px-4 py-2 border-b text-black">{book.BOOK_ID}</td>
-                        <td className="px-4 py-2 border-b text-black">{book.BOOK_TITLE}</td>
-                        <td className="px-4 py-2 border-b text-black">{book.BOOK_YEAR}</td>
-                        <td className="px-4 py-2 border-b text-black">{book.BOOK_PUBLISHER}</td>
-                        <td className="px-4 py-2 border-b text-black">{book.BOOK_COPIES}</td>
+                    <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-muted">
+                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_ID}</td>
+                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_TITLE}</td>
+                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_YEAR}</td>
+                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_PUBLISHER}</td>
+                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_COPIES}</td>
                     </tr>
                     ))
                 ) : (
