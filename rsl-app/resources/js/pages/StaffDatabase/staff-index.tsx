@@ -1,7 +1,7 @@
-import React from 'react';
+import React,{ useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -9,6 +9,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/staffdatabase',
     },
 ];
+
 import {
     Search as SearchIcon,
     Plus as PlusIcon,
@@ -49,7 +50,32 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', 
 
 
 // --- MAIN PAGE COMPONENT ---
-export default function StaffIndex( {staff}: { staff: any[] }) {
+export default function StaffIndex( {staff, filters}: { staff: any[], filters:{search?: string}} ) {
+
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    
+    useEffect(() =>{
+            const timerId = setTimeout(() => {
+                if (searchTerm === (filters.search || '')) {
+                    return;
+                }
+        
+                router.get(
+                    '/staffdatabase',
+                    {search: searchTerm},
+                    {
+                        preserveState: true,
+                        replace: true,
+                        preserveScroll: true,
+                    }
+                );
+            }, 300);
+            return () => clearTimeout(timerId);
+        }, [searchTerm,filters.search]);
+    
+    useEffect(() => {
+            setSearchTerm(filters.search || '');
+        }, [filters.search]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -65,6 +91,8 @@ export default function StaffIndex( {staff}: { staff: any[] }) {
                             <Input
                                 placeholder="Search by name, ID, contact number..."
                                 className="pl-9"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         
@@ -105,7 +133,8 @@ export default function StaffIndex( {staff}: { staff: any[] }) {
                             ) : (
                                 <tr>
                                     <td colSpan={5} className="py-4 text-center text-gray-500">
-                                        No Staff found.
+                                        {}
+                                        {filters.search ? 'No Staffs found for your search.' : 'No staffs found.'}
                                     </td> 
                                 </tr>
 
