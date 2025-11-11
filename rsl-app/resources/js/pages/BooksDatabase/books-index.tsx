@@ -8,6 +8,7 @@ import {
     SlidersHorizontal as SlidersHorizontalIcon,
     Plus as PlusIcon,
 } from 'lucide-react';
+import { CustomModalForm } from '@/components/custom-modal-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -147,10 +148,19 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                     More Filters
 
                 </Button>
-                <Button className="w-full sm:w-auto">
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    Add New Book
-                </Button>
+                <div className="w-full sm:w-auto">
+                    <CustomModalForm 
+                    title="Add New Book"
+                    route="/booksdatabase"
+                    fields={[
+                        { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" },
+                        { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title" },
+                        { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year" },
+                        { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher" },
+                        { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies" },
+                    ]}
+                    />
+                </div>
                 </div>
             </div>
             </div>

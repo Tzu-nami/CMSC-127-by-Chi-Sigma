@@ -11,6 +11,9 @@ class Borrowers extends Model
 
     //Retrieve data from borrower_data table
     protected $table = 'borrower_data';
+    protected $primaryKey = 'BORROWER_ID';
+    protected $keyType = 'string';
+    public $timestamps = false; // REALLY REALLY IMPORTANT TO ADD THIS LINE
 
     //Choose which ones to display
     protected $fillable = [

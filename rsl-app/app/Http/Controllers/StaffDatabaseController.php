@@ -30,4 +30,26 @@ class StaffDatabaseController extends Controller
             'filters'=>$request->only(['search']),
         ]);
     }
+
+    public function store(Request $request) {
+        // Check if all inputs are valid
+        $validated = $request->validate([
+            'staff_id' => 'required|max:5|string|unique:staff_data,STAFF_ID',
+            'staff_lastname'=> 'required|max:255|string',
+            'staff_firstname' => 'required|max:255|string',
+            'staff_middleinitial' => 'nullable|max:2|string',
+            'staff_job' => 'required|max:100|string',
+        ]);
+
+        // Create new staff
+        Staff::create([
+            'STAFF_ID' => $validated['staff_id'],
+            'STAFF_LASTNAME' => $validated['staff_lastname'],
+            'STAFF_FIRSTNAME' => $validated['staff_firstname'],
+            'STAFF_MIDDLEINITIAL' => $validated['staff_middleinitial'],
+            'STAFF_JOB' => $validated['staff_job'],
+        ]);
+
+        return redirect()->route('staffdatabase.index')->with('success', 'Staff added successfully!');
+    }
 }

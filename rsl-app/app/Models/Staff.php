@@ -11,6 +11,9 @@ class Staff extends Model
 
     //Retrieve data from borrower_data table
     protected $table = 'staff_data';
+    protected $primaryKey = 'STAFF_ID';
+    protected $keyType = 'string';
+    public $timestamps = false; // REALLY REALLY IMPORTANT TO ADD THIS LINE
 
     //Choose which ones to display
     protected $fillable = [
