@@ -1,13 +1,9 @@
-import React,{ useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 
-import {
-    Search as SearchIcon,
-    SlidersHorizontal as SlidersHorizontalIcon,
-    Plus as PlusIcon,
-} from 'lucide-react';
+import { SearchIcon, SlidersHorizontalIcon, PlusIcon } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -90,9 +86,8 @@ const Tabs = ({ tabs, activeTab, onTabChange }: TabsProps) => (
     </div>
 );
 
-
 // --- MAIN PAGE COMPONENT ---
-export default function BooksIndex({ books, filters }: { books: any[], filters:{search?: string} }) {
+export default function BooksIndex({ books, filters }: { books: any[], filters: { search?: string } }) {
     const tabOptions: Tab[] = [
         { name: 'All Books' },
         { name: 'Available' },
@@ -100,8 +95,12 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
     ];
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    const [activeTab, setActiveTab] = useState<string>('All Books');
+    const [showMoreFilters, setShowMoreFilters] = useState(false);
+    const [yearFilter, setYearFilter] = useState('');
+    const [publisherFilter, setPublisherFilter] = useState('');
 
-    useEffect(() =>{
+    useEffect(() => {
         const timerId = setTimeout(() => {
             if (searchTerm === (filters.search || '')) {
                 return;
@@ -109,7 +108,7 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
             router.get(
                 '/booksdatabase',
-                {search: searchTerm},
+                { search: searchTerm },
                 {
                     preserveState: true,
                     replace: true,
@@ -118,86 +117,173 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
             );
         }, 300);
         return () => clearTimeout(timerId);
-    }, [searchTerm,filters.search]);
+    }, [searchTerm, filters.search]);
 
     useEffect(() => {
         setSearchTerm(filters.search || '');
     }, [filters.search]);
 
+    // Filter books based on all criteria
+    const getFilteredBooks = () => {
+        let filtered = books;
+
+        // Filter by search term
+        if (searchTerm) {
+            filtered = filtered.filter(book =>
+                book.BOOK_TITLE.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                book.BOOK_PUBLISHER.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        // Filter by tab (availability)
+        if (activeTab === 'Available') {
+            filtered = filtered.filter(book => book.BOOK_COPIES > 0);
+        } else if (activeTab === 'On Loan') {
+            filtered = filtered.filter(book => book.BOOK_COPIES === 0);
+        }
+
+        // Filter by year if selected
+        if (yearFilter) {
+            filtered = filtered.filter(book => book.BOOK_YEAR.toString() === yearFilter);
+        }
+
+        // Filter by publisher if selected
+        if (publisherFilter) {
+            filtered = filtered.filter(book => book.BOOK_PUBLISHER === publisherFilter);
+        }
+
+        return filtered;
+    };
+
+    // Extract unique years and publishers for filter options
+    const uniqueYears = [...new Set(books.map(book => book.BOOK_YEAR))].sort((a, b) => b - a);
+    const uniquePublishers = [...new Set(books.map(book => book.BOOK_PUBLISHER))].sort();
+
+    const filteredBooks = getFilteredBooks();
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-        <Head title="Books Database" />
-        <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
+            <Head title="Books Database" />
+            <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
 
-            <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div className="relative w-full md:max-w-md">
-                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
-                    
-                    <Input 
-                        placeholder="Search by title, author, publisher..." 
-                        className="pl-9"
-                        value={searchTerm} 
-                        onChange={(e) => setSearchTerm(e.target.value)} 
+                <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="relative w-full md:max-w-md">
+                            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
+                            <Input
+                                placeholder="Search by title, author, publisher..."
+                                className="pl-9"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+
+                        <Button
+                            variant="outline"
+                            className="w-full sm:w-auto"
+                            onClick={() => setShowMoreFilters(!showMoreFilters)}
+                        >
+                            <SlidersHorizontalIcon className="h-4 w-4 mr-2" />
+                            More Filters
+                        </Button>
+                        <Button className="w-full sm:w-auto">
+                            <PlusIcon className="h-4 w-4 mr-2" />
+                            Add New Book
+                        </Button>
+                    </div>
+
+                    {/* More Filters Section */}
+                    {showMoreFilters && (
+                        <div className="mt-4 p-4 bg-[#f9fafb] border border-[#e5e7eb] rounded-md flex flex-col sm:flex-row gap-4">
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-[#374151] mb-2">
+                                    Year Published
+                                </label>
+                                <Select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)}>
+                                    <option value="">All Years</option>
+                                    {uniqueYears.map(year => (
+                                        <option key={year} value={year}>{year}</option>
+                                    ))}
+                                </Select>
+                            </div>
+
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-[#374151] mb-2">
+                                    Publisher
+                                </label>
+                                <Select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)}>
+                                    <option value="">All Publishers</option>
+                                    {uniquePublishers.map(publisher => (
+                                        <option key={publisher} value={publisher}>{publisher}</option>
+                                    ))}
+                                </Select>
+                            </div>
+
+                            <div className="flex items-end">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setYearFilter('');
+                                        setPublisherFilter('');
+                                    }}
+                                    className="w-full"
+                                >
+                                    Reset Filters
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="px-4 sm:px-6">
+                    <Tabs
+                        tabs={tabOptions}
+                        activeTab={activeTab}
+                        onTabChange={setActiveTab}
                     />
                 </div>
-                
-                <Button variant="outline" className="w-full sm:w-auto">
-                    <SlidersHorizontalIcon className="h-4 w-4 mr-2" />
-                    More Filters
 
-                </Button>
-                <Button className="w-full sm:w-auto">
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    Add New Book
-                </Button>
+                {/* Display table */}
+                <div className="p-6 overflow-x-auto">
+                    <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
+                        <thead className="bg-foreground">
+                            <tr>
+                                <th className="px-4 py-2 border-b text-background rounded-tl-lg">Book ID</th>
+                                <th className="px-4 py-2 border-b text-background">Title</th>
+                                <th className="px-4 py-2 border-b text-background">Year Published</th>
+                                <th className="px-4 py-2 border-b text-background">Publisher</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tr-lg">Available Copies</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {filteredBooks && filteredBooks.length > 0 ? (
+                                filteredBooks.map((book, index) => (
+                                    <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-muted">
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_TITLE}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_YEAR}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_PUBLISHER}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">
+                                            <span className={book.BOOK_COPIES > 0 ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+                                                {book.BOOK_COPIES}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={5} className="py-4 text-center text-gray-500">
+                                        {searchTerm || yearFilter || publisherFilter ? 'No books found for your filters.' : 'No books found.'}
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+
             </div>
 
-            
-            <div className="px-4 sm:px-6">
-            <Tabs tabs={tabOptions} activeTab="All Books" onTabChange={() => {}} />
-            </div>
-
-            {/*Display header of table*/}
-            <div className="p-6 overflow-x-auto">
-            <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
-                <thead className="bg-foreground">
-                <tr>
-                    <th className="px-4 py-2 border-b text-background rounded-tl-lg">Book ID</th>
-                    <th className="px-4 py-2 border-b text-background">Title</th>
-                    <th className="px-4 py-2 border-b text-background">Year Published</th>
-                    <th className="px-4 py-2 border-b text-background">Publisher</th>
-                    <th className="px-4 py-2 border-b text-background rounded-tr-lg">Available Copies</th>
-                </tr>
-                </thead>
-
-                {/*Display data of table using map function in the array, index for future null values*/}
-                <tbody>
-                {books && books.length > 0 ? (
-                    books.map((book, index) => (
-                    <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-muted">
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_ID}</td>
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_TITLE}</td>
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_YEAR}</td>
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_PUBLISHER}</td>
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_COPIES}</td>
-                    </tr>
-                    ))
-                ) : (
-                    <tr>
-                    <td colSpan={5} className="py-4 text-center text-gray-500">
-                        {}
-                        {filters.search ? 'No books found for your search.' : 'No books found.'}
-                    </td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
-            </div>
-        
         </AppLayout>
     );
 }
-
