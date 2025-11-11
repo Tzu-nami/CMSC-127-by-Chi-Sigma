@@ -24,6 +24,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/borrowersdatabase',[BorrowersDatabaseController::class,'index'])->name('borrowersdatabase.index');
     Route::get('/currentloans',[CurrentLoansController::class,'index'])->name('currentloans.index');
     Route::get('/staffdatabase',[StaffDatabaseController::class,'index'])->name('staffdatabase.index');
+    Route::post('/booksdatabase',[BooksDatabaseController::class,'store'])->name('booksdatabase.store');
+    Route::post('/borrowersdatabase',[BorrowersDatabaseController::class,'store'])->name('borrowersdatabase.store');
+    Route::post('/staffdatabase',[StaffDatabaseController::class,'store'])->name('staffdatabase.store');
+    Route::post('/authorsdatabase',[AuthorsDatabaseController::class,'store'])->name('authorsdatabase.store');
+    Route::post('/currentloans',[CurrentLoansController::class,'store'])->name('currentloans.store');
 });
 
 require __DIR__.'/settings.php';

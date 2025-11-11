@@ -28,4 +28,25 @@ class AuthorsDatabaseController extends Controller
             'filters'=>$request->only(['search']),
         ]);
     }
+
+    public function store(Request $request) {
+        // Check if all inputs are valid
+        $validated = $request->validate([
+            'author_id' => 'required|min:16000|max:99999|integer|unique:author_data,AUTHOR_ID',
+            'author_lastname'=> 'required|max:255|string',
+            'author_firstname' => 'required|max:255|string',
+            'author_middleinitial' => 'nullable|max:2|string',
+        ]);
+
+        // Create new author
+        Authors::create([
+            'AUTHOR_ID' => $validated['author_id'],
+            'AUTHOR_LASTNAME' => $validated['author_lastname'],
+            'AUTHOR_FIRSTNAME' => $validated['author_firstname'],
+            'AUTHOR_MIDDLEINITIAL' => $validated['author_middleinitial'],
+        ]);
+
+        return redirect()->route('authorsdatabase.index')->with('success', 'Author added successfully!');
+
+    }
 }

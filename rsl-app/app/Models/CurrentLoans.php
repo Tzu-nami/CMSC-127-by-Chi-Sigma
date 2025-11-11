@@ -11,6 +11,10 @@ class CurrentLoans extends Model
 
     //Retrieve data from borrower_data table
     protected $table = 'current_loan';
+    protected $primaryKey = 'TRANSACTION_ID';
+    protected $keyType = 'string';
+    public $timestamps = false; // REALLY REALLY IMPORTANT TO ADD THIS LINE
+
 
     //Choose which ones to display
     protected $fillable = [

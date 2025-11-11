@@ -14,6 +14,8 @@ import {
     Plus as PlusIcon,
 } from 'lucide-react';
 
+import { CustomModalForm } from '@/components/custom-modal-form';
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
     size?: 'default' | 'sm' | 'icon';
@@ -95,12 +97,20 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                             />
                         </div>
                         
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <Button className="w-full sm:w-auto">
-                                <PlusIcon className="h-4 w-4 mr-2" />
-                                Add New Borrower
-                            </Button>
-                        </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <CustomModalForm 
+                    title="Add New Borrower"
+                    route="/borrowersdatabase"
+                    fields={[
+                        { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26" },
+                        { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name" },
+                        { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name" },
+                        { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial" },
+                        { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status"},
+                        { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number" },
+                    ]}
+                    />
+                </div>
                     </div>
                 </div>
 

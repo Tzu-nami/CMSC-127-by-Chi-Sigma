@@ -15,6 +15,7 @@ import {
     Plus as PlusIcon,
 } from 'lucide-react';
 
+import { CustomModalForm } from '@/components/custom-modal-form';
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
     size?: 'default' | 'sm' | 'icon';
@@ -97,10 +98,17 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                         </div>
                         
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <Button className="w-full sm:w-auto">
-                                <PlusIcon className="h-4 w-4 mr-2" />
-                                Add New Staff
-                            </Button>
+                        <CustomModalForm 
+                            title="Add New Staff"
+                            route="/staffdatabase"
+                            fields={[
+                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26" },
+                                { name: "staff_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name" },
+                                { name: "staff_firstname", label: "First Name", type:"text", placeholder: "Enter First Name" },
+                                { name: "staff_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial" },
+                                { name: "staff_job", label: "Choose a job", type:"text", placeholder: "Enter a job"},
+                            ]}
+                            />
                         </div>
                     </div>
                 </div>

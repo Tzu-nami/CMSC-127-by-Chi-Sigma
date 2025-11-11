@@ -21,9 +21,6 @@ class BooksDatabaseController extends Controller
                 ->orWhere('BOOK_YEAR', 'like', "%{$search}%");
 
         }); 
-
-        // Fetch all books from the database and store it
-        //$books = Books::all();
         
         $books =$query->get();
 
@@ -32,5 +29,28 @@ class BooksDatabaseController extends Controller
 
             'filters'=>$request->only(['search']),
         ]);
+    }
+
+    public function store(Request $request) {
+        // Check if all inputs are valid
+        $validated = $request->validate([
+            'book_id' => 'required|max:5|string|unique:books_data,BOOK_ID',
+            'book_title'=> 'required|max:255|string',
+            'book_year' => 'required|digits:4|min:1901|integer|max:' . date('Y'),
+            'book_publisher' => 'required|max:255|string',
+            'book_copies' => 'required|integer|min:0'
+        ]);
+
+        // Create new book
+        Books::create([
+            'BOOK_ID' => $validated['book_id'],
+            'BOOK_TITLE' => $validated['book_title'],
+            'BOOK_YEAR' => $validated['book_year'],
+            'BOOK_PUBLISHER' => $validated['book_publisher'],
+            'BOOK_COPIES' => $validated['book_copies'],
+        ]);
+
+        return redirect()->route('booksdatabase.index')->with('success', 'Book added successfully!');
+
     }
 }

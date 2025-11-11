@@ -14,6 +14,8 @@ import {
     Plus as PlusIcon,
 } from 'lucide-react';
 
+import { CustomModalForm } from '@/components/custom-modal-form';
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
     size?: 'default' | 'sm' | 'icon';
@@ -96,10 +98,16 @@ export default function AuthorsIndex( {currentLoans, filters}: { currentLoans: a
                         </div>
                         
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <Button className="w-full sm:w-auto">
-                                <PlusIcon className="h-4 w-4 mr-2" />
-                                Add New Current Loan
-                            </Button>
+                        <CustomModalForm 
+                            title="Add New Current Loan"
+                            route="/currentloansdatabase"
+                            fields={[
+                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26" },
+                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" },
+                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26" },
+                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26" }
+                            ]}
+                            />
                         </div>
                     </div>
                 </div>

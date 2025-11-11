@@ -14,6 +14,8 @@ import {
     Plus as PlusIcon,
 } from 'lucide-react';
 
+import { CustomModalForm } from '@/components/custom-modal-form';
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
     size?: 'default' | 'sm' | 'icon';
@@ -96,10 +98,16 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                         </div>
                         
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <Button className="w-full sm:w-auto">
-                                <PlusIcon className="h-4 w-4 mr-2" />
-                                Add New Author
-                            </Button>
+                        <CustomModalForm 
+                            title="Add New Author"
+                            route="/authorsdatabase"
+                            fields={[
+                                { name: "author_id", label: "Author ID", type:"text", placeholder: "e.g. A1Z26" },
+                                { name: "author_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name" },
+                                { name: "author_firstname", label: "First Name", type:"text", placeholder: "Enter First Name" },
+                                { name: "author_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial" }
+                            ]}
+                            />
                         </div>
                     </div>
                 </div>

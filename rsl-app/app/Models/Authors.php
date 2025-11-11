@@ -11,6 +11,9 @@ class Authors extends Model
 
     //Retrieve data from borrower_data table
     protected $table = 'author_data';
+    protected $primaryKey = 'AUTHOR_ID';
+    protected $keyType = 'string';
+    public $timestamps = false; // REALLY REALLY IMPORTANT TO ADD THIS LINE
 
     //Choose which ones to display
     protected $fillable = [
