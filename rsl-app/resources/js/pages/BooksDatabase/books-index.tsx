@@ -7,7 +7,6 @@ import {
     Search as SearchIcon,
     SlidersHorizontal as SlidersHorizontalIcon,
     Plus as PlusIcon,
-    Replace,
 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [

@@ -1,7 +1,7 @@
-import React from 'react';
+import React,{ useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -49,7 +49,32 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', 
 
 
 // --- MAIN PAGE COMPONENT ---
-export default function BorrowersIndex( {borrowers}: { borrowers: any[] }) {
+export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[], filters:{search?: string}} ) {
+
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+
+    useEffect(() =>{
+            const timerId = setTimeout(() => {
+                if (searchTerm === (filters.search || '')) {
+                    return;
+                }
+    
+                router.get(
+                    '/borrowersdatabase',
+                    {search: searchTerm},
+                    {
+                        preserveState: true,
+                        replace: true,
+                        preserveScroll: true,
+                    }
+                );
+            }, 300);
+            return () => clearTimeout(timerId);
+        }, [searchTerm,filters.search]);
+
+    useEffect(() => {
+            setSearchTerm(filters.search || '');
+        }, [filters.search]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -65,6 +90,8 @@ export default function BorrowersIndex( {borrowers}: { borrowers: any[] }) {
                             <Input
                                 placeholder="Search by name, ID, contact number..."
                                 className="pl-9"
+                                value ={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         
@@ -106,9 +133,10 @@ export default function BorrowersIndex( {borrowers}: { borrowers: any[] }) {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={6} className="py-4 text-center text-gray-500">
-                                        No borrowers found.
-                                    </td> 
+                                <td colSpan={5} className="py-4 text-center text-gray-500">
+                                    {}
+                                    {filters.search ? 'No borrowers found for your search.' : 'No borrowers found.'}
+                                </td> 
                                 </tr>
 
                             )}
