@@ -11,8 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { PlusIcon } from "lucide-react";
 
 interface Field {
@@ -178,16 +176,16 @@ export const CustomModalForm = ({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-4 py-6 px-1">
             {fields.map((field) => (
             <div key={field.name} className="grid gap-2">
-              <label htmlFor={field.name}> {field.label} </label>
+              <label htmlFor={field.name} className="text-sm font-medium text-foreground"> {field.label} </label>
               <input id={field.name}
                type={field.type || "text"} 
                placeholder={field.placeholder || ""}
                value={data[field.name]}
                onChange={(e) => setData(field.name, e.target.value)}
-               className={errors[field.name] ? "border-red-500": ""} required/>
+               className={`h-2 px-3 py-4 text-base rounded ${errors[field.name] ? "border-red-500 ring-red-500/50" : ""}`}required/>
               {errors[field.name] && (<p className="text-red-500">{errors[field.name]}</p>)}
             </div>
             ))}
@@ -195,7 +193,7 @@ export const CustomModalForm = ({
 
           <DialogFooter className="mt-4">
             <DialogClose asChild>
-              <Button type="button" variant="outline"> Cancel  </Button>
+              <Button type="button" variant="outline"> Cancel </Button>
             </DialogClose>
             <Button type="submit" disabled={processing}>{processing ? "Saving" : "Save"}</Button>
           </DialogFooter>
@@ -213,13 +211,13 @@ export const CustomModalForm = ({
           <DialogDescription>
             Are you sure you want to add this?
           </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose asChild>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
               <Button type="button" variant="outline" onClick={cancelSubmit}> Cancel  </Button>
-            </DialogClose>
-            <Button type="button" onClick={confirmSubmit}> Confirm </Button>
-          </DialogFooter>
+          </DialogClose>
+              <Button type="button" onClick={confirmSubmit}> Confirm </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
 
