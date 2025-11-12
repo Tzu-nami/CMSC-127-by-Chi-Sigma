@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useForm } from "@inertiajs/react"
+import { router, useForm } from "@inertiajs/react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -11,8 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { PlusIcon } from "lucide-react";
 
 interface Field {
@@ -27,10 +25,12 @@ interface CustomModalFormProps {
   route: string;
   fields: Field[];
   triggerLabel?: string;
+  method?: 'post' | 'put' | 'delete';
+  initialData?: Record<string, string>;
 }
 
 export const CustomModalForm = ({
-  title, route, fields, triggerLabel = "Add New",
+  title, route, fields, triggerLabel = "Add New", method = 'post',
   }: CustomModalFormProps) => {
   // Check if modal is can be accessed
   const [open, setOpen] = useState(false);
@@ -51,12 +51,30 @@ export const CustomModalForm = ({
     book_copies: "",
   });*/
 
-  const { data, setData, post, processing, errors, reset } = useForm(initialData);
+  const { data, setData, post, processing, errors, reset } = useForm(initialData || {});
 
   // Check if everything is valid before submitting
   const submitForm = (e: React.FormEvent) => {
     e.preventDefault();
     setConfirmation(true);
+
+    if (method === 'put') {
+      router.put(route, data, {
+        onSuccess: () => {
+          reset();
+          setOpen(false);
+          setConfirmation(false);
+        },
+      });
+    } else {
+      post(route, {
+        onSuccess: () => {
+          reset();
+          setOpen(false);
+          setConfirmation(false);
+        },
+      });
+    }
 
     /*if (!data.book_id || !data.book_title || !data.book_year || !data.book_publisher || !data.book_copies) {
       alert("Please fill in all required fields.");
@@ -178,16 +196,16 @@ export const CustomModalForm = ({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-4 py-6 px-1">
             {fields.map((field) => (
             <div key={field.name} className="grid gap-2">
-              <label htmlFor={field.name}> {field.label} </label>
+              <label htmlFor={field.name} className="text-sm font-medium text-foreground"> {field.label} </label>
               <input id={field.name}
                type={field.type || "text"} 
                placeholder={field.placeholder || ""}
                value={data[field.name]}
                onChange={(e) => setData(field.name, e.target.value)}
-               className={errors[field.name] ? "border-red-500": ""} required/>
+               className={`h-2 px-3 py-4 text-base rounded ${errors[field.name] ? "border-red-500 ring-red-500/50": ""}`} required/>
               {errors[field.name] && (<p className="text-red-500">{errors[field.name]}</p>)}
             </div>
             ))}
@@ -195,7 +213,7 @@ export const CustomModalForm = ({
 
           <DialogFooter className="mt-4">
             <DialogClose asChild>
-              <Button type="button" variant="outline"> Cancel  </Button>
+              <Button type="button" variant="outline"> Cancel </Button>
             </DialogClose>
             <Button type="submit" disabled={processing}>{processing ? "Saving" : "Save"}</Button>
           </DialogFooter>
@@ -218,7 +236,7 @@ export const CustomModalForm = ({
             <DialogClose asChild>
               <Button type="button" variant="outline" onClick={cancelSubmit}> Cancel  </Button>
             </DialogClose>
-            <Button type="button" onClick={confirmSubmit}> Confirm </Button>
+              <Button type="button" onClick={submitForm}> Confirm </Button>
           </DialogFooter>
       </DialogContent>
     </Dialog>

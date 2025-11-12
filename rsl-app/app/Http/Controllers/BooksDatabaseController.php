@@ -53,4 +53,25 @@ class BooksDatabaseController extends Controller
         return redirect()->route('booksdatabase.index')->with('success', 'Book added successfully!');
 
     }
+
+    public function update(Request $request, $id) {
+        // Check if all inputs are valid
+        $validated = $request->validate([
+            'book_title'=> 'required|max:255|string',
+            'book_year' => 'required|digits:4|min:1901|integer|max:' . date('Y'),
+            'book_publisher' => 'required|max:255|string',
+            'book_copies' => 'required|integer|min:0'
+        ]);
+
+        // Find the book by ID and update its details
+        $book = Books::where('BOOK_ID', $id)->firstOrFail();
+        $book->update([
+            'BOOK_TITLE' => $validated['book_title'],
+            'BOOK_YEAR' => $validated['book_year'],
+            'BOOK_PUBLISHER' => $validated['book_publisher'],
+            'BOOK_COPIES' => $validated['book_copies'],
+        ]);
+
+        return redirect()->route('booksdatabase.index')->with('success', 'Book updated successfully!');
+    }
 }

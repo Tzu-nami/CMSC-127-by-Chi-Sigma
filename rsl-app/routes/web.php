@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/staffdatabase',[StaffDatabaseController::class,'store'])->name('staffdatabase.store');
     Route::post('/authorsdatabase',[AuthorsDatabaseController::class,'store'])->name('authorsdatabase.store');
     Route::post('/currentloans',[CurrentLoansController::class,'store'])->name('currentloans.store');
+    Route::put('/booksdatabase/{book}',[BooksDatabaseController::class,'update'])->name('booksdatabase.update');
 });
 
 require __DIR__.'/settings.php';
