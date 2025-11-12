@@ -14,7 +14,9 @@ import {
     Plus as PlusIcon,
 } from 'lucide-react';
 
-import { CustomModalForm } from '@/components/custom-modal-form';
+import { CreateModalForm } from '@/components/create-modal-form';
+import { EditModalForm } from '@/components/ui/edit-modal-form';
+import { DeleteForm } from '@/components/ui/delete-form';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
@@ -98,16 +100,16 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                         </div>
                         
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <CustomModalForm 
+                    <CreateModalForm 
                     title="Add New Borrower"
                     route="/borrowersdatabase"
                     fields={[
-                        { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26" },
-                        { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name" },
-                        { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name" },
-                        { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial" },
-                        { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status"},
-                        { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number" },
+                        { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                        { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                        { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                        { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
+                        { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status", required: true, maxLength: 100 },
+                        { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number", required: true, maxLength: 15, pattern: "[0-9+-]*"},
                     ]}
                     />
                 </div>
@@ -125,6 +127,7 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                                 <th className="px-4 py-2 border-b text-background">Middle Initial</th>
                                 <th className="px-4 py-2 border-b text-background">Status</th>
                                 <th className="px-4 py-2 border-b text-background rounded-tr-lg">Contact Number</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center" colSpan={2}>Actions</th>
                             </tr>
                         </thead>
 
@@ -139,6 +142,35 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_MIDDLEINITIAL}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_STATUS}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_CONTACTNUMBER}</td>
+                                        <td>
+                                            <EditModalForm 
+                                            title="Edit Borrower"
+                                            triggerVariant="outline"
+                                            route={`/borrowersdatabase/${borrower.BORROWER_ID}`}
+                                            initialData={{
+                                                borrower_id: borrower.BORROWER_ID,
+                                                borrower_lastname: borrower.BORROWER_LASTNAME,
+                                                borrower_firstname: borrower.BORROWER_FIRSTNAME,
+                                                borrower_middleinitial: borrower.BORROWER_MIDDLEINITIAL,
+                                                borrower_status: borrower.BORROWER_STATUS,
+                                                borrower_contactnumber: borrower.BORROWER_CONTACTNUMBER,
+                                            }}
+                                            fields={[
+                                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, readonly: true },
+                                                { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                                { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                                { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
+                                                { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status", required: true, maxLength: 100 },
+                                                { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number", required: true, maxLength: 15, pattern: "[0-9+-]*"},
+                                            ]} />
+                                        </td>
+                                        <td>
+                                            <DeleteForm
+                                            route={`/borrowersdatabase/${borrower.BORROWER_ID}`}
+                                            item={`Borrower: ${borrower.BORROWER_FIRSTNAME} ${borrower.BORROWER_LASTNAME}`}
+                                            triggerVariant="outline"
+                                            />
+                                        </td>
                                     </tr>
                                 ))
                             ) : (

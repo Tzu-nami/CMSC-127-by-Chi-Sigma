@@ -47,6 +47,24 @@ class CurrentLoansController extends Controller
         ]);
 
         return redirect()->route('currentloans.index')->with('success', 'Current Loan added successfully!');
+    }
+    public function update(Request $request, $id) {
+        // Check if all inputs are valid
+        $validated = $request->validate([
+            'book_id'=> 'required|max:5|string',
+            'borrower_id' => 'required|max:5|string',
+            'staff_id' => 'required|max:5|string',
+        ]);
 
+        // Update current loan
+        $currentLoan = CurrentLoans::where('TRANSACTION_ID', $id)->firstOrFail();
+        $currentLoan->update([
+            'TRANSACTION_ID' => $validated['transaction_id'],
+            'BOOK_ID' => $validated['book_id'],
+            'BORROWER_ID' => $validated['borrower_id'],
+            'STAFF_ID' => $validated['staff_id'],
+        ]);
+
+        return redirect()->route('currentloans.index')->with('success', 'Current Loan updated successfully!');
     }
 }

@@ -18,20 +18,22 @@ interface Field {
   label: string;
   type?: string;
   placeholder?: string;
+  required: boolean;
+  maxLength: number;
+  pattern?: string;
 }
 
-interface CustomModalFormProps {
+interface CreateModalFormProps {
   title: string;
   route: string;
   fields: Field[];
   triggerLabel?: string;
-  method?: 'post' | 'put' | 'delete';
   initialData?: Record<string, string>;
 }
 
-export const CustomModalForm = ({
-  title, route, fields, triggerLabel = "Add New", method = 'post',
-  }: CustomModalFormProps) => {
+export const CreateModalForm = ({
+  title, route, fields, triggerLabel = "Add New",
+  }: CreateModalFormProps) => {
   // Check if modal is can be accessed
   const [open, setOpen] = useState(false);
   const [confirmation, setConfirmation] = useState(false);
@@ -42,61 +44,29 @@ export const CustomModalForm = ({
     return acc;
   }, {} as Record<string, string>);
 
-  // User input is stored here
-  /*const { data, setData, post, processing, errors, reset } = useForm({
-    book_id: "",
-    book_title: "",
-    book_year: "",
-    book_publisher: "",
-    book_copies: "",
-  });*/
-
   const { data, setData, post, processing, errors, reset } = useForm(initialData || {});
 
-  // Check if everything is valid before submitting
+  // Open confirmation dialog
   const submitForm = (e: React.FormEvent) => {
     e.preventDefault();
     setConfirmation(true);
+  };
 
-    if (method === 'put') {
-      router.put(route, data, {
+  // Check and confirm submission
+  const confirmSubmit = () => {
+    post(route, {
         onSuccess: () => {
           reset();
           setOpen(false);
           setConfirmation(false);
         },
       });
-    } else {
-      post(route, {
-        onSuccess: () => {
-          reset();
-          setOpen(false);
-          setConfirmation(false);
-        },
-      });
-    }
-
+    };
+  
     /*if (!data.book_id || !data.book_title || !data.book_year || !data.book_publisher || !data.book_copies) {
       alert("Please fill in all required fields.");
       return;
     }*/
-
-
-  };
-
-  // Save and confirm submission
-  const confirmSubmit = () => {
-    post(/*"/booksdatabase"*/route, {
-      onSuccess: () => {
-        reset();
-        setOpen(false);
-        setConfirmation(false);
-      },
-      onError: () => {
-        setConfirmation(false);
-      }
-    });
-  };
 
   // For cancelling
   const cancelSubmit = () => {
@@ -199,13 +169,25 @@ export const CustomModalForm = ({
           <div className="grid gap-4 py-6 px-1">
             {fields.map((field) => (
             <div key={field.name} className="grid gap-2">
-              <label htmlFor={field.name} className="text-sm font-medium text-foreground"> {field.label} </label>
+              <label htmlFor={field.name} className="text-sm font-medium text-foreground"> {field.label} {field.required && <span className="text-red-500">*</span>} </label>
               <input id={field.name}
                type={field.type || "text"} 
                placeholder={field.placeholder || ""}
                value={data[field.name]}
-               onChange={(e) => setData(field.name, e.target.value)}
-               className={`h-2 px-3 py-4 text-base rounded ${errors[field.name] ? "border-red-500 ring-red-500/50" : ""}`}required/>
+               onChange={(e) => {
+                // Brute force error handling for number limits
+                let value = e.target.value;
+                
+                if (field.type == "number"){
+                    value = value.slice(0, field.maxLength);
+                }
+                setData(field.name, value)}
+               } 
+               className={`h-2 px-3 py-4 text-base rounded ${errors[field.name] ? "border-red-500 ring-red-500/50" : ""}`}
+               required={field.required || false}
+               maxLength={field.type !== "number" ? field.maxLength: undefined}
+               pattern={field.pattern}
+               />
               {errors[field.name] && (<p className="text-red-500">{errors[field.name]}</p>)}
             </div>
             ))}
@@ -236,7 +218,7 @@ export const CustomModalForm = ({
           <DialogClose asChild>
               <Button type="button" variant="outline" onClick={cancelSubmit}> Cancel  </Button>
           </DialogClose>
-              <Button type="button" onClick={submitForm}> Confirm </Button>
+              <Button type="button" onClick={confirmSubmit}> Confirm </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

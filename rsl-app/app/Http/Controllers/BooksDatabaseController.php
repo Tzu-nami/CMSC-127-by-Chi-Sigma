@@ -74,4 +74,11 @@ class BooksDatabaseController extends Controller
 
         return redirect()->route('booksdatabase.index')->with('success', 'Book updated successfully!');
     }
+    public function destroy($id) {
+        // Find the book by ID and delete it
+        $book = Books::where('BOOK_ID', $id)->firstOrFail();
+        $book->delete();
+
+        return redirect()->route('booksdatabase.index')->with('success', 'Book deleted successfully!');
+    }
 }

@@ -52,4 +52,33 @@ class StaffDatabaseController extends Controller
 
         return redirect()->route('staffdatabase.index')->with('success', 'Staff added successfully!');
     }
+
+    public function update(Request $request, $id) {
+        // Check if all inputs are valid
+        $validated = $request->validate([
+            'staff_lastname'=> 'required|max:255|string',
+            'staff_firstname' => 'required|max:255|string',
+            'staff_middleinitial' => 'nullable|max:2|string',
+            'staff_job' => 'required|max:100|string',
+        ]);
+
+        // Find the staff by ID and update its details
+        $staff = Staff::where('STAFF_ID', $id)->firstOrFail();
+        $staff->update([
+            'STAFF_LASTNAME' => $validated['staff_lastname'],
+            'STAFF_FIRSTNAME' => $validated['staff_firstname'],
+            'STAFF_MIDDLEINITIAL' => $validated['staff_middleinitial'],
+            'STAFF_JOB' => $validated['staff_job'],
+        ]);
+
+        return redirect()->route('staffdatabase.index')->with('success', 'Staff updated successfully!');
+    }
+
+    public function destroy($id){
+        // Find the staff by id and delete it
+        $staff = Staff::where('STAFF_ID', $id)->firstOrFail();
+        $staff->delete();
+
+        return redirect()->route('staffdatabase.index')->with('success', 'Staff deleted successfully!');
+    }
 }

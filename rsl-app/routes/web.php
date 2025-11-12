@@ -30,6 +30,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/authorsdatabase',[AuthorsDatabaseController::class,'store'])->name('authorsdatabase.store');
     Route::post('/currentloans',[CurrentLoansController::class,'store'])->name('currentloans.store');
     Route::put('/booksdatabase/{book}',[BooksDatabaseController::class,'update'])->name('booksdatabase.update');
+    Route::put('/borrowersdatabase/{borrower}',[BorrowersDatabaseController::class,'update'])->name('borrowersdatabase.update');
+    Route::put('/staffdatabase/{staff}',[StaffDatabaseController::class,'update'])->name('staffdatabase.update');
+    Route::put('/authorsdatabase/{author}',[AuthorsDatabaseController::class,'update'])->name('authorsdatabase.update');
+    Route::put('/currentloans/{currentloan}',[CurrentLoansController::class,'update'])->name('currentloans.update');
+    Route::delete('/booksdatabase/{book}',[BooksDatabaseController::class,'destroy'])->name('booksdatabase.destroy');
+    Route::delete('/borrowersdatabase/{borrower}',[BorrowersDatabaseController::class,'destroy'])->name('borrowersdatabase.destroy');
+    Route::delete('/staffdatabase/{staff}',[StaffDatabaseController::class,'destroy'])->name('staffdatabase.destroy');
+    Route::delete('/authorsdatabase/{author}',[AuthorsDatabaseController::class,'destroy'])->name('authorsdatabase.destroy');
 });
 
 require __DIR__.'/settings.php';

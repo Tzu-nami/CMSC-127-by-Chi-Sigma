@@ -14,7 +14,9 @@ import {
     Plus as PlusIcon,
 } from 'lucide-react';
 
-import { CustomModalForm } from '@/components/custom-modal-form';
+import { CreateModalForm } from '@/components/create-modal-form';
+import { EditModalForm } from '@/components/ui/edit-modal-form';
+import { DeleteForm } from '@/components/ui/delete-form';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
@@ -98,14 +100,14 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                         </div>
                         
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <CustomModalForm 
+                        <CreateModalForm 
                             title="Add New Author"
                             route="/authorsdatabase"
                             fields={[
-                                { name: "author_id", label: "Author ID", type:"text", placeholder: "e.g. A1Z26" },
-                                { name: "author_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name" },
-                                { name: "author_firstname", label: "First Name", type:"text", placeholder: "Enter First Name" },
-                                { name: "author_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial" }
+                                { name: "author_id", label: "Author ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                { name: "author_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                { name: "author_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                { name: "author_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*"}
                             ]}
                             />
                         </div>
@@ -121,6 +123,7 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                                 <th className="px-4 py-2 border-b text-background">Last Name</th>
                                 <th className="px-4 py-2 border-b text-background">First Name</th>
                                 <th className="px-4 py-2 border-b text-background rounded-tr-lg">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center" colSpan={2}>Actions</th>
                             </tr>
                         </thead>
 
@@ -133,6 +136,31 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                                         <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_LASTNAME}</td>
                                         <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_FIRSTNAME}</td>
                                         <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_MIDDLEINITIAL}</td>
+                                        <td>
+                                            <EditModalForm
+                                                title="Add New Author"
+                                                route="/authorsdatabase"
+                                                triggerVariant="outline"
+                                                initialData={{
+                                                    author_id: author.AUTHOR_ID,
+                                                    author_lastname: author.AUTHOR_LASTNAME,
+                                                    author_firstname: author.AUTHOR_FIRSTNAME,
+                                                    author_middleinitial: author.AUTHOR_MIDDLEINITIAL
+                                                }}
+                                                fields={[
+                                                    { name: "author_id", label: "Author ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, readonly: true },
+                                                    { name: "author_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                                    { name: "author_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                                    { name: "author_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*"}
+                                                ]} />
+                                        </td>
+                                        <td>
+                                            <DeleteForm
+                                            route={`/authorsdatabase/${author.AUTHOR_ID}`}
+                                            item={`Author: ${author.AUTHOR_FIRSTNAME} ${author.AUTHOR_LASTNAME}`}
+                                            triggerVariant="outline"
+                                            />
+                                        </td>
                                     </tr>
                                 ))
                             ) : (

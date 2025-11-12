@@ -9,7 +9,9 @@ import {
     Search as SearchIcon,
     SlidersHorizontal as SlidersHorizontalIcon,
 } from 'lucide-react';
-import { CustomModalForm } from '@/components/custom-modal-form';
+import { CreateModalForm } from '@/components/create-modal-form';
+import { EditModalForm } from '@/components/ui/edit-modal-form';
+import { DeleteForm } from '@/components/ui/delete-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -226,15 +228,15 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
                     {/*-- Add New Book Modal --*/}
                     <div className="w-full sm:w-auto">
-                        <CustomModalForm 
+                        <CreateModalForm 
                         title="Add New Book"
                         route="/booksdatabase"
                         fields={[
-                            { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" },
-                            { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title" },
-                            { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year" },
-                            { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher" },
-                            { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies" },
+                            { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" , required: true, maxLength: 5 },
+                            { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title", required: true, maxLength: 255 },
+                            { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year", required: true, maxLength: 4, pattern: "[0-9]*" },
+                            { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher", required: true, maxLength: 255 },
+                            { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*" },
                         ]}
                         />
                     </div>
@@ -311,6 +313,7 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                     <th className="px-4 py-2 border-b text-background">Year Published</th>
                     <th className="px-4 py-2 border-b text-background">Publisher</th>
                     <th className="px-4 py-2 border-b text-background rounded-tr-lg">Available Copies</th>
+                    <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center" colSpan={2}>Actions</th>
                 </tr>
                 </thead>
 
@@ -324,72 +327,38 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                             <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_YEAR}</td>
                             <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_PUBLISHER}</td>
                             <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">
-                                <span className={book.BOOK_COPIES > 0 ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}                            >
+                                <span className={book.BOOK_COPIES > 0 ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
                                     {book.BOOK_COPIES}
                                 </span>
                             </td>
-
-                        <td>
-
-
-                            <CustomModalForm 
-
-
-                            title="Edit Book"
-
-
-                            triggerLabel="Edit"
-
-
-                            route={`/booksdatabase/${book.BOOK_ID}`}
-
-
-                            method="put"
-
-
-                            initialData={{
-
-
-                                book_id: book.BOOK_ID,
-
-
-                                book_title: book.BOOK_TITLE,
-
-
-                                book_year: book.BOOK_YEAR,
-
-
-                                book_publisher: book.BOOK_PUBLISHER,
-
-
-                                book_copies: book.BOOK_COPIES,
-
-
-                            }}
-
-
-                            fields={[
-
-
-                                { name: "book_title", label: "Book Title", type:"text" },
-
-
-                                { name: "book_year", label: "Book Year", type:"number" },
-
-
-                                { name: "book_publisher", label: "Book Publisher", type:"text" },
-
-
-                                { name: "book_copies", label: "Number of Copies", type:"number"},
-
-
-                            ]}
-
-
-                            />
-
-
-                        </td>
+                            <td>
+                                <EditModalForm 
+                                title="Edit Book"
+                                triggerVariant="outline"
+                                route={`/booksdatabase/${book.BOOK_ID}`}
+                                initialData={{
+                                    book_id: book.BOOK_ID,
+                                    book_title: book.BOOK_TITLE,
+                                    book_year: book.BOOK_YEAR,
+                                    book_publisher: book.BOOK_PUBLISHER,
+                                    book_copies: book.BOOK_COPIES,
+                                }}
+                                fields={[
+                                    { name: "book_id", label: "Book ID", type:"text", required: false, maxLength: 5, readonly: true },
+                                    { name: "book_title", label: "Book Title", type:"text", required: true, maxLength: 255},
+                                    { name: "book_year", label: "Book Year", type:"number", required: true, maxLength: 4 },
+                                    { name: "book_publisher", label: "Book Publisher", type:"text", required: true, maxLength: 255 },
+                                    { name: "book_copies", label: "Number of Copies", type:"number", required: true, maxLength: 5 },
+                                ]}
+                                />
+                            </td>
+                            <td>
+                                <DeleteForm 
+                                route={`/booksdatabase/${book.BOOK_ID}`}
+                                item={`Book: ${book.BOOK_TITLE}`}
+                                triggerVariant="outline"
+                                />
+                            </td>
                         </tr>
                     ))
                 ) : (

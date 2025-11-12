@@ -15,7 +15,9 @@ import {
     Plus as PlusIcon,
 } from 'lucide-react';
 
-import { CustomModalForm } from '@/components/custom-modal-form';
+import { CreateModalForm } from '@/components/create-modal-form';
+import { EditModalForm } from '@/components/ui/edit-modal-form';
+import { DeleteForm } from '@/components/ui/delete-form';
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
     size?: 'default' | 'sm' | 'icon';
@@ -98,15 +100,15 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                         </div>
                         
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <CustomModalForm 
+                        <CreateModalForm 
                             title="Add New Staff"
                             route="/staffdatabase"
                             fields={[
-                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26" },
-                                { name: "staff_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name" },
-                                { name: "staff_firstname", label: "First Name", type:"text", placeholder: "Enter First Name" },
-                                { name: "staff_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial" },
-                                { name: "staff_job", label: "Choose a job", type:"text", placeholder: "Enter a job"},
+                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                { name: "staff_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                { name: "staff_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                { name: "staff_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
+                                { name: "staff_job", label: "Choose a job", type:"text", placeholder: "Enter a job", required: true, maxLength: 100},
                             ]}
                             />
                         </div>
@@ -123,6 +125,7 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                                 <th className="px-4 py-2 border-b text-background">First Name</th>
                                 <th className="px-4 py-2 border-b text-background">Middle Initial</th>
                                 <th className="px-4 py-2 border-b text-background">Job</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center" colSpan={2}>Actions</th>
                             </tr>
                         </thead>
 
@@ -136,6 +139,33 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_FIRSTNAME}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_MIDDLEINITIAL}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_JOB}</td>
+                                        <td>
+                                            <EditModalForm 
+                                            title="Edit Staff"
+                                            triggerVariant="outline"
+                                            route={`/staffdatabase/${stf.STAFF_ID}`}
+                                            initialData={{
+                                                staff_id: stf.STAFF_ID,
+                                                staff_lastname: stf.STAFF_LASTNAME,
+                                                staff_firstname: stf.STAFF_FIRSTNAME,
+                                                staff_middleinitial: stf.STAFF_MIDDLEINITIAL,
+                                                staff_job: stf.STAFF_JOB,
+                                            }}
+                                            fields={[
+                                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, readonly: true },
+                                                { name: "staff_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                                { name: "staff_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                                { name: "staff_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
+                                                { name: "staff_job", label: "Choose a job", type:"text", placeholder: "Enter a job", required: true, maxLength: 100},
+                                            ]} />
+                                        </td>
+                                        <td>
+                                            <DeleteForm
+                                            route={`/staffdatabase/${stf.STAFF_ID}`}
+                                            item={`Staff: ${stf.STAFF_FIRSTNAME} ${stf.STAFF_LASTNAME}`}
+                                            triggerVariant="outline"
+                                            />
+                                        </td>
                                     </tr>
                                 ))
                             ) : (

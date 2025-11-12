@@ -14,7 +14,8 @@ import {
     Plus as PlusIcon,
 } from 'lucide-react';
 
-import { CustomModalForm } from '@/components/custom-modal-form';
+import { CreateModalForm } from '@/components/create-modal-form';
+import { EditModalForm } from '@/components/ui/edit-modal-form';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
@@ -98,14 +99,14 @@ export default function AuthorsIndex( {currentLoans, filters}: { currentLoans: a
                         </div>
                         
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <CustomModalForm 
+                        <CreateModalForm 
                             title="Add New Current Loan"
                             route="/currentloansdatabase"
                             fields={[
-                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26" },
-                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" },
-                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26" },
-                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26" }
+                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5}
                             ]}
                             />
                         </div>
@@ -121,6 +122,7 @@ export default function AuthorsIndex( {currentLoans, filters}: { currentLoans: a
                                 <th className="px-4 py-2 border-b text-background">Book ID</th>
                                 <th className="px-4 py-2 border-b text-background">Borrower ID</th>
                                 <th className="px-4 py-2 border-b text-background rounded-tr-lg">Staff ID</th>
+                                <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center">Actions</th>
                             </tr>
                         </thead>
 
@@ -133,6 +135,25 @@ export default function AuthorsIndex( {currentLoans, filters}: { currentLoans: a
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.BOOK_ID}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.BORROWER_ID}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.STAFF_ID}</td>
+                                        <td>
+                                            <EditModalForm 
+                                            title="Edit Current Loan"
+                                            triggerVariant="outline"
+                                            route={`/currentloansdatabase/${cLoans.TRANSACTION_ID}`}
+                                            initialData={{
+                                                transaction_id: cLoans.TRANSACTION_ID,
+                                                book_id: cLoans.BOOK_ID,
+                                                borrower_id: cLoans.BORROWER_ID,
+                                                staff_id: cLoans.STAFF_ID,
+                                            }}
+                                            fields={[
+                                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, readonly: true },
+                                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5}
+                                            ]}
+                                            />
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
