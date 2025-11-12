@@ -328,6 +328,68 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                                     {book.BOOK_COPIES}
                                 </span>
                             </td>
+
+                        <td>
+
+
+                            <CustomModalForm 
+
+
+                            title="Edit Book"
+
+
+                            triggerLabel="Edit"
+
+
+                            route={`/booksdatabase/${book.BOOK_ID}`}
+
+
+                            method="put"
+
+
+                            initialData={{
+
+
+                                book_id: book.BOOK_ID,
+
+
+                                book_title: book.BOOK_TITLE,
+
+
+                                book_year: book.BOOK_YEAR,
+
+
+                                book_publisher: book.BOOK_PUBLISHER,
+
+
+                                book_copies: book.BOOK_COPIES,
+
+
+                            }}
+
+
+                            fields={[
+
+
+                                { name: "book_title", label: "Book Title", type:"text" },
+
+
+                                { name: "book_year", label: "Book Year", type:"number" },
+
+
+                                { name: "book_publisher", label: "Book Publisher", type:"text" },
+
+
+                                { name: "book_copies", label: "Number of Copies", type:"number"},
+
+
+                            ]}
+
+
+                            />
+
+
+                        </td>
                         </tr>
                     ))
                 ) : (

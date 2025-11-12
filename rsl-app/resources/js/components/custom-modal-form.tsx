@@ -236,7 +236,7 @@ export const CustomModalForm = ({
           <DialogClose asChild>
               <Button type="button" variant="outline" onClick={cancelSubmit}> Cancel  </Button>
           </DialogClose>
-              <Button type="button" onClick={confirmSubmit}> Confirm </Button>
+              <Button type="button" onClick={submitForm}> Confirm </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
