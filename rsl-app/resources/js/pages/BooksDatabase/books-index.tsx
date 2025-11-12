@@ -1,3 +1,5 @@
+"use client"
+
 import React,{ useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -6,7 +8,6 @@ import { Head, router } from '@inertiajs/react';
 import {
     Search as SearchIcon,
     SlidersHorizontal as SlidersHorizontalIcon,
-    Plus as PlusIcon,
 } from 'lucide-react';
 import { CustomModalForm } from '@/components/custom-modal-form';
 
@@ -35,7 +36,11 @@ const Button = ({ variant = 'default', size = 'default', className = '', childre
         icon: 'h-9 w-9',
     };
     const classes = `inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`;
-    return <button className={classes} {...props}>{children}</button>;
+    return (
+        <button className={classes} {...props}>
+            {children}
+        </button>
+    );
 };
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
@@ -92,7 +97,7 @@ const Tabs = ({ tabs, activeTab, onTabChange }: TabsProps) => (
 );
 
 
-// --- MAIN PAGE COMPONENT ---
+{/*-- MAIN PAGE COMPONENT --*/}
 export default function BooksIndex({ books, filters }: { books: any[], filters:{search?: string} }) {
     const tabOptions: Tab[] = [
         { name: 'All Books' },
@@ -100,7 +105,16 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
         { name: 'On Loan' },
     ];
 
+    {/*-- Search --*/}  
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    {/*-- Tab --*/} 
+    const [activeTab, setActiveTab] = useState<string>('All Books');
+    {/*-- Filters --*/}
+    const [showMoreFilters, setShowMoreFilters] = useState(false);
+    const [yearFilter, setYearFilter] = useState('');
+    const [publisherFilter, setPublisherFilter] = useState('');
+    {/*-- Sort --*/}
+    const [sortBy, setSortBy] = useState("title-asc");  
 
     useEffect(() =>{
         const timerId = setTimeout(() => {
@@ -125,52 +139,169 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
         setSearchTerm(filters.search || '');
     }, [filters.search]);
 
+    const getFilteredAndSortedBooks = () => {
+        let filtered = books;
+        
+        {/*-- Search Term --*/}
+        if (searchTerm) {
+            filtered = filtered.filter(
+                (book) =>
+                book.BOOK_TITLE.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                book.BOOK_PUBLISHER.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        {/*-- Active Tabs --*/}
+        if (activeTab === 'Available') {
+            filtered = filtered.filter((book) => book.BOOK_COPIES > 0);
+        } // idk how to do the on loan yet
+
+        {/*-- Year Filter --*/}
+        if (yearFilter) {
+            filtered = filtered.filter((book => book.BOOK_YEAR.toString() === yearFilter))
+        }
+
+        {/*-- Publisher Filter --*/}
+        if (yearFilter) {
+            filtered = filtered.filter((book => book.BOOK_YEAR.toString() === yearFilter))
+        }
+
+        if (publisherFilter) {
+            filtered = filtered.filter((book => book.BOOK_PUBLISHER.toString() === publisherFilter))
+        }
+        
+        {/*-- Sort --*/}
+        switch (sortBy) {
+            case "title-asc":
+                filtered.sort((a, b) => a.BOOK_TITLE.localeCompare(b.BOOK_TITLE))
+                break
+            case "title-desc":
+                filtered.sort((a, b) => b.BOOK_TITLE.localeCompare(a.BOOK_TITLE))
+                break
+            case "year-newest":
+                filtered.sort((a, b) => b.BOOK_YEAR - a.BOOK_YEAR)
+                break
+            case "year-oldest":
+                filtered.sort((a, b) => a.BOOK_YEAR - b.BOOK_YEAR)
+                break
+            case "copies-available":
+                filtered.sort((a, b) => b.BOOK_COPIES - a.BOOK_COPIES)
+                break
+            default:
+                break
+        }
+        return filtered;
+    }
+
+    {/*-- Get unique years and publishers --*/}
+    const uniqueYears = Array.from(new Set(books.map(book => book.BOOK_YEAR))).sort((a, b) => b - a);
+    const uniquePublishers = Array.from(new Set(books.map(book => book.BOOK_PUBLISHER))).sort();
+
+    const filteredbooks = getFilteredAndSortedBooks();
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
         <Head title="Books Database" />
         <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
 
             <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div className="relative w-full md:max-w-md">
-                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
-                    
-                    <Input 
-                        placeholder="Search by title, author, publisher..." 
-                        className="pl-9"
-                        value={searchTerm} 
-                        onChange={(e) => setSearchTerm(e.target.value)} 
-                    />
-                </div>
-                
-                <Button variant="outline" className="w-full sm:w-auto">
-                    <SlidersHorizontalIcon className="h-4 w-4 mr-2" />
-                    More Filters
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="relative w-full md:max-w-md">
+                        {/*-- Search Input --*/}
+                        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
+                        
+                        <Input 
+                            placeholder="Search by title, author, publisher..." 
+                            className="pl-9"
+                            value={searchTerm} 
+                            onChange={(e) => setSearchTerm(e.target.value)} 
+                        />
+                    </div>
 
-                </Button>
-                <div className="w-full sm:w-auto">
-                    <CustomModalForm 
-                    title="Add New Book"
-                    route="/booksdatabase"
-                    fields={[
-                        { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" },
-                        { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title" },
-                        { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year" },
-                        { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher" },
-                        { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies" },
-                    ]}
-                    />
-                </div>
+                    {/*-- Filters --*/}
+                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => setShowMoreFilters(!showMoreFilters)}>
+                        <SlidersHorizontalIcon className="h-4 w-4 mr-2" />
+                        More Filters
+                    </Button>
+
+                    {/*-- Add New Book Modal --*/}
+                    <div className="w-full sm:w-auto">
+                        <CustomModalForm 
+                        title="Add New Book"
+                        route="/booksdatabase"
+                        fields={[
+                            { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" },
+                            { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title" },
+                            { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year" },
+                            { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher" },
+                            { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies" },
+                        ]}
+                        />
+                    </div>
+                    </div>
                 </div>
             </div>
-            </div>
 
+            {showMoreFilters && (
+                <div className="px-4 sm:px-6 py-4 bg-[#f9fafb] border-b border-[#e5e7eb] flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-[#374151] mb-2">Year Published</label>
+                        <Select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)}>
+                            <option value="">All Years</option>
+                            {uniqueYears.map((year) => (
+                            <option key={year} value={year}>
+                                {year}
+                            </option>
+                            ))}
+                        </Select>
+                    </div>
+
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-[#374151] mb-2">Publisher</label>
+                        <Select value={publisherFilter} onChange={(e) => setPublisherFilter(e.target.value)}>
+                            <option value="">All Publishers</option>
+                            {uniquePublishers.map((publisher) => (
+                            <option key={publisher} value={publisher}>
+                                {publisher}
+                            </option>
+                            ))}
+                        </Select>
+                    </div>
+
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-[#374151] mb-2">Sort By</label>
+                        <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                            <option value="title-asc">Title (A-Z)</option>
+                            <option value="title-desc">Title (Z-A)</option>
+                            <option value="year-newest">Year (Newest)</option>
+                            <option value="year-oldest">Year (Oldest)</option>
+                            <option value="copies-available">Most Copies Available</option>
+                        </Select>
+                    </div>
+
+                    <div className="flex items-end">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                            setYearFilter("")
+                            setPublisherFilter("")
+                            setSortBy("title-asc")
+                            }}
+                            className="w-full"
+                        >
+                            Reset Filters
+                        </Button>
+                    </div>
+                </div>
+            )}
+        
+            {/*-- Filters section --*/}
             
             <div className="px-4 sm:px-6">
-            <Tabs tabs={tabOptions} activeTab="All Books" onTabChange={() => {}} />
+                <Tabs tabs={tabOptions} activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
 
-            {/*Display header of table*/}
+            {/*-- Display header of table --*/}
             <div className="p-6 overflow-x-auto">
             <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
                 <thead className="bg-foreground">
@@ -183,45 +314,29 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                 </tr>
                 </thead>
 
-                {/*Display data of table using map function in the array, index for future null values*/}
+                {/*-- Display data of table using map function in the array, index for future null values. Filtered function applied. --*/}
                 <tbody>
-                {books && books.length > 0 ? (
-                    books.map((book, index) => (
-                    <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-muted">
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_ID}</td>
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_TITLE}</td>
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_YEAR}</td>
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_PUBLISHER}</td>
-                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_COPIES}</td>
-                        <td>
-                            <CustomModalForm 
-                            title="Edit Book"
-                            triggerLabel="Edit"
-                            route={`/booksdatabase/${book.BOOK_ID}`}
-                            method="put"
-                            initialData={{
-                                book_id: book.BOOK_ID,
-                                book_title: book.BOOK_TITLE,
-                                book_year: book.BOOK_YEAR,
-                                book_publisher: book.BOOK_PUBLISHER,
-                                book_copies: book.BOOK_COPIES,
-                            }}
-                            fields={[
-                                { name: "book_title", label: "Book Title", type:"text" },
-                                { name: "book_year", label: "Book Year", type:"number" },
-                                { name: "book_publisher", label: "Book Publisher", type:"text" },
-                                { name: "book_copies", label: "Number of Copies", type:"number"},
-                            ]}
-                            />
-                        </td>
-                    </tr>
+                {filteredbooks && filteredbooks.length > 0 ? (
+                    filteredbooks.map((book, index) => (
+                        <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-muted">
+                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_ID}</td>
+                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_TITLE}</td>
+                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_YEAR}</td>
+                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_PUBLISHER}</td>
+                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">
+                                <span className={book.BOOK_COPIES > 0 ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}                            >
+                                    {book.BOOK_COPIES}
+                                </span>
+                            </td>
+                        </tr>
                     ))
                 ) : (
                     <tr>
-                    <td colSpan={5} className="py-4 text-center text-gray-500">
-                        {}
-                        {filters.search ? 'No books found for your search.' : 'No books found.'}
-                    </td>
+                        <td colSpan={5} className="py-4 text-center text-gray-500">
+                            {searchTerm || yearFilter || publisherFilter
+                            ? "No books found for your filters."
+                            : "No books found."}
+                        </td>
                     </tr>
                 )}
                 </tbody>

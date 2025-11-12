@@ -205,7 +205,7 @@ export const CustomModalForm = ({
                placeholder={field.placeholder || ""}
                value={data[field.name]}
                onChange={(e) => setData(field.name, e.target.value)}
-               className={`h-2 px-3 py-4 text-base rounded ${errors[field.name] ? "border-red-500 ring-red-500/50": ""}`} required/>
+               className={`h-2 px-3 py-4 text-base rounded ${errors[field.name] ? "border-red-500 ring-red-500/50" : ""}`}required/>
               {errors[field.name] && (<p className="text-red-500">{errors[field.name]}</p>)}
             </div>
             ))}
@@ -231,13 +231,13 @@ export const CustomModalForm = ({
           <DialogDescription>
             Are you sure you want to add this?
           </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose asChild>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
               <Button type="button" variant="outline" onClick={cancelSubmit}> Cancel  </Button>
-            </DialogClose>
-              <Button type="button" onClick={submitForm}> Confirm </Button>
-          </DialogFooter>
+          </DialogClose>
+              <Button type="button" onClick={confirmSubmit}> Confirm </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
 
