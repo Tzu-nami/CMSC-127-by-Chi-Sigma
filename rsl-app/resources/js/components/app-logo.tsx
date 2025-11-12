@@ -8,10 +8,10 @@ export default function AppLogo() {
             </div>
             <div className="ml-1 grid flex-1 text-left text-sm">
                 <span className="mb-0.5 truncate leading-tight font-semibold">
-                    RS School
+                    MKNS School
                 </span>
                 <span className="text-xs leading-tight text-background truncate">
-
+                    Library Management System
                 </span>
             </div>
         </>
