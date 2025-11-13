@@ -102,9 +102,9 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
 
-        {/*-- Pagination --*/}
-        const [currentPage, setCurrentPage] = useState(1);
-        const [itemsPerPage, setItemsPerPage] = useState(10); // Fixed items per page
+    {/*-- Pagination --*/}
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10); // Fixed items per page
 
     useEffect(() =>{
             const timerId = setTimeout(() => {

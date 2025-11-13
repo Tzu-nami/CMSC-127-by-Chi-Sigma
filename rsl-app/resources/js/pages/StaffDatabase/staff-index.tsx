@@ -1,4 +1,4 @@
-import React,{ useEffect, useState } from 'react';
+import React,{ use, useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
@@ -13,6 +13,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 import {
     Search as SearchIcon,
     Plus as PlusIcon,
+    ChevronLeft as ChevronLeftIcon,
+    ChevronRight as ChevronRightIcon
 } from 'lucide-react';
 
 import { CreateModalForm } from '@/components/create-modal-form';
@@ -51,13 +53,61 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', 
     );
 });
 
+interface PaginationProps {
+    currentPage: number;
+    totalPages: number;
+    onPageChange: (page: number) => void;
+    totalItems: number;
+    itemsPerPage: number;
+}
+
+const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPerPage }: PaginationProps) => {
+    if (totalPages <= 1) return null;
+
+    const startItem = (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+    return (
+        <div className="flex items-center justify-between border-t border-[#e5e7eb] px-4 py-3 sm:px-6">
+            <div className="text-sm text-[#6b7280]">
+                Showing {startItem} to {endItem} of {totalItems} results
+            </div>
+            <div className="flex space-x-2">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    <ChevronLeftIcon className="h-4 w-4" />
+                </Button>
+                <span className="text-sm text-[#6b7280]">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
+                    <ChevronRightIcon className="h-4 w-4" />
+                </Button>
+            </div>
+        </div>
+    );
+};
+
 
 // --- MAIN PAGE COMPONENT ---
 export default function StaffIndex( {staff, filters}: { staff: any[], filters:{search?: string}} ) {
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
+
+        {/*-- Pagination --*/}
+        const [currentPage, setCurrentPage] = useState(1);
+        const [itemsPerPage, setItemsPerPage] = useState(10); // Fixed items per page
     
-    useEffect(() =>{
+        useEffect(() =>{
             const timerId = setTimeout(() => {
                 if (searchTerm === (filters.search || '')) {
                     return;
@@ -79,6 +129,34 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
     useEffect(() => {
             setSearchTerm(filters.search || '');
         }, [filters.search]);
+
+    useEffect(() => {
+            setCurrentPage(1); // Reset to first page on filter change
+        }, [searchTerm]);
+
+        // Filter staff based on search term
+        const filteredStaffs = staff.filter((staff) => {
+            const search = searchTerm.toLowerCase();
+            return (
+                staff.STAFF_ID.toLowerCase().includes(search) ||
+                staff.STAFF_LASTNAME.toLowerCase().includes(search) ||
+                staff.STAFF_FIRSTNAME.toLowerCase().includes(search) ||
+                staff.STAFF_JOB.toLowerCase().includes(search)
+            );
+        }   );
+
+        // Pagination logic
+        const totalItems = filteredStaffs.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const paginatedStaffs = filteredStaffs.slice(
+            (currentPage - 1) * itemsPerPage,
+            currentPage * itemsPerPage
+        );
+
+        const handlePageChange = (page: number) => {
+            if (page < 1 || page > totalPages) return;
+            setCurrentPage(page);
+        };  
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -131,8 +209,8 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
 
                     {/*Display data of table using map function in the array, index for future null values*/}
                         <tbody> 
-                        {staff && staff.length > 0 ? (
-                            staff.map((stf, index) => (
+                        {paginatedStaffs && paginatedStaffs.length > 0 ? (
+                            paginatedStaffs.map((stf, index) => (
                             <tr key={stf.STAFF_ID || `staff-${index}`} className="hover:bg-muted">
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_ID}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_LASTNAME}</td>
@@ -181,6 +259,16 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                     </table>
                 </div>
 
+            <div className="p-4 sm:p-6 border-t border-[#e5e7eb]">
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => setCurrentPage(page)}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                />
+            </div>
+            
             </div>
         </AppLayout>
     );
