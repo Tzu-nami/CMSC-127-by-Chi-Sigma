@@ -312,7 +312,7 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                     <th className="px-4 py-2 border-b text-background">Title</th>
                     <th className="px-4 py-2 border-b text-background">Year Published</th>
                     <th className="px-4 py-2 border-b text-background">Publisher</th>
-                    <th className="px-4 py-2 border-b text-background rounded-tr-lg">Available Copies</th>
+                    <th className="px-4 py-2 border-b text-background">Available Copies</th>
                     <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center" colSpan={2}>Actions</th>
                 </tr>
                 </thead>
@@ -333,30 +333,30 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                             </td>
                             <td>
                                 <EditModalForm 
-                                title="Edit Book"
-                                triggerVariant="outline"
-                                route={`/booksdatabase/${book.BOOK_ID}`}
-                                initialData={{
-                                    book_id: book.BOOK_ID,
-                                    book_title: book.BOOK_TITLE,
-                                    book_year: book.BOOK_YEAR,
-                                    book_publisher: book.BOOK_PUBLISHER,
-                                    book_copies: book.BOOK_COPIES,
-                                }}
-                                fields={[
-                                    { name: "book_id", label: "Book ID", type:"text", required: false, maxLength: 5, readonly: true },
-                                    { name: "book_title", label: "Book Title", type:"text", required: true, maxLength: 255},
-                                    { name: "book_year", label: "Book Year", type:"number", required: true, maxLength: 4 },
-                                    { name: "book_publisher", label: "Book Publisher", type:"text", required: true, maxLength: 255 },
-                                    { name: "book_copies", label: "Number of Copies", type:"number", required: true, maxLength: 5 },
-                                ]}
+                                    title="Edit Book"
+                                    triggerVariant="outline"
+                                    route={`/booksdatabase/${book.BOOK_ID}`}
+                                    initialData={{
+                                        book_id: book.BOOK_ID,
+                                        book_title: book.BOOK_TITLE,
+                                        book_year: book.BOOK_YEAR,
+                                        book_publisher: book.BOOK_PUBLISHER,
+                                        book_copies: book.BOOK_COPIES,
+                                    }}
+                                    fields={[
+                                        { name: "book_id", label: "Book ID", type:"text", required: false, maxLength: 5, readonly: true },
+                                        { name: "book_title", label: "Book Title", type:"text", required: true, maxLength: 255},
+                                        { name: "book_year", label: "Book Year", type:"number", required: true, maxLength: 4 },
+                                        { name: "book_publisher", label: "Book Publisher", type:"text", required: true, maxLength: 255 },
+                                        { name: "book_copies", label: "Number of Copies", type:"number", required: true, maxLength: 5 },
+                                    ]}
                                 />
                             </td>
                             <td>
                                 <DeleteForm 
-                                route={`/booksdatabase/${book.BOOK_ID}`}
-                                item={`Book: ${book.BOOK_TITLE}`}
-                                triggerVariant="outline"
+                                    route={`/booksdatabase/${book.BOOK_ID}`}
+                                    item={`Book: ${book.BOOK_TITLE}`}
+                                    triggerVariant="outline"
                                 />
                             </td>
                         </tr>
@@ -373,7 +373,6 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                 </tbody>
             </table>
             </div>
-        
         </AppLayout>
     );
 }
