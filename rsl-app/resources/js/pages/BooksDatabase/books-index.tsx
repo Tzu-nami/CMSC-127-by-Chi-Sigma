@@ -303,7 +303,8 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                     </div>
                 </div>
             </div>
-
+            
+            {/*-- Filters section --*/}
             {showMoreFilters && (
                 <div className="px-4 sm:px-6 py-4 bg-[#f9fafb] border-b border-[#e5e7eb] flex flex-col sm:flex-row gap-4">
                     <div className="flex-1">
@@ -356,8 +357,6 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                     </div>
                 </div>
             )}
-        
-            {/*-- Filters section --*/}
             
             <div className="px-4 sm:px-6">
                 <Tabs tabs={tabOptions} activeTab={activeTab} onTabChange={setActiveTab} />
