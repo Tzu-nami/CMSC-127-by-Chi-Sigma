@@ -8,7 +8,10 @@ import { Head, router } from '@inertiajs/react';
 import {
     Search as SearchIcon,
     SlidersHorizontal as SlidersHorizontalIcon,
+    ChevronLeft as ChevronLeftIcon,
+    ChevronRight as ChevronRightIcon
 } from 'lucide-react';
+
 import { CreateModalForm } from '@/components/create-modal-form';
 import { EditModalForm } from '@/components/ui/edit-modal-form';
 import { DeleteForm } from '@/components/ui/delete-form';
@@ -98,6 +101,49 @@ const Tabs = ({ tabs, activeTab, onTabChange }: TabsProps) => (
     </div>
 );
 
+interface PaginationProps {
+    currentPage: number;
+    totalPages: number;
+    onPageChange: (page: number) => void;
+    totalItems: number;
+    itemsPerPage: number;
+}
+
+const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPerPage }: PaginationProps) => {
+    if (totalPages <= 1) return null;
+
+    const startItem = (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+    return (
+        <div className="flex items-center justify-between border-t border-[#e5e7eb] px-4 py-3 sm:px-6">
+            <div className="text-sm text-[#6b7280]">
+                Showing {startItem} to {endItem} of {totalItems} results
+            </div>
+            <div className="flex space-x-2">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    <ChevronLeftIcon className="h-4 w-4" />
+                </Button>
+                <span className="text-sm text-[#6b7280]">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
+                    <ChevronRightIcon className="h-4 w-4" />
+                </Button>
+            </div>
+        </div>
+    );
+};
 
 {/*-- MAIN PAGE COMPONENT --*/}
 export default function BooksIndex({ books, filters }: { books: any[], filters:{search?: string} }) {
@@ -117,6 +163,9 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
     const [publisherFilter, setPublisherFilter] = useState('');
     {/*-- Sort --*/}
     const [sortBy, setSortBy] = useState("title-asc");  
+    {/*-- Pagination --*/}
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10); // Fixed items per page
 
     useEffect(() =>{
         const timerId = setTimeout(() => {
@@ -140,6 +189,11 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
     useEffect(() => {
         setSearchTerm(filters.search || '');
     }, [filters.search]);
+
+    useEffect(() => {
+        // change to page 1 whenever filters or tab change
+        setCurrentPage(1);
+    }, [searchTerm, activeTab, yearFilter, publisherFilter]);
 
     const getFilteredAndSortedBooks = () => {
         let filtered = books;
@@ -199,7 +253,13 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
     const uniqueYears = Array.from(new Set(books.map(book => book.BOOK_YEAR))).sort((a, b) => b - a);
     const uniquePublishers = Array.from(new Set(books.map(book => book.BOOK_PUBLISHER))).sort();
 
+    {/*-- pagination --*/}
     const filteredbooks = getFilteredAndSortedBooks();
+    const totalItems = filteredbooks.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const paginatedBooks = filteredbooks.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -319,8 +379,9 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
                 {/*-- Display data of table using map function in the array, index for future null values. Filtered function applied. --*/}
                 <tbody>
-                {filteredbooks && filteredbooks.length > 0 ? (
-                    filteredbooks.map((book, index) => (
+                {/*-- changed to paginatedBooks --*/}
+                {paginatedBooks && paginatedBooks.length > 0 ? ( 
+                    paginatedBooks.map((book, index) => (
                         <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-muted">
                             <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_ID}</td>
                             <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_TITLE}</td>
@@ -364,14 +425,25 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                 ) : (
                     <tr>
                         <td colSpan={5} className="py-4 text-center text-gray-500">
-                            {searchTerm || yearFilter || publisherFilter
-                            ? "No books found for your filters."
-                            : "No books found."}
+                            {filteredbooks.length === 0 && (searchTerm || yearFilter || publisherFilter)
+                            ? "No books found matching your criteria."
+                            : "No books in the database."}      
                         </td>
                     </tr>
                 )}
                 </tbody>
             </table>
+            </div>
+
+            {/*-- Pagination --*/}
+            <div className="p-4 sm:p-6 border-t border-[#e5e7eb]">
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => setCurrentPage(page)}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+            />
             </div>
         </AppLayout>
     );

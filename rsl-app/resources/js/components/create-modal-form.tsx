@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { router, useForm } from "@inertiajs/react"
+import { useForm } from "@inertiajs/react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -60,6 +60,10 @@ export const CreateModalForm = ({
           setOpen(false);
           setConfirmation(false);
         },
+        onError: () => {
+          setConfirmation(false);
+          setOpen(true);
+        }
       });
     };
   
