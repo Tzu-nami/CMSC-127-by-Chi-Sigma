@@ -103,6 +103,14 @@ export const EditModalForm = ({
                 }
                 setData(field.name, value)}
                } 
+                onKeyDown={(e) => {
+                  if (field.type == "number"){
+                    if (["e", "E", "-", "=", ".", ","].includes(e.key)) {
+                      //console.log("ds");
+                      e.preventDefault();
+                    }
+                  }
+                }} 
                className={`h-2 px-3 py-4 text-base rounded ${errors[field.name] ? "border-red-500 ring-red-500/50" : ""}`}
                disabled={field.readonly}
                required={field.required || false}
