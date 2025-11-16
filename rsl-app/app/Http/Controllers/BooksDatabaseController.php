@@ -20,7 +20,8 @@ class BooksDatabaseController extends Controller
                 ->orWhere('BOOK_ID', 'like', "%{$search}%")
                 ->orWhere('BOOK_YEAR', 'like', "%{$search}%");
         }); 
-        
+
+        $query->withCount('currentLoans');
         $books =$query->get();
 
         return Inertia::render('BooksDatabase/books-index', [
