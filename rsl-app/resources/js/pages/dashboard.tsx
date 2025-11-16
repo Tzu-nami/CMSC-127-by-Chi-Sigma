@@ -78,7 +78,7 @@ export default function Dashboard({
             
             <div className="space-y-6 px-4 sm:px-6 lg:px-8">
                 <div className="justify-items-center pt-8 pb-3">
-                    <p className="text-3xl font-bold text-foreground">Welcome to the RSL School Library Management System.</p>
+                    <p className="text-3xl font-bold text-foreground">Welcome to the MKNS School Library Management System.</p>
                 </div>
 
                 {/* -- ROW 1 : search bar -- */}
