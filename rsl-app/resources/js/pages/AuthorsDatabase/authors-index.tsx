@@ -188,7 +188,7 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                                 { name: "author_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
                                 { name: "author_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*"}
                             ]}
-                            />
+                        />
                         </div>
                     </div>
                 </div>

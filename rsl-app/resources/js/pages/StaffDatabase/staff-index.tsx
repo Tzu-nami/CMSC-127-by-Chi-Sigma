@@ -188,7 +188,7 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                                 { name: "staff_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
                                 { name: "staff_job", label: "Choose a job", type:"text", placeholder: "Enter a job", required: true, maxLength: 100},
                             ]}
-                            />
+                        />
                         </div>
                     </div>
                 </div>

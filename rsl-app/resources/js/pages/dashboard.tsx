@@ -45,7 +45,7 @@ export function Calendar18() {
         mode="single"
         selected={date}
         onSelect={setDate}
-        className="rounded-lg border border-muted bg-card [--cell-size:--spacing(8)] md:[--cell-size:--spacing(8)]"
+        className="rounded-lg bg-card [--cell-size:--spacing(8)] md:[--cell-size:--spacing(8)]"
         buttonVariant="ghost"
     />
   )
@@ -93,16 +93,14 @@ export default function Dashboard({
                     availableCopies={stats.availableCopies}
                     totalBorrowers={stats.totalBorrowers}
                 />
-
-                {/* -- ROW 3 : quick actions -- */}
                 
-
-                {/* -- ROW 4 : transactions & calendar (2 columns) -- */}
-                <div className="grid grid-cols-1 lg:grid-cols-6 gap-5">
-                    {/* left Column */}
+                {/* -- ROW 3 : transactions & calendar & quick actions (3 columns) -- */}
+                <div className="grid grid-cols-1 lg:grid-cols-6 gap-5 items-center">
+                    {/* left column */}
                     <div className="bg-card rounded-lg border border-muted p-6 col-span-1">
                         <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
                         <div className="flex flex-wrap gap-3">
+                            {/* CreateModalForm component instances. i will fix the layout later my brain is fried*/}
                             <p className="text-sm text-foreground">Transaction:</p>
                             <CreateModalForm
                                 title="Add New Transaction"
@@ -126,14 +124,51 @@ export default function Dashboard({
                                     { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*" },
                                 ]}
                             />
+                            <p className="text-sm text-foreground">Author:</p>
+                            <CreateModalForm 
+                                title="Add New Author"
+                                route="/authorsdatabase"
+                                fields={[
+                                    { name: "author_id", label: "Author ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                    { name: "author_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "author_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "author_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*"}
+                                ]}
+                            />
+                            <p className="text-sm text-foreground">Borrower:</p>
+                            <CreateModalForm 
+                                title="Add New Borrower"
+                                route="/borrowersdatabase"
+                                fields={[
+                                    { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                    { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
+                                    { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status", required: true, maxLength: 100 },
+                                    { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number", required: true, maxLength: 15, pattern: "[0-9+-]*"},
+                                ]}
+                            />
+                            <p className="text-sm text-foreground">Staff:</p>
+                            <CreateModalForm 
+                                title="Add New Staff"
+                                route="/staffdatabase"
+                                fields={[
+                                    { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                    { name: "staff_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "staff_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "staff_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
+                                    { name: "staff_job", label: "Choose a job", type:"text", placeholder: "Enter a job", required: true, maxLength: 100},
+                                ]}
+                            />
                         </div>
                     </div>
 
+                    {/* middle column */}       
                     <div className="col-span-4">
                         <RecentTransactions transactions={recentTransactions} />
                     </div>
 
-                    {/* right Column */}
+                    {/* right column */}
                     <div className="col-span-1">
                         <Calendar18 />
                     </div>

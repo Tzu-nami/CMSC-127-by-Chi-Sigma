@@ -16,19 +16,19 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
     
     return (
         <div className="bg-card rounded-lg overflow-hidden">
-            <div className="p-6">
+            <div className="p-3">
                 <h3 className="text-lg font-semibold text-foreground">Recent Transactions</h3>
             </div>
 
             <div className="overflow-x-auto">
-                <table className="min-w-full border-collapse text-sm text-left">
-                    <thead className="bg-foreground">
+                <table className="min-w-full text-sm text-left rounded-t-lg">
+                    <thead className="bg-foreground rounded-t-lg">
                         <tr>
                             {headers.map((header, index) => (
                                 <th 
                                     key={header} 
                                     className={`
-                                        px-4 py-2 border-b text-background
+                                        px-4 py-2 text-background
                                         ${index === 0 ? 'rounded-tl-lg' : ''}
                                         ${index === headers.length - 1 ? 'rounded-tr-lg' : ''}
                                     `}
