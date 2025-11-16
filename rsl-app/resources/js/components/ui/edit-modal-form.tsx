@@ -71,10 +71,14 @@ export const EditModalForm = ({
     {/* Edit Dialog */}
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={triggerVariant}>
-          <PencilIcon className="h-4 w-4 mr-2 text-blue-500" />
+        <Button
+          variant={triggerVariant}
+          className="p-2 h-auto w-auto bg-[#F0E7C6] hover:bg-[#444034] rounded-lg transition-colors duration-100 ease-in-out"
+        >
+          <PencilIcon className="h-5 w-5 text-[#8C9657] hover:text-[#F0E7C6]" />
         </Button>
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={submitForm}>
           <DialogHeader>

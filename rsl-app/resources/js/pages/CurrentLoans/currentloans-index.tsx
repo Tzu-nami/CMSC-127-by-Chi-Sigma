@@ -28,7 +28,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = ({ variant = 'default', size = 'default', className = '', children, ...props }: ButtonProps) => {
     const variants = {
         default: 'bg-[#8C9657] text-[#ffffff] hover:bg-[#444034]',
-        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb]',
+        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb] hover:text-[#444034]',
         ghost: 'bg-[transparent] text-[#374151] hover:bg-[#444034]',
     };
     const sizes = {
@@ -73,7 +73,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPe
                 Showing {startItem} to {endItem} of {totalItems} results
             </div>
             <div className="flex space-x-2">
-                <Button
+                <Button 
                     variant="outline"
                     size="sm"
                     onClick={() => onPageChange(currentPage - 1)}
@@ -163,7 +163,7 @@ export default function CurrentLoansIndex( {currentLoans, filters}: { currentLoa
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Current Loans Database" />
 
-            <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
+            <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">
                 
                 <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -198,11 +198,11 @@ export default function CurrentLoansIndex( {currentLoans, filters}: { currentLoa
                     <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
                         <thead className="bg-foreground">
                             <tr>
-                                <th className="px-4 py-2 border-b text-background rounded-tl-lg">Transaction ID</th>
-                                <th className="px-4 py-2 border-b text-background">Book ID</th>
-                                <th className="px-4 py-2 border-b text-background">Borrower ID</th>
-                                <th className="px-4 py-2 border-b text-background rounded-tr-lg">Staff ID</th>
-                                <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center">Actions</th>
+                                <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Transaction ID</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Book ID</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Borrower ID</th>
+                                <th className="px-4 py-2 border-b text-background text-center ">Staff ID</th>
+                                <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w-28">Actions</th>
                             </tr>
                         </thead>
 
@@ -213,11 +213,12 @@ export default function CurrentLoansIndex( {currentLoans, filters}: { currentLoa
 
                             // I changed AUTHOR_ID to TRANSACTION_ID as the unique key
                             <tr key={cLoans.TRANSACTION_ID || `currentLoans-${index}`} className="hover:bg-muted">
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.TRANSACTION_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.BOOK_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.BORROWER_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{cLoans.STAFF_ID}</td>
-                                        <td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{cLoans.TRANSACTION_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{cLoans.BOOK_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{cLoans.BORROWER_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{cLoans.STAFF_ID}</td>
+                                        <td className= "border-b text-foreground text-center">
+                                            <div className="flex justify-center space-x-1">
                                             <EditModalForm 
                                             title="Edit Current Loan"
                                             triggerVariant="outline"
@@ -235,6 +236,7 @@ export default function CurrentLoansIndex( {currentLoans, filters}: { currentLoa
                                                 { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5}
                                             ]}
                                             />
+                                            </div>
                                         </td>
                                     </tr>
                                 ))

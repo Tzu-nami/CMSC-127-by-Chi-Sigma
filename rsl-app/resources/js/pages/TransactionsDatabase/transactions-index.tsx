@@ -28,7 +28,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = ({ variant = 'default', size = 'default', className = '', children, ...props }: ButtonProps) => {
     const variants = {
         default: 'bg-[#8C9657] text-[#ffffff] hover:bg-[#444034]',
-        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb]',
+        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb] hover:text-[#444034]',
         ghost: 'bg-[transparent] text-[#374151] hover:bg-[#444034]',
     };
     const sizes = {
@@ -163,7 +163,7 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Transactions Database" />
 
-            <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
+            <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">
                 
                 <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
