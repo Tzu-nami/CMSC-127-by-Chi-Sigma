@@ -214,7 +214,7 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_BORROWDATE}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_DUEDATE}</td>
                                         <td className="text-center">
-                                            <div className="flex justify-center space-x-2">
+                                            <div className="flex justify-center space-x-1">
                                                 <EditModalForm 
                                                     title="Edit Transaction"
                                                     triggerVariant="outline"

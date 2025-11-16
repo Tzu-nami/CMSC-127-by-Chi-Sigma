@@ -7,6 +7,7 @@ use App\Http\Controllers\CurrentLoansController;
 use App\Http\Controllers\StaffDatabaseController;
 use App\Http\Controllers\TransactionsDatabaseController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
@@ -17,10 +18,6 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
-
     // Index Routes for Databases
     Route::get('/booksdatabase',[BooksDatabaseController::class,'index'])->name('booksdatabase.index');
     Route::get('/authorsdatabase',[AuthorsDatabaseController::class,'index'])->name('authorsdatabase.index');
@@ -53,6 +50,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/authorsdatabase/{author}',[AuthorsDatabaseController::class,'destroy'])->name('authorsdatabase.destroy');
     Route::delete('/currentloans/{currentloan}',[CurrentLoansController::class,'destroy'])->name('currentloans.destroy');
     Route::delete('/transactionsdatabase/{transaction}',[TransactionsDatabaseController::class,'destroy'])->name('transactionsdatabase.destroy');
+
+    // Dashboard Route
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/search', [DashboardController::class, 'search'])->name('search');
 });
 
 require __DIR__.'/settings.php';

@@ -218,7 +218,7 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_MIDDLEINITIAL}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{stf.STAFF_JOB}</td>
                                         <td>
-                                            <div className="flex justify-center">
+                                            <div className="flex justify-center space-x-1">
                                                 <EditModalForm 
                                                     title="Edit Staff"
                                                     triggerVariant="outline"
