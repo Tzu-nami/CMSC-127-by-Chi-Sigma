@@ -15,7 +15,7 @@ class DashboardController extends Controller
         $availableCopies = DB::table('books_data')->sum('BOOK_COPIES');
         $totalBorrowers = DB::table('borrower_data')->count();
 
-        // last 8 transactions (YUN LANG KASYA)
+        // last 10 transactions (YUN LANG KASYA)
         $recentTransactions = DB::table('transaction_data as t')
             // join current loan
             ->join('current_loan as cl', 't.TRANSACTION_ID', '=', 'cl.TRANSACTION_ID')
@@ -32,7 +32,7 @@ class DashboardController extends Controller
                 'bor.BORROWER_LASTNAME'
             )
             ->orderBy('t.TRANSACTION_ID', 'desc')
-            ->limit(8)
+            ->limit(10)
             ->get();
 
         return Inertia::render('dashboard', [
