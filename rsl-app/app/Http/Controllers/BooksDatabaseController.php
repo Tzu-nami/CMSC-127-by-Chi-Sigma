@@ -19,7 +19,6 @@ class BooksDatabaseController extends Controller
                 ->orWhere('BOOK_PUBLISHER', 'like', "%{$search}%")
                 ->orWhere('BOOK_ID', 'like', "%{$search}%")
                 ->orWhere('BOOK_YEAR', 'like', "%{$search}%");
-
         }); 
         
         $books =$query->get();

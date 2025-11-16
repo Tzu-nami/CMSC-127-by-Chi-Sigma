@@ -12,7 +12,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, BookOpenText, BookUser, User, BriefcaseBusiness, ScanBarcode } from 'lucide-react';
+import { LayoutGrid, BookOpenText, BookUser, User, BriefcaseBusiness, ScanBarcode, NotebookText } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -45,7 +45,13 @@ const mainNavItems: NavItem[] = [
         title: 'Staff Database',
         href: '/staffdatabase',
         icon: BriefcaseBusiness,
+    },
+    {
+        title: 'Transactions Database',
+        href: '/transactionsdatabase',
+        icon: NotebookText,
     }
+
 ];
 
 export function AppSidebar() {

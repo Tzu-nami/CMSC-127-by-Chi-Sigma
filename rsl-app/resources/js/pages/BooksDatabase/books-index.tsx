@@ -436,13 +436,13 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
             {/*-- Pagination --*/}
             <div className="p-4 sm:p-6 border-t border-[#e5e7eb]">
-            <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={(page) => setCurrentPage(page)}
-                totalItems={totalItems}
-                itemsPerPage={itemsPerPage}
-            />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => setCurrentPage(page)}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                />
             </div>
         </AppLayout>
     );
