@@ -17,6 +17,7 @@ import {
 
 import { CreateModalForm } from '@/components/create-modal-form';
 import { EditModalForm } from '@/components/ui/edit-modal-form';
+import { DeleteForm } from '@/components/ui/delete-form';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
@@ -199,7 +200,8 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
                             <tr>
                                 <th className="px-4 py-2 border-b text-background rounded-tl-lg">Transaction ID</th>
                                 <th className="px-4 py-2 border-b text-background">Transaction Borrow Date</th>
-                                <th className="px-4 py-2 border-b text-background rounded-tr-lg">Transaction Due Date</th>
+                                <th className="px-4 py-2 border-b text-background">Transaction Due Date</th>
+                                <th className="px-2 py-2 border-b text-background rounded-tr-lg text-center">Actions</th>
                             </tr>
                         </thead>
 
@@ -207,27 +209,33 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
                         <tbody> 
                         {paginatedTransactions && paginatedTransactions.length > 0 ? (
                             paginatedTransactions.map((transaction, index) => (
-
                             <tr key={transaction.TRANSACTION_ID || `transactions-${index}`} className="hover:bg-muted">
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_ID}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_BORROWDATE}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_DUEDATE}</td>
-                                        <td>
-                                            <EditModalForm 
-                                            title="Edit Transaction"
-                                            triggerVariant="outline"
-                                            route={`/transactionsdatabase/${transaction.TRANSACTION_ID}`}
-                                            initialData={{
-                                                transaction_id: transaction.TRANSACTION_ID,
-                                                transaction_borrowdate: transaction.TRANSACTION_BORROWDATE,
-                                                transaction_duedate: transaction.TRANSACTION_DUEDATE,
-                                            }}
-                                            fields={[
-                                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, readonly: true },
-                                                { name: "transaction_borrowdate", label: "Transaction Borrow Date", type:"text", placeholder: "e.g. 2024-01-01", required: true, maxLength: 10 },
-                                                { name: "transaction_duedate", label: "Transaction Due Date", type:"text", placeholder: "e.g. 2024-01-15", required: true, maxLength: 10 }
-                                            ]}
-                                            />
+                                        <td className="text-center">
+                                            <div className="flex justify-center space-x-2">
+                                                <EditModalForm 
+                                                    title="Edit Transaction"
+                                                    triggerVariant="outline"
+                                                    route={`/transactionsdatabase/${transaction.TRANSACTION_ID}`}
+                                                    initialData={{
+                                                        transaction_id: transaction.TRANSACTION_ID,
+                                                        transaction_borrowdate: transaction.TRANSACTION_BORROWDATE,
+                                                        transaction_duedate: transaction.TRANSACTION_DUEDATE,
+                                                    }}
+                                                    fields={[
+                                                        { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, readonly: true },
+                                                        { name: "transaction_borrowdate", label: "Transaction Borrow Date", type:"text", placeholder: "e.g. 2024-01-01", required: true, maxLength: 10 },
+                                                        { name: "transaction_duedate", label: "Transaction Due Date", type:"text", placeholder: "e.g. 2024-01-15", required: true, maxLength: 10 }
+                                                    ]}
+                                                />
+                                                <DeleteForm
+                                                    route={`/transactionsdatabase/${transaction.TRANSACTION_ID}`}
+                                                    item={`Transaction: ${transaction.TRANSACTION_ID}`}
+                                                    triggerVariant="outline"
+                                                />
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
