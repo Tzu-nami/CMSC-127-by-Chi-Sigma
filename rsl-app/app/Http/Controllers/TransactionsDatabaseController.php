@@ -30,7 +30,7 @@ class TransactionsDatabaseController extends Controller
     public function store(Request $request) {
         // Check if all inputs are valid
         $validated = $request->validate([
-            'transaction_id' => 'required|max:5|string|unique:transactions_data,TRANSACTION_ID',
+            'transaction_id' => 'required|max:5|string|unique:transaction_data,TRANSACTION_ID',
             'transaction_borrowdate'=> 'required|date_format:m/d/Y',
             'transaction_duedate' => 'required|date_format:m/d/Y|after_or_equal:today'
         ]);

@@ -11,6 +11,48 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+// column configurations for each table
+const bookColumns = [
+    { key: 'BOOK_ID', label: 'Book ID' },
+    { key: 'BOOK_TITLE', label: 'Book Title' },
+    { key: 'BOOK_YEAR', label: 'Year' },
+    { key: 'BOOK_PUBLISHER', label: 'Publisher' },
+    { key: 'BOOK_COPIES', label: 'Copies' }
+];
+
+const authorColumns = [
+    { key: 'AUTHOR_ID', label: 'Author ID' },
+    { key: 'AUTHOR_LASTNAME', label: 'Last Name' },
+    { key: 'AUTHOR_FIRSTNAME', label: 'First Name' },
+    { key: 'AUTHOR_MIDDLEINITIAL', label: 'Middle Initial' }
+];
+
+const staffColumns = [
+    { key: 'STAFF_ID', label: 'Staff ID' },
+    { key: 'STAFF_LASTNAME', label: 'Last Name' },
+    { key: 'STAFF_FIRSTNAME', label: 'First Name' },
+    { key: 'STAFF_MIDDLEINITIAL', label: 'Middle Initial' }
+];
+
+const borrowerColumns = [
+    { key: 'BORROWER_ID', label: 'Borrower ID' },
+    { key: 'BORROWER_LASTNAME', label: 'Last Name' },
+    { key: 'BORROWER_FIRSTNAME', label: 'First Name' },
+    { key: 'BORROWER_MIDDLEINITIAL', label: 'Middle Initial' }
+];
+
+const transactionColumns = [
+    { key: 'TRANSACTION_ID', label: 'Transaction ID' },
+    { key: 'TRANSACTION_BORROWDATE', label: 'Borrow Date' },
+    { key: 'TRANSACTION_DUEDATE', label: 'Due Date' },
+];
+
+const currentloansColumns = [
+    { key: 'TRANSACTION_ID', label: 'Transaction ID' },
+    { key: 'BOOK_ID', label: 'Book ID' },
+    { key: 'BORROWER_ID', label: 'Borrower ID' },
+    { key: 'STAFF_ID', label: 'Staff ID' }
+];
 interface SearchResultsProps {
     query: string;
     books: any[];
@@ -18,15 +60,17 @@ interface SearchResultsProps {
     staff: any[];
     borrowers: any[];
     transactions: any[];
+    currentloans: any[];
 }
 
-export default function SearchResults({ query, books, authors, staff, borrowers, transactions }: SearchResultsProps) {
+export default function SearchResults({ query, books, authors, staff, borrowers, transactions, currentloans }: SearchResultsProps) {
     const getInitialTab = () => {
         if (books.length > 0) return 'books';
         if (authors.length > 0) return 'authors';
         if (staff.length > 0) return 'staff';
         if (borrowers.length > 0) return 'borrowers';
         if (transactions.length > 0) return 'transactions';
+        if (currentloans.length > 0) return 'currentloans';
         return 'books'; // fallback
     };
 
@@ -38,33 +82,18 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
         }
 
         return (
-            <div className="overflow-x-auto">
-                <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
-                    <thead className="bg-foreground">
+            <div className="overflow-x-auto rounded-t-lg">
+                <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left">
+                    <thead className="bg-foreground text-background rounded-t-lg">
                         <tr>
-                            {columns.map((col, index) => (
-                                <th 
-                                    key={col} 
-                                    className={`
-                                        px-4 py-2 border-b text-background
-                                        ${index === 0 ? 'rounded-tl-lg' : ''}
-                                        ${index === columns.length - 1 ? 'rounded-tr-lg' : ''}
-                                    `}
-                                >
-                                    {col}
-                                </th>
-                            ))}
+                            {columns.map(col => <th className="px-6 py-1 font-medium" key={col.key}>{col.label}</th>)}
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((item, index) => (
-                            <tr key={index} className="hover:bg-muted">
-                                {columns.map((col) => (
-                                    <td key={col} className="px-4 py-2 border-b text-foreground whitespace-nowrap">
-                                        {item[col]}
-                                    </td>
-                                ))}
-                            </tr>
+                        {data.map((row, index) => (
+                        <tr key={index}>
+                            {columns.map(col => <td className="px-6 py-1 whitespace-nowrap text-foreground" key={col.key}>{row[col.key]}</td>)}
+                        </tr>
                         ))}
                     </tbody>
                 </table>
@@ -103,23 +132,23 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
                         </TabsList>
 
                         <TabsContent value="books" className="space-y-4">
-                            {renderTable(books, ['BOOK_ID', 'BOOK_TITLE', 'BOOK_YEAR', 'BOOK_PUBLISHER', 'BOOK_COPIES'])}
+                            {renderTable(books, bookColumns)}
                         </TabsContent>
 
                         <TabsContent value="authors" className="space-y-4">
-                            {renderTable(authors, ['AUTHOR_ID', 'AUTHOR_LASTNAME', 'AUTHOR_FIRSTNAME', 'AUTHOR_MIDDLEINITIAL'])}
+                            {renderTable(authors, authorColumns)}
                         </TabsContent>
 
                         <TabsContent value="staff" className="space-y-4">
-                            {renderTable(staff, ['STAFF_ID', 'STAFF_LASTNAME', 'STAFF_FIRSTNAME', 'STAFF_MIDDLEINITIAL'])}
+                            {renderTable(staff, staffColumns)}
                         </TabsContent>
 
                         <TabsContent value="borrowers" className="space-y-4">
-                            {renderTable(borrowers, ['BORROWER_ID', 'BORROWER_LASTNAME', 'BORROWER_FIRSTNAME', 'BORROWER_CONTACTNUMBER', 'BORROWER_STATUS'])}
+                            {renderTable(borrowers, borrowerColumns)}
                         </TabsContent>
 
                         <TabsContent value="transactions" className="space-y-4">
-                            {renderTable(transactions, ['TRANSACTION_ID', 'TRANSACTION_BORROWDATE', 'TRANSACTION_DUEDATE'])}
+                            {renderTable(transactions, transactionColumns)}
                         </TabsContent>
                     </Tabs>
                 </div>

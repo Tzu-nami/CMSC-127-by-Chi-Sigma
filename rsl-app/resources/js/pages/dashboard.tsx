@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { Plus } from 'lucide-react';
-
 import SearchBar from '@/components/search-bar';
 import InventorySummary from '@/components/inventory-summary';
-import CalendarWidget from '@/components/calendar-widget';
-import QuickTransactionForm from '@/components/quick-transaction-form';
+import { Calendar } from "@/components/ui/calendar"
 import RecentTransactions from '@/components/recent-transactions';
 import { CreateModalForm } from '@/components/create-modal-form';
 
@@ -39,6 +36,21 @@ const Button = ({ variant = 'default', size = 'default', className = '', childre
     return <button className={classes} {...props}>{children}</button>;
 };
 
+export function Calendar18() {
+  const [date, setDate] = React.useState<Date | undefined>(
+    new Date(2025, 10, 16)
+  )
+  return (
+    <Calendar
+        mode="single"
+        selected={date}
+        onSelect={setDate}
+        className="rounded-lg border border-muted bg-card [--cell-size:--spacing(8)] md:[--cell-size:--spacing(8)]"
+        buttonVariant="ghost"
+    />
+  )
+}
+
 // --- MAIN DASHBOARD PAGE ---
 export default function Dashboard({
     stats,
@@ -64,11 +76,17 @@ export default function Dashboard({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             
-            <div className="space-y-6">
-                <div className="bg-card rounded-lg border border-muted p-6">
+            <div className="space-y-6 px-4 sm:px-6 lg:px-8">
+                <div className="justify-items-center pt-8 pb-3">
+                    <p className="text-3xl font-bold text-foreground">Welcome to the RSL School Library Management System.</p>
+                </div>
+
+                {/* -- ROW 1 : search bar -- */}
+                <div className="bg-card rounded-lg">
                     <SearchBar onSearch={handleGlobalSearch} />
                 </div>
 
+                {/* -- ROW 2 : inventory summary -- */}
                 <InventorySummary
                     totalBooks={stats.totalBooks}
                     activeLoans={stats.activeLoans}
@@ -76,10 +94,16 @@ export default function Dashboard({
                     totalBorrowers={stats.totalBorrowers}
                 />
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">                    
-                    <div className="bg-white rounded-lg border border-[#e5e7eb] p-6">
+                {/* -- ROW 3 : quick actions -- */}
+                
+
+                {/* -- ROW 4 : transactions & calendar (2 columns) -- */}
+                <div className="grid grid-cols-1 lg:grid-cols-6 gap-5">
+                    {/* left Column */}
+                    <div className="bg-card rounded-lg border border-muted p-6 col-span-1">
                         <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
-                        <div className="space-y-3">
+                        <div className="flex flex-wrap gap-3">
+                            <p className="text-sm text-foreground">Transaction:</p>
                             <CreateModalForm
                                 title="Add New Transaction"
                                 route="/transactionsdatabase"
@@ -90,23 +114,30 @@ export default function Dashboard({
                                     { name: "staff_id", label: "Staff ID", type: "text", placeholder: "e.g. D1W23", required: true, maxLength: 5 }
                                 ]}
                             />
-                            <Button variant="outline" className="w-full">
-                                <Plus className="h-4 w-4 mr-2" />
-                                View All Books
-                            </Button>
-                            <Button variant="outline" className="w-full">
-                                <Plus className="h-4 w-4 mr-2" />
-                                View All Borrowers
-                            </Button>
+                            <p className="text-sm text-foreground">Book:</p>
+                            <CreateModalForm 
+                                title="Add New Book"
+                                route="/booksdatabase"
+                                fields={[
+                                    { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" , required: true, maxLength: 5 },
+                                    { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title", required: true, maxLength: 255 },
+                                    { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year", required: true, maxLength: 4, pattern: "[0-9]*" },
+                                    { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher", required: true, maxLength: 255 },
+                                    { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*" },
+                                ]}
+                            />
                         </div>
                     </div>
 
-                    <div className="lg:col-span-2">
-                        <CalendarWidget/>
+                    <div className="col-span-4">
+                        <RecentTransactions transactions={recentTransactions} />
+                    </div>
+
+                    {/* right Column */}
+                    <div className="col-span-1">
+                        <Calendar18 />
                     </div>
                 </div>
-
-                <RecentTransactions transactions={recentTransactions} />
             </div>
         </AppLayout>
     );
