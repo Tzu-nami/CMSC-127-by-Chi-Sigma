@@ -15,27 +15,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'default' | 'outline' | 'ghost';
-    size?: 'default' | 'sm' | 'icon';
-    children: React.ReactNode;
-}
-
-const Button = ({ variant = 'default', size = 'default', className = '', children, ...props }: ButtonProps) => {
-    const variants = {
-        default: 'bg-[#8C9657] text-[#ffffff] hover:bg-[#444034]',
-        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb]',
-        ghost: 'bg-[transparent] text-[#374151] hover:bg-[#444034]',
-    };
-    const sizes = {
-        default: 'h-9 px-4 py-2',
-        sm: 'h-8 rounded-md px-3 text-xs',
-        icon: 'h-9 w-9',
-    };
-    const classes = `inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`;
-    return <button className={classes} {...props}>{children}</button>;
-};
-
 export function Calendar18() {
   const [date, setDate] = React.useState<Date | undefined>(
     new Date(2025, 10, 16)
