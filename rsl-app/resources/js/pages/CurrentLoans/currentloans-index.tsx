@@ -6,7 +6,7 @@ import { Head, router} from '@inertiajs/react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Current Loans Database',
-        href: '/currentloansdatabase',
+        href: '/currentloans',
     },
 ];
 import {
@@ -97,11 +97,77 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPe
     );
 };
 
+interface Book {
+    BOOK_ID: string;
+    BOOK_TITLE: string;
+    BOOK_COPIES: number;
+}
+
+interface Borrower {
+    BORROWER_ID: string;
+    BORROWER_FIRSTNAME: string;
+    BORROWER_LASTNAME: string;
+}
+
+interface Staff {
+    STAFF_ID: string;
+    STAFF_FIRSTNAME: string;
+    STAFF_LASTNAME: string;
+}
+
+interface CurrentLoan {
+    TRANSACTION_ID: string;
+    TRANSACTION_BORROWDATE: string;
+    TRANSACTION_DUEDATE: string;
+    BOOK_ID: string;
+    BORROWER_ID: string;
+    STAFF_ID: string;
+}
+
+interface Props {
+    currentLoans: CurrentLoan[];
+    books: Book[];
+    borrowers: Borrower[];
+    staff: Staff[];
+    filters: {
+        search ?: string;
+    }
+}
 
 // --- MAIN PAGE COMPONENT ---
-export default function CurrentLoansIndex( {currentLoans, filters}: { currentLoans: any[], filters:{search?: string}} ) {
+export default function CurrentLoansIndex( {currentLoans, books, borrowers, staff, filters}: Props) {
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
+
+    const getBook = (bookId: string) => {
+        const book = books.find(b => b.BOOK_ID === bookId);
+        return book ? book.BOOK_TITLE: bookId;
+    };
+
+    const getBorrower = (borrowerId: string) => {
+        const borrower = borrowers.find(b => b.BORROWER_ID === borrowerId);
+        return borrower ? `${borrower.BORROWER_LASTNAME}, ${borrower.BORROWER_FIRSTNAME}`: borrowerId;
+    };
+
+    const getStaff = (staffId: string) => {
+        const staffMem = staff.find(b => b.STAFF_ID === staffId);
+        return staffMem ? `${staffMem.STAFF_LASTNAME}, ${staffMem.STAFF_FIRSTNAME}`: staffId;;
+    };
+
+    const bookOptions = books.map(book => ({
+        value: book.BOOK_ID,
+        label: `${book.BOOK_TITLE} -- ID: ${book.BOOK_ID} -- ${book.BOOK_COPIES} ${book.BOOK_COPIES === 1 ? 'copy' : 'copies'} available`,
+    }));
+
+    const borrowerOptions = borrowers.map(borrower => ({
+        value: borrower.BORROWER_ID,
+        label: `${borrower.BORROWER_LASTNAME}, ${borrower.BORROWER_FIRSTNAME} -- ID: ${borrower.BORROWER_ID}`,
+    }));
+
+    const staffOptions = staff.map(staff => ({
+        value: staff.STAFF_ID,
+        label: `${staff.STAFF_LASTNAME}, ${staff.STAFF_FIRSTNAME} -- ID: ${staff.STAFF_ID}`,
+    }));
 
     {/*-- Pagination --*/}
     const [currentPage, setCurrentPage] = useState(1);
@@ -181,12 +247,18 @@ export default function CurrentLoansIndex( {currentLoans, filters}: { currentLoa
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                         <CreateModalForm 
                             title="Add New Current Loan"
-                            route="/currentloansdatabase"
+                            route="/currentloans"
+                            triggerLabel="Add New Loan"
                             fields={[
-                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5}
+                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'input' as const},
+                                { name: "transaction_borrowdate", label: "Date Borrowed", type:"date", placeholder: "", required: true, fieldType: 'input' as const },
+                                { name: "transaction_duedate", label: "Due Date", type:"date", placeholder: "", required: true, autoCalculate: {
+                                    basedOn: "transaction_borrowdate",
+                                    addDays: 7
+                                }},
+                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: bookOptions },
+                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: borrowerOptions },
+                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: staffOptions }
                             ]}
                             />
                         </div>
@@ -199,9 +271,9 @@ export default function CurrentLoansIndex( {currentLoans, filters}: { currentLoa
                         <thead className="bg-foreground">
                             <tr>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Transaction ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center">Book ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center">Borrower ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center ">Staff ID</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Book</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Borrower</th>
+                                <th className="px-4 py-2 border-b text-background text-center ">Staff</th>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w-28">Actions</th>
                             </tr>
                         </thead>
@@ -214,26 +286,33 @@ export default function CurrentLoansIndex( {currentLoans, filters}: { currentLoa
                             // I changed AUTHOR_ID to TRANSACTION_ID as the unique key
                             <tr key={cLoans.TRANSACTION_ID || `currentLoans-${index}`} className="hover:bg-muted">
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{cLoans.TRANSACTION_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{cLoans.BOOK_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{cLoans.BORROWER_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{cLoans.STAFF_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{getBook(cLoans.BOOK_ID)}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{getBorrower(cLoans.BORROWER_ID)}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{getStaff(cLoans.STAFF_ID)}</td>
                                         <td className= "border-b text-foreground text-center">
                                             <div className="flex justify-center space-x-1">
                                             <EditModalForm 
                                             title="Edit Current Loan"
                                             triggerVariant="outline"
-                                            route={`/currentloansdatabase/${cLoans.TRANSACTION_ID}`}
+                                            route={`/currentloans/${cLoans.TRANSACTION_ID}`}
                                             initialData={{
                                                 transaction_id: cLoans.TRANSACTION_ID,
+                                                transaction_borrowdate: cLoans.TRANSACTION_BORROWDATE,
+                                                transaction_duedate: cLoans.TRANSACTION_DUEDATE,
                                                 book_id: cLoans.BOOK_ID,
                                                 borrower_id: cLoans.BORROWER_ID,
                                                 staff_id: cLoans.STAFF_ID,
                                             }}
                                             fields={[
-                                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, readonly: true },
-                                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5}
+                                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, readonly: true, fieldType: 'input' as const },
+                                                { name: "transaction_borrowdate", label: "Date Borrowed", type:"date", placeholder: "", required: true, fieldType: 'input' as const },
+                                                { name: "transaction_duedate", label: "Due Date", type:"date", placeholder: "", required: true, autoCalculate: {
+                                                    basedOn: "transaction_borrowdate",
+                                                    addDays: 7
+                                                }},
+                                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: bookOptions },
+                                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: borrowerOptions },
+                                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: staffOptions}
                                             ]}
                                             />
                                             </div>

@@ -31,7 +31,7 @@ class DashboardController extends Controller
                 'bor.BORROWER_FIRSTNAME',
                 'bor.BORROWER_LASTNAME'
             )
-            ->orderBy('t.TRANSACTION_ID', 'desc')
+            ->orderBy('t.TRANSACTION_ID', 'desc') // kasi recent
             ->limit(7)
             ->get();
 

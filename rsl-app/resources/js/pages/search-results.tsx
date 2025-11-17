@@ -109,9 +109,7 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
             <div className="space-y-6">
                 <div className="bg-card rounded-lg border border-muted p-6">
                     <h1 className="text-3xl font-bold text-foreground mb-2">Search Results</h1>
-                    <p className="text-foreground dark:text-background">Results for:
-                        <span className="font-semibold text-accent">{query}</span>
-                    </p>
+                    <p className="text-foreground dark:text-background">Results for: <span className="font-semibold text-accent">{query}</span></p>
                 </div>
                 {/* tabs for different categories */}
                 <div className="bg-card rounded-lg p-6">
@@ -133,7 +131,7 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
                                 Transactions ({transactions.length})
                             </TabsTrigger>
                         </TabsList>
-
+                        {/* the tables for each tab */}
                         <TabsContent value="books" className="space-y-4">
                             {renderTable(books, bookColumns)}
                         </TabsContent>
