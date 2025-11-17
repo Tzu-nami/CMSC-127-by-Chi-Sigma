@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\Books;
+use App\Models\Authors;
+use App\Models\Genres;
 
 class BooksDatabaseController extends Controller
 {
@@ -46,9 +48,13 @@ class BooksDatabaseController extends Controller
             });
         });
         $books = $query->get();
+        $authors = Authors::all();
+        $genres = Genres::all();
 
         return Inertia::render('BooksDatabase/books-index', [
             'books' => $books,
+            'authors' => $authors,
+            'genres' => $genres,
             'filters' => $request->only(['search']),
         ]);
     }

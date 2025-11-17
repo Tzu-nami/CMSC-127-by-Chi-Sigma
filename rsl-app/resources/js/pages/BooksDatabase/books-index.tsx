@@ -15,9 +15,19 @@ import {
 import { CreateModalForm } from '@/components/create-modal-form';
 import { EditModalForm } from '@/components/ui/edit-modal-form';
 import { DeleteForm } from '@/components/ui/delete-form';
-
 import BookDetailsModal from '@/components/book-details-modal';
 
+interface Author {
+    AUTHOR_ID: string;
+    AUTHOR_FIRSTNAME: string;
+    AUTHOR_LASTNAME: string;
+    AUTHOR_MIDDLEINITIAL?: string;
+}
+
+interface Genre {
+    GENRE_ID: string;
+    GENRE_NAME: string;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -150,7 +160,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPe
 
 
 {/*-- MAIN PAGE COMPONENT --*/}
-export default function BooksIndex({ books, filters }: { books: any[], filters:{search?: string} }) {
+export default function BooksIndex({ books, authors, genres, filters }: { books: any[], authors: Author[], genres: Genre[], filters:{search?: string} }) {
     const tabOptions: Tab[] = [
         { name: 'All Books' },
         { name: 'Available' },
@@ -223,7 +233,6 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
         }
 
         {/*-- Publisher Filter --*/}
-
         if (publisherFilter) {
             filtered = filtered.filter((book => book.BOOK_PUBLISHER.toString() === publisherFilter))
         }
@@ -285,6 +294,16 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
         ))
     ).sort();
 
+    const authorOptions = authors.map(author => ({
+        value: author.AUTHOR_ID,
+        label: `${author.AUTHOR_LASTNAME}, ${author.AUTHOR_FIRSTNAME} ${author.AUTHOR_MIDDLEINITIAL || ''} -- ID: ${author.AUTHOR_ID}`,
+    }));
+
+    const genreOptions = uniqueGenres.map(genreName => ({
+        value: genreName,
+        label: genreName,
+    }));
+
     {/*-- pagination --*/}
     const filteredbooks = getFilteredAndSortedBooks();
     const totalItems = filteredbooks.length;
@@ -321,22 +340,39 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                                 More Filters
                         </Button>
 
-                        {/*-- Add New Book Modal --*/}
+                        {/*-- Add New Book Modal. Edit: dropdown for authors and genres --*/}
                         <div className="w-full sm:w-auto">
                             <CreateModalForm 
-                            title="Add New Book"
-                            route="/booksdatabase"
-                            fields={[
-                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" , required: true, maxLength: 5 },
-                                { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title", required: true, maxLength: 255 },
-                                { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year", required: true, maxLength: 4, pattern: "[0-9]*" },
-                                { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher", required: true, maxLength: 255 },
-                                { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*" },
-                            ]}
+                                title="Add New Book"
+                                route="/booksdatabase"
+                                fields={[
+                                    { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" , required: true, maxLength: 5, fieldType: 'input' as const },
+                                    { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title", required: true, maxLength: 255, fieldType: 'input' as const },
+                                    { 
+                                        name: "author_id",
+                                        label: "Author", 
+                                        type:"text", 
+                                        placeholder: "Select an author", 
+                                        required: true,
+                                        fieldType: 'select' as const, 
+                                        options: authorOptions 
+                                    },
+                                    { 
+                                        name: "genre_id",
+                                        label: "Genre", 
+                                        type:"text", 
+                                        placeholder: "Select a genre", 
+                                        required: true, 
+                                        fieldType: 'select' as const, 
+                                        options: genreOptions 
+                                    },
+                                    { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year", required: true, maxLength: 4, pattern: "[0-9]*", fieldType: 'input' as const },
+                                    { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher", required: true, maxLength: 255, fieldType: 'input' as const },
+                                    { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*", fieldType: 'input' as const },
+                                ]}
                             />
                         </div>
-                        </div>
-
+                    </div>
                     </div>
                 </div>
             </div>
@@ -470,6 +506,7 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
                             <td className= "border-b text-foreground text-center">
                                 <div className="flex justify-center space-x-1">
+                                {/* Edit: dropdown for authors and genres*/}
                                 <EditModalForm 
                                     title="Edit Book"
                                     triggerVariant="outline"
@@ -484,13 +521,30 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                                     fields={[
                                         { name: "book_id", label: "Book ID", type:"text", required: false, maxLength: 5, readonly: true },
                                         { name: "book_title", label: "Book Title", type:"text", required: true, maxLength: 255},
+                                        { 
+                                            name: "author_id",
+                                            label: "Author", 
+                                            type:"text", 
+                                            placeholder: "Select an author", 
+                                            required: true,
+                                            fieldType: 'select' as const, 
+                                            options: authorOptions 
+                                        },
+                                        { 
+                                            name: "genre_id",
+                                            label: "Genre", 
+                                            type:"text", 
+                                            placeholder: "Select a genre", 
+                                            required: true, 
+                                            fieldType: 'select' as const, 
+                                            options: genreOptions 
+                                        },
                                         { name: "book_year", label: "Book Year", type:"number", required: true, maxLength: 4 },
                                         { name: "book_publisher", label: "Book Publisher", type:"text", required: true, maxLength: 255 },
                                         { name: "book_copies", label: "Number of Copies", type:"number", required: true, maxLength: 5 },
                                     ]}
                                 />
-                            
-                            
+                                                        
                                 <DeleteForm 
                                     route={`/booksdatabase/${book.BOOK_ID}`}
                                     item={`Book: ${book.BOOK_TITLE}`}

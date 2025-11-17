@@ -33,6 +33,17 @@ interface Staff {
     STAFF_LASTNAME: string;
 }
 
+interface Author {
+    AUTHOR_ID: string;
+    AUTHOR_FIRSTNAME: string;
+    AUTHOR_LASTNAME: string;
+}
+
+interface Genre {
+    GENRE_ID: string;
+    GENRE_NAME: string;
+}
+
 export function Calendar18() {
   return (
     <Calendar
@@ -54,6 +65,8 @@ export default function Dashboard({
     books,
     borrowers,
     staff,
+    authors,
+    genres,
 }: {
     stats: {
         totalBooks: number;
@@ -65,6 +78,8 @@ export default function Dashboard({
     books: Book[];
     borrowers: Borrower[];
     staff: Staff[];
+    authors: Author[];
+    genres: Genre[];
 }) {
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -78,6 +93,16 @@ export default function Dashboard({
     const bookOptions = books.map(book => ({
         value: book.BOOK_ID,
         label: `${book.BOOK_TITLE} -- ID: ${book.BOOK_ID} -- ${book.BOOK_COPIES} ${book.BOOK_COPIES === 1 ? 'copy' : 'copies'} available`,
+    }));
+
+    const authorOptions = authors.map(author => ({
+        value: author.AUTHOR_ID,
+        label: `${author.AUTHOR_LASTNAME}, ${author.AUTHOR_FIRSTNAME} ${author.AUTHOR_MIDDLEINITIAL || ''} -- ID: ${author.AUTHOR_ID}`,
+    }));
+
+    const genreOptions = genres.map(genre => ({
+        value: genre.GENRE_ID,
+        label: `${genre.GENRE_NAME} -- ID: ${genre.GENRE_ID}`,
     }));
 
     const borrowerOptions = borrowers.map(borrower => ({
@@ -147,11 +172,20 @@ export default function Dashboard({
                                     title="Add New Book"
                                     route="/booksdatabase"
                                     fields={[
-                                        { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" , required: true, maxLength: 5 },
-                                        { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title", required: true, maxLength: 255 },
-                                        { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year", required: true, maxLength: 4, pattern: "[0-9]*" },
-                                        { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher", required: true, maxLength: 255 },
-                                        { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*" },
+                                        { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" , required: true, maxLength: 5, fieldType: 'input' as const },
+                                        { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title", required: true, maxLength: 255, fieldType: 'input' as const },
+                                        { 
+                                            name: "author_id",
+                                            label: "Author", 
+                                            type:"text", 
+                                            placeholder: "Select an author", 
+                                            required: true,
+                                            fieldType: 'select' as const, 
+                                            options: authorOptions 
+                                        },
+                                        { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year", required: true, maxLength: 4, pattern: "[0-9]*", fieldType: 'input' as const },
+                                        { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher", required: true, maxLength: 255, fieldType: 'input' as const },
+                                        { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*", fieldType: 'input' as const },
                                     ]}
                                 />
                             </div>
