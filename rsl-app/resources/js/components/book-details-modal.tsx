@@ -17,7 +17,7 @@ const DetailRow = ({ label, value, highlight }: { label: string, value: string |
     <div className="flex flex-row justify-between items-center">
         <span className="text-sm font-medium text-[#8C9657]">{label}</span>
         
-        <span className={`text-sm text-right ${
+        <span className={`text-sm font-medium text-right ${ 
             highlight === 'green' ? 'text-[#444034]' : 
             highlight === 'red' ? 'text-red-600' : 
             'text-foreground' 
@@ -37,7 +37,7 @@ export default function BookDetailsModal({ book, open, onOpenChange }: BookDetai
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[350px]">
-                <DialogHeader>
+                <DialogHeader className="mt-4"> 
                     <DialogTitle className="text-lg font-semibold text-foreground">
                         {book.BOOK_TITLE}
                     </DialogTitle>
