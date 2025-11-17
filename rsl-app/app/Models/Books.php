@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Books extends Model
 {
@@ -24,8 +26,48 @@ class Books extends Model
         'BOOK_COPIES',
     ];
 
+    protected $appends = ['author_names', 'genre_names'];
+
+    public function authors(): BelongsToMany
+    {
+
+        return $this->belongsToMany(
+            Authors::class, 
+            'book_authors',
+            'book_id',   
+            'author_id',
+            'BOOK_ID',   
+            'AUTHOR_ID' );
+    }
+
+    public function genres(): BelongsToMany
+    {
+
+        return $this->belongsToMany(
+            Genres::class, 
+            'book_genre', 
+            'book_id',
+            'genre_id',  
+            'BOOK_ID',
+            'GENRE_ID'
+        );
+    }
+
     public function currentLoans()
         {
             return $this->hasMany('App\Models\CurrentLoans', 'book_id', 'BOOK_ID');
+        }
+    
+    public function getAuthorNamesAttribute(): string
+        {
+        // create a full name
+        return $this->authors->map(function ($author) {
+            return trim($author->AUTHOR_FIRSTNAME . ' ' . $author->AUTHOR_MIDDLEINITIAL. ' ' . $author->AUTHOR_LASTNAME);
+        })->implode(', ');
+        }
+
+    public function getGenreNamesAttribute(): string
+        {            
+            return $this->genres->pluck('GENRE_NAME')->implode(', ');
         }
 }

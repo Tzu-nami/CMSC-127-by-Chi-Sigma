@@ -11,7 +11,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 import {
     Search as SearchIcon,
-    Plus as PlusIcon,
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon
 } from 'lucide-react';

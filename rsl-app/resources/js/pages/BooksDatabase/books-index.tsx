@@ -16,6 +16,9 @@ import { CreateModalForm } from '@/components/create-modal-form';
 import { EditModalForm } from '@/components/ui/edit-modal-form';
 import { DeleteForm } from '@/components/ui/delete-form';
 
+import BookDetailsModal from '@/components/book-details-modal';
+
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Books Database',
@@ -145,6 +148,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPe
     );
 };
 
+
 {/*-- MAIN PAGE COMPONENT --*/}
 export default function BooksIndex({ books, filters }: { books: any[], filters:{search?: string} }) {
     const tabOptions: Tab[] = [
@@ -166,6 +170,8 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
     {/*-- Pagination --*/}
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10); // Fixed items per page
+
+    const [selectedBook, setSelectedBook] = useState<any | null>(null);
 
     useEffect(() =>{
         const timerId = setTimeout(() => {
@@ -197,15 +203,6 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
     const getFilteredAndSortedBooks = () => {
         let filtered = books;
-        
-        {/*-- Search Term --*/}
-        if (searchTerm) {
-            filtered = filtered.filter(
-                (book) =>
-                book.BOOK_TITLE.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                book.BOOK_PUBLISHER.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
 
         {/*-- Active Tabs --*/}
         if (activeTab === 'Available') {
@@ -379,10 +376,10 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                 <thead className="bg-foreground">
                 <tr>
                     <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Book ID</th>
-                    <th className="px-4 py-2 border-b text-background text-center">Title</th>
+                    <th className="px-4 py-2 border-b text-background">Title</th>
                     <th className="px-4 py-2 border-b text-background text-center">Year Published</th>
-                    <th className="px-4 py-2 border-b text-background text-center">Publisher</th>
-                    <th className="px-4 py-2 border-b text-background text-center">Available Copies</th>
+                    <th className="px-4 py-2 border-b text-background ">Author</th>
+                    <th className="px-4 py-2 border-b text-background ">Genre</th>
                     <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w=28">Actions</th>
                 </tr>
                 </thead>
@@ -394,29 +391,28 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                     paginatedBooks.map((book, index) => (
                         <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-muted">
                             <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{book.BOOK_ID}</td>
-                            <td className="px-4 py-2 border-b text-foreground max-w-[25ch] ">
-                                <div className="truncate" title={book.BOOK_TITLE}> 
+                            <td className="px-4 py-2 border-b text-foreground  ">
+                                <button
+                                    onClick={() => setSelectedBook(book)}
+                                    className="truncate max-w-[40ch] text-left text-[#444034] hover:text-[#8C9657] hover:underline hover:cursor-pointer"
+                                    title={book.BOOK_TITLE}
+                                > 
                                     {book.BOOK_TITLE}
-                                </div>
+                                </button>
                             </td>  
                             <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{book.BOOK_YEAR}</td>
-                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{book.BOOK_PUBLISHER}</td>
-                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">
-                                {(() => {
-                                    const total = book.BOOK_COPIES || 0;
-                                    const loaned = book.current_loans_count || 0;
-                                            
-                                    const available = total - loaned; 
-                                            
-                                    const colorClass = available > 0 ? "text-[#444034]-600" : "text-red-600";
-                                            
-                                     return (
-                                            <span className={colorClass}>
-                                                {available} / {total} {/* This will show the correct "1/10" */}
-                                            </span>
-                                     );
-                                })()}
+                            <td className="px-4 py-2 border-b text-foreground max-w-[25ch]">
+                                <div className="truncate" title={book.author_names}> 
+                                    {book.author_names}
+                                </div>
                             </td>
+                            
+                            <td className="px-4 py-2 border-b text-foreground max-w-[25ch]">
+                                <div title={book.genre_names}> 
+                                    {book.genre_names}
+                                </div>
+                            </td>
+
                             <td className= "border-b text-foreground text-center">
                                 <div className="flex justify-center space-x-1">
                                 <EditModalForm 
@@ -472,7 +468,19 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                     itemsPerPage={itemsPerPage}
                 />
             </div>
+            {/*-- Book Details Modal --*/}
+            {selectedBook && (
+                <BookDetailsModal
+                    book={selectedBook}
+                    open={!!selectedBook} 
+                    onOpenChange={(open) => {
+                        if (!open) {
+                        setSelectedBook(null); 
+                    }
+            }}
+        />
+            )}
+        
         </AppLayout>
     );
 }
-
