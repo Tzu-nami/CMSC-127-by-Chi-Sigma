@@ -53,6 +53,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', 
     );
 });
 
+type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & { children: React.ReactNode };
+
+const Select = ({ className = '', children, ...props }: SelectProps) => {
+    return (
+        <select
+            className={`flex h-9 w-full items-center justify-between rounded-md border border-[#d1d5db] bg-[#ffffff] px-3 py-2 text-sm shadow-sm ring-offset-white placeholder:text-[#6b7280] focus:outline-none focus:ring-1 focus:ring-[#8C9657] disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+            {...props}
+        >
+            {children}
+        </select>
+    );
+};
+
 interface PaginationProps {
     currentPage: number;
     totalPages: number;
@@ -102,6 +115,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPe
 export default function StaffIndex( {staff, filters}: { staff: any[], filters:{search?: string}} ) {
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    // job filter
+    const [jobFilter, setJobFilter] = useState("");
 
         {/*-- Pagination --*/}
         const [currentPage, setCurrentPage] = useState(1);
@@ -132,10 +147,15 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
 
     useEffect(() => {
             setCurrentPage(1); // Reset to first page on filter change
-        }, [searchTerm]);
+        }, [searchTerm, jobFilter]);
+
+        // get unique job titles for filter dropdown
+        const uniqueJobs = Array.from(
+            new Set(staff.map(s => s.STAFF_JOB))
+        ).sort();
 
         // Filter staff based on search term
-        const filteredStaffs = staff.filter((staff) => {
+        let filteredStaffs = staff.filter((staff) => {
             const search = searchTerm.toLowerCase();
             return (
                 staff.STAFF_ID.toLowerCase().includes(search) ||
@@ -143,7 +163,14 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                 staff.STAFF_FIRSTNAME.toLowerCase().includes(search) ||
                 staff.STAFF_JOB.toLowerCase().includes(search)
             );
-        }   );
+        });
+        
+        // apply job filter if selected
+        if (jobFilter) {
+            filteredStaffs = filteredStaffs.filter(
+                (staff) => staff.STAFF_JOB === jobFilter
+            );
+        }
 
         // Pagination logic
         const totalItems = filteredStaffs.length;
@@ -175,6 +202,18 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
+                        </div>
+                        
+                        {/* job filter */}
+                        <div className="w-full md:w-48">
+                            <Select value={jobFilter} onChange={(e) => setJobFilter(e.target.value)}>
+                                <option value="">All Jobs</option>
+                                {uniqueJobs.map((job) => (
+                                    <option key={job} value={job}>
+                                        {job}
+                                    </option>
+                                ))}
+                            </Select>
                         </div>
                         
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
@@ -252,8 +291,9 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                             ) : (
                                 <tr>
                                     <td colSpan={4} className="py-4 text-center text-gray-500">
-                                        {}
-                                        {filters.search ? 'No Staffs found for your search.' : 'No staffs found.'}
+                                        {filteredStaffs.length === 0 && (searchTerm || jobFilter)
+                                            ? "No staffs found matching your criteria."
+                                            : "No staffs in the database."}
                                     </td> 
                                 </tr>
 
