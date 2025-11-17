@@ -11,7 +11,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// column configurations for each table
+// column display for each table
 const bookColumns = [
     { key: 'BOOK_ID', label: 'Book ID' },
     { key: 'BOOK_TITLE', label: 'Book Title' },
@@ -64,23 +64,24 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({ query, books, authors, staff, borrowers, transactions, currentloans }: SearchResultsProps) {
-    const getInitialTab = () => {
-        if (books.length > 0) return 'books';
-        if (authors.length > 0) return 'authors';
-        if (staff.length > 0) return 'staff';
-        if (borrowers.length > 0) return 'borrowers';
-        if (transactions.length > 0) return 'transactions';
-        if (currentloans.length > 0) return 'currentloans';
+    const getInitialTab = () => { // for rendering initial tab based on results
+        // changed syntax to (prop || []) bcs white space page if prop is null (query not found)
+        if ((books || []).length > 0) return 'books';
+        if ((authors || []).length > 0) return 'authors';
+        if ((staff || []).length > 0) return 'staff';
+        if ((borrowers || []).length > 0) return 'borrowers';
+        if ((transactions || []).length > 0) return 'transactions';
+        if ((currentloans || []).length > 0) return 'currentloans';
         return 'books'; // fallback
     };
 
     const [activeTab, setActiveTab] = useState(getInitialTab); // set initial tab based on results. goes to where the result is found
-
-    const renderTable = (data: any[], columns: string[]) => {
-        if (data.length === 0) {
+    // function to render table
+    const renderTable = (data: any[], columns: { key: string; label: string }[]) => {
+        if ((data || []).length === 0) {
             return <p className="text-center text-foreground py-8">No results found</p>;
         }
-
+        // render table
         return (
             <div className="overflow-x-auto rounded-t-lg">
                 <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left">
@@ -100,7 +101,7 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
             </div>
         );
     };
-
+    // main render
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Search Results for "${query}"`} />
@@ -108,9 +109,11 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
             <div className="space-y-6">
                 <div className="bg-card rounded-lg border border-muted p-6">
                     <h1 className="text-3xl font-bold text-foreground mb-2">Search Results</h1>
-                    <p className="text-foreground dark:text-background">Results for: <span className="font-semibold text-accent">{query}</span></p>
+                    <p className="text-foreground dark:text-background">Results for:
+                        <span className="font-semibold text-accent">{query}</span>
+                    </p>
                 </div>
-
+                {/* tabs for different categories */}
                 <div className="bg-card rounded-lg p-6">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <TabsList className="mb-6">

@@ -20,19 +20,16 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                 <h3 className="text-lg font-semibold text-foreground">Recent Transactions</h3>
             </div>
 
-            <div>
-                <table className="min-w-full text-sm text-left rounded-t-lg">
+            {/* adds a horizontal scrollbar only when needed */}
+            <div className="overflow-x-auto">
+                <table className="w-full table-fixed text-sm text-left">
                     <thead className="bg-foreground rounded-t-lg">
                         <tr>
                             {headers.map((header, index) => (
-                                <th 
-                                    key={header} 
-                                    className={`
-                                        px-4 py-2 text-background
-                                        ${index === 0 ? 'rounded-tl-lg' : ''}
-                                        ${index === headers.length - 1 ? 'rounded-tr-lg' : ''}
-                                    `}
-                                >
+                                <th key={header} className={`px-4 py-2 text-background
+                                    ${index === 0 ? 'rounded-tl-lg' : ''}
+                                    ${index === headers.length - 1 ? 'rounded-tr-lg' : ''}
+                                    ${header === 'Book Title' ? 'w-2/5' : 'w-auto'}`}>
                                     {header}
                                 </th>
                             ))}
@@ -44,7 +41,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                             transactions.map((transaction, index) => (
                                 <tr key={index} className="border-b border-muted hover:bg-muted">
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_ID}</td>
-                                    <td className="px-4 py-2 border-b text-foreground truncate max-w-65">{transaction.BOOK_TITLE}</td>
+                                    <td className="px-4 py-2 border-b text-foreground truncate">{transaction.BOOK_TITLE}</td>
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">
                                         {transaction.BORROWER_FIRSTNAME} {transaction.BORROWER_LASTNAME}
                                     </td>

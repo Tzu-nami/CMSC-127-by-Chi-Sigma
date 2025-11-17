@@ -219,7 +219,7 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                                             <div className="flex justify-center space-x-1">
                                                 <EditModalForm
                                                 title="Add New Author"
-                                                route="/authorsdatabase"
+                                                route={`/authorsdatabase/${author.AUTHOR_ID}`}
                                                 triggerVariant="outline"
                                                 initialData={{
                                                     author_id: author.AUTHOR_ID,

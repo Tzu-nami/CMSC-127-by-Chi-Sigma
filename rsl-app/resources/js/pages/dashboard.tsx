@@ -74,7 +74,7 @@ export default function Dashboard({
                 />
                 
                 {/* -- ROW 3 : transactions & calendar & quick actions (3 columns) -- */}
-                <div className="grid lg:grid-cols-6 items-center">
+                <div className="grid lg:grid-cols-6 gap-3.5 items-center">
                     {/* left column */}
                     <div className="bg-card rounded-lg border border-muted p-6 col-span-1">
                         <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
