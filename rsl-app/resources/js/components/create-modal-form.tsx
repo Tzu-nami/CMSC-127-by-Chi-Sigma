@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { PlusIcon } from "lucide-react";
+import { ShuffleIcon } from "lucide-react";
 import { SelectDropdown } from "@/components/select-dropdown";
 
 interface Field {
@@ -38,6 +39,28 @@ interface CreateModalFormProps {
   fields: Field[];
   triggerLabel?: string;
   initialData?: Record<string, string>;
+}
+
+function randomId(length: number = 5) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  let result = '';
+  let hasLetter = false;
+  do {
+    result = '';
+    hasLetter = false;
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = chars[Math.floor(Math.random() * chars.length)];
+      result += randomIndex;
+      
+      if (letters.includes(result)) {
+        hasLetter = true;
+      }
+    }
+  }  while (!hasLetter);
+  return result;
 }
 
 export const CreateModalForm = ({
@@ -242,6 +265,10 @@ export const CreateModalForm = ({
                     value = value.slice(0, field.maxLength);
                 }
                 handleFieldChange(field.name, value);
+
+                if (field.name) {
+
+                }
                 }}
                 onKeyDown={(e) => {
                 if (field.type == "number"){
@@ -256,6 +283,13 @@ export const CreateModalForm = ({
                maxLength={field.type !== "number" ? field.maxLength: undefined}
                pattern={field.pattern}
                />
+
+              {(field.name === "transaction_id" || field.name === "book_id" || field.name === "borrower_id" || field.name === "staff_id") && (
+                <button type="button" className="h-5 w-5 bg-[#8c9567] text-white rounded hover:bg-[#444c2f]"
+                onClick={() => handleFieldChange(field.name, randomId())}>
+                  <ShuffleIcon className="h-5 w-5"/>
+                </button>
+               )}
               {errors[field.name] && (<p className="text-red-500">{errors[field.name]}</p>)}
             </>
               )}
