@@ -53,6 +53,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', 
     );
 });
 
+type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & { children: React.ReactNode };
+
+const Select = ({ className = '', children, ...props }: SelectProps) => {
+    return (
+        <select
+            className={`flex h-9 w-full items-center justify-between rounded-md border border-[#d1d5db] bg-[#ffffff] px-3 py-2 text-sm shadow-sm ring-offset-white placeholder:text-[#6b7280] focus:outline-none focus:ring-1 focus:ring-[#8C9657] disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+            {...props}
+        >
+            {children}
+        </select>
+    );
+};
+
 interface PaginationProps {
     currentPage: number;
     totalPages: number;
@@ -102,6 +115,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPe
 export default function AuthorsIndex( {authors, filters}: { authors: any[], filters:{search?: string}} ) {
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    // for sorting
+    const [sortBy, setSortBy] = useState("lastname-asc");
 
 {/*-- Pagination --*/}
         const [currentPage, setCurrentPage] = useState(1);
@@ -144,11 +159,29 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
             );
         }   
     ); 
+        // sorting logic
+        const sortedAuthors = [...filteredAuthors];
+        switch (sortBy) {
+            case "lastname-asc":
+                sortedAuthors.sort((a, b) => a.AUTHOR_LASTNAME.localeCompare(b.AUTHOR_LASTNAME));
+                break;
+            case "lastname-desc":
+                sortedAuthors.sort((a, b) => b.AUTHOR_LASTNAME.localeCompare(a.AUTHOR_LASTNAME));
+                break;
+            case "firstname-asc":
+                sortedAuthors.sort((a, b) => a.AUTHOR_FIRSTNAME.localeCompare(b.AUTHOR_FIRSTNAME));
+                break;
+            case "firstname-desc":
+                sortedAuthors.sort((a, b) => b.AUTHOR_FIRSTNAME.localeCompare(a.AUTHOR_FIRSTNAME));
+                break;
+            default:
+                break; // default to the order from the filter
+        }
 
         // Pagination logic
-        const totalItems = filteredAuthors.length;
+        const totalItems = sortedAuthors.length;
         const totalPages = Math.ceil(totalItems / itemsPerPage);
-        const paginatedAuthors = filteredAuthors.slice(
+        const paginatedAuthors = sortedAuthors.slice(
             (currentPage - 1) * itemsPerPage,
             currentPage * itemsPerPage
         );
@@ -158,37 +191,45 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
             setCurrentPage(page);
         };  
 
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Authors Database" />
-
-            <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">
-                
-                <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
+            <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">                
+                <div className="p-4 sm:p-6 border-b border-muted">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         
-                        <div className="relative w-full md:max-w-md">
-                            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
+                        <div className="relative w-full md:max-w-xs">
+                            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground" />
                             <Input
-                                placeholder="Search by name, ID, contact number..."
+                                placeholder="Search by name, ID..." // Shorter placeholder
                                 className="pl-9"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <CreateModalForm 
-                            title="Add New Author"
-                            route="/authorsdatabase"
-                            fields={[
-                                { name: "author_id", label: "Author ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                { name: "author_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
-                                { name: "author_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
-                                { name: "author_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*"}
-                            ]}
-                        />
+                        {/* ++ ADD THIS: Sort dropdown ++ */}
+                        <div className="flex-grow md:flex-grow-0 md:w-48">
+                            <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                                <option value="lastname-asc">Last Name (A-Z)</option>
+                                <option value="lastname-desc">Last Name (Z-A)</option>
+                                <option value="firstname-asc">First Name (A-Z)</option>
+                                <option value="firstname-desc">First Name (Z-A)</option>
+                            </Select>
+                        </div>
+                        
+                        {/* -- MODIFY THIS: Wrap the button for layout -- */}
+                        <div className="flex-shrink-0">
+                            <CreateModalForm 
+                                title="Add New Author"
+                                route="/authorsdatabase"
+                                fields={[
+                                    { name: "author_id", label: "Author ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                    { name: "author_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "author_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "author_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*"}
+                                ]}
+                            />
                         </div>
                     </div>
                 </div>

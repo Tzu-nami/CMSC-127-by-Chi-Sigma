@@ -53,6 +53,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = '', 
     );
 });
 
+type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & { children: React.ReactNode };
+
+const Select = ({ className = '', children, ...props }: SelectProps) => {
+    return (
+        <select
+            className={`flex h-9 w-full items-center justify-between rounded-md border border-[#d1d5db] bg-[#ffffff] px-3 py-2 text-sm shadow-sm ring-offset-white placeholder:text-[#6b7280] focus:outline-none focus:ring-1 focus:ring-[#8C9657] disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+            {...props}
+        >
+            {children}
+        </select>
+    );
+};
+
 interface PaginationProps {
     currentPage: number;
     totalPages: number;
@@ -102,6 +115,10 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
 
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
 
+    // sorting
+    const [statusFilter, setStatusFilter] = useState("");
+    const [sortBy, setSortBy] = useState("lastname-asc");
+
     {/*-- Pagination --*/}
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10); // Fixed items per page
@@ -131,10 +148,15 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
 
     useEffect(() => {
             setCurrentPage(1); // Reset to first page on filter change
-        }, [searchTerm]);
+        }, [searchTerm, statusFilter, sortBy]);
+    
+        // get unique statuses for filter dropdown
+        const uniqueStatuses = Array.from(
+            new Set(borrowers.map(b => b.BORROWER_STATUS))
+        ).sort();
 
         // Filter borrowers based on search term
-        const filteredBorrowers = borrowers.filter((borrower) => {
+        let filteredBorrowers = borrowers.filter((borrower) => {
             const search = searchTerm.toLowerCase();
             return (
                 borrower.BORROWER_ID.toLowerCase().includes(search) ||
@@ -142,12 +164,37 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                 borrower.BORROWER_FIRSTNAME.toLowerCase().includes(search) ||
                 borrower.BORROWER_CONTACTNUMBER.toLowerCase().includes(search)
             );
-        }   );
+        });
+
+        if (statusFilter) {
+            filteredBorrowers = filteredBorrowers.filter(
+                (borrower) => borrower.BORROWER_STATUS === statusFilter
+            );
+        }
+
+        // sorting logic
+        const sortedBorrowers = [...filteredBorrowers];
+        switch (sortBy) {
+            case "lastname-asc":
+                sortedBorrowers.sort((a, b) => a.BORROWER_LASTNAME.localeCompare(b.BORROWER_LASTNAME));
+                break;
+            case "lastname-desc":
+                sortedBorrowers.sort((a, b) => b.BORROWER_LASTNAME.localeCompare(a.BORROWER_LASTNAME));
+                break;
+            case "firstname-asc":
+                sortedBorrowers.sort((a, b) => a.BORROWER_FIRSTNAME.localeCompare(b.BORROWER_FIRSTNAME));
+                break;
+            case "firstname-desc":
+                sortedBorrowers.sort((a, b) => b.BORROWER_FIRSTNAME.localeCompare(a.BORROWER_FIRSTNAME));
+                break;
+            default:
+                break;
+        }
 
         // Pagination logic
-        const totalItems = filteredBorrowers.length;
+        const totalItems = sortedBorrowers.length;
         const totalPages = Math.ceil(totalItems / itemsPerPage);
-        const paginatedBorrowers = filteredBorrowers.slice(
+        const paginatedBorrowers = sortedBorrowers.slice(
             (currentPage - 1) * itemsPerPage,
             currentPage * itemsPerPage
         );
@@ -160,36 +207,58 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Borrowers Database" />
-
             <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">
-                
                 <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         
-                        <div className="relative w-full md:max-w-md">
-                            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
+                        {/* -- Search Bar -- */}
+                        <div className="relative w-full md:max-w-xs">
+                            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground" />
                             <Input
-                                placeholder="Search by name, ID, contact number..."
+                                placeholder="Search by name, ID, contact..."
                                 className="pl-9"
                                 value ={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                         
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <CreateModalForm 
-                    title="Add New Borrower"
-                    route="/borrowersdatabase"
-                    fields={[
-                        { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                        { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
-                        { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
-                        { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
-                        { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status", required: true, maxLength: 100 },
-                        { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number", required: true, maxLength: 15, pattern: "[0-9+-]*"},
-                    ]}
-                    />
-                </div>
+                        {/* status filter */}
+                        <div className="w-full md:w-48">
+                            <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                                <option value="">All Statuses</option>
+                                {uniqueStatuses.map((status) => (
+                                    <option key={status} value={status}>
+                                        {status}
+                                    </option>
+                                ))}
+                            </Select>
+                        </div>
+                        
+                        {/* sort by */}
+                        <div className="w-full md:w-48">
+                            <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                                <option value="lastname-asc">Last Name (A-Z)</option>
+                                <option value="lastname-desc">Last Name (Z-A)</option>
+                                <option value="firstname-asc">First Name (A-Z)</option>
+                                <option value="firstname-desc">First Name (Z-A)</option>
+                            </Select>
+                        </div>
+
+                        {/* create */}
+                        <div className="flex-shrink-0">
+                            <CreateModalForm 
+                                title="Add New Borrower"
+                                route="/borrowersdatabase"
+                                fields={[
+                                    { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                    { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
+                                    { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
+                                    { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status", required: true, maxLength: 100 },
+                                    { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number", required: true, maxLength: 15, pattern: "[0-9+-]*"},
+                                ]}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -257,10 +326,11 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                                 ))
                             ) : (
                                 <tr>
-                                <td colSpan={8} className="py-4 text-center text-gray-500">
-                                    {}
-                                    {filters.search ? 'No borrowers found for your search.' : 'No borrowers found.'}
-                                </td> 
+                                <td colSpan={7} className="py-4 text-center text-gray-500">
+                                    {filteredBorrowers.length === 0 && (searchTerm || statusFilter)
+                                    ? "No borrowers found matching your criteria."
+                                    : "No borrowers in the database."}
+                                </td>
                                 </tr>
 
                             )}
