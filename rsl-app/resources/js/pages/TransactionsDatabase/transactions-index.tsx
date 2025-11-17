@@ -115,7 +115,7 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
                 }
     
                 router.get(
-                    '/currentloans',
+                    '/transactionsdatabase',
                     {search: searchTerm},
                     {
                         preserveState: true,
@@ -136,13 +136,12 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
         }, [searchTerm]);
 
         // Filter borrowers based on search term
-        const filteredTransactions = transactions.filter((loan) => {
+        const filteredTransactions = transactions.filter((transaction) => {
             const search = searchTerm.toLowerCase();
             return (
-                loan.TRANSACTION_ID.toLowerCase().includes(search) ||
-                loan.BOOK_ID.toLowerCase().includes(search) ||
-                loan.BORROWER_ID.toLowerCase().includes(search) ||
-                loan.STAFF_ID.toLowerCase().includes(search)
+                transaction.TRANSACTION_ID.toLowerCase().includes(search) ||
+                transaction.TRANSACTION_BORROWDATE.toLowerCase().includes(search) ||
+                transaction.TRANSACTION_DUEDATE.toLowerCase().includes(search)
             );
         }   );
 
@@ -179,16 +178,6 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
                         </div>
                         
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <CreateModalForm 
-                            title="Add New Transaction"
-                            route="/transactionsdatabase"
-                            fields={[
-                                { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5}
-                            ]}
-                            />
                         </div>
                     </div>
                 </div>
@@ -226,8 +215,11 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
                                                     }}
                                                     fields={[
                                                         { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, readonly: true },
-                                                        { name: "transaction_borrowdate", label: "Transaction Borrow Date", type:"text", placeholder: "e.g. 2024-01-01", required: true, maxLength: 10 },
-                                                        { name: "transaction_duedate", label: "Transaction Due Date", type:"text", placeholder: "e.g. 2024-01-15", required: true, maxLength: 10 }
+                                                        { name: "transaction_borrowdate", label: "Date Borrowed", type:"date", placeholder: "", required: true },
+                                                        { name: "transaction_duedate", label: "Due Date", type:"date", placeholder: "", required: true, autoCalculate: {
+                                                            basedOn: "transaction_borrowdate",
+                                                            addDays: 7
+                                                        }}
                                                     ]}
                                                 />
                                                 <DeleteForm

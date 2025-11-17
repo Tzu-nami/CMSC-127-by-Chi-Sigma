@@ -107,6 +107,11 @@ export default function Dashboard({
                                 route="/transactionsdatabase"
                                 fields={[
                                     { name: "transaction_id", label: "Transaction ID", type: "text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                    { name: "transaction_borrowdate", label: "Date Borrowed", type:"date", placeholder: "", required: true },
+                                    { name: "transaction_duedate", label: "Due Date", type:"date", placeholder: "", required: true, autoCalculate: {
+                                        basedOn: "transaction_borrowdate",
+                                        addDays: 7
+                                    }},
                                     { name: "book_id", label: "Book ID", type: "text", placeholder: "e.g. B1Y25", required: true, maxLength: 5 },
                                     { name: "borrower_id", label: "Borrower ID", type: "text", placeholder: "e.g. C1X24", required: true, maxLength: 5 },
                                     { name: "staff_id", label: "Staff ID", type: "text", placeholder: "e.g. D1W23", required: true, maxLength: 5 }
