@@ -165,6 +165,8 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
     const [showMoreFilters, setShowMoreFilters] = useState(false);
     const [yearFilter, setYearFilter] = useState('');
     const [publisherFilter, setPublisherFilter] = useState('');
+    const [authorFilter, setAuthorFilter] = useState('');
+    const [genreFilter, setGenreFilter] = useState('');
     {/*-- Sort --*/}
     const [sortBy, setSortBy] = useState("title-asc");  
     {/*-- Pagination --*/}
@@ -199,7 +201,7 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
     useEffect(() => {
         // change to page 1 whenever filters or tab change
         setCurrentPage(1);
-    }, [searchTerm, activeTab, yearFilter, publisherFilter]);
+    }, [searchTerm, activeTab, yearFilter, publisherFilter, authorFilter, genreFilter]);
 
     const getFilteredAndSortedBooks = () => {
         let filtered = books;
@@ -224,6 +226,21 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
         if (publisherFilter) {
             filtered = filtered.filter((book => book.BOOK_PUBLISHER.toString() === publisherFilter))
+        }
+
+        {/*-- Author Filter --*/}
+        if (authorFilter) {
+            filtered = filtered.filter(book => 
+                book.authors.some((a: any) => 
+                `${a.AUTHOR_FIRSTNAME} ${a.AUTHOR_LASTNAME}`.trim() === authorFilter                )
+            );
+        }
+
+        {/*-- Genre Filter --*/}
+        if (genreFilter) {
+            filtered = filtered.filter(book => 
+                book.genres.some((g: any) => g.GENRE_NAME === genreFilter)
+            );
         }
         
         {/*-- Sort --*/}
@@ -252,9 +269,21 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
         return filtered;
     }
 
-    {/*-- Get unique years and publishers --*/}
+    {/*-- Get unique years, publishers, authors and genres --*/}
     const uniqueYears = Array.from(new Set(books.map(book => book.BOOK_YEAR))).sort((a, b) => b - a);
     const uniquePublishers = Array.from(new Set(books.map(book => book.BOOK_PUBLISHER))).sort();
+
+    const uniqueAuthors = Array.from(
+        new Set(books.flatMap(book => 
+            book.authors.map((a: any) => `${a.AUTHOR_FIRSTNAME} ${a.AUTHOR_LASTNAME}`.trim())
+        ))
+    ).sort();
+
+    const uniqueGenres = Array.from(
+        new Set(books.flatMap(book => 
+            book.genres.map((g: any) => g.GENRE_NAME)
+        ))
+    ).sort();
 
     {/*-- pagination --*/}
     const filteredbooks = getFilteredAndSortedBooks();
@@ -314,7 +343,7 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
             
             {/*-- Filters section --*/}
             {showMoreFilters && (
-                <div className="px-4 sm:px-6 py-4 bg-[#FFFDF6] border-b border-[#e5e7eb] flex flex-col sm:flex-row gap-4">
+                    <div className="px-4 sm:px-6 py-4 bg-[#FFFDF6] border-b border-[#e5e7eb] grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4">                    
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-[#374151] mb-2">Year Published</label>
                         <Select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)}>
@@ -340,6 +369,30 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                     </div>
 
                     <div className="flex-1">
+                        <label className="block text-sm font-medium text-[#374151] mb-2">Author</label>
+                        <Select value={authorFilter} onChange={(e) => setAuthorFilter(e.target.value)}>
+                            <option value="">All Authors</option>
+                            {uniqueAuthors.map((author) => (
+                            <option key={author} value={author}>
+                                {author}
+                            </option>
+                            ))}
+                        </Select>
+                    </div>
+
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-[#374151] mb-2">Genre</label>
+                        <Select value={genreFilter} onChange={(e) => setGenreFilter(e.target.value)}>
+                            <option value="">All Genres</option>
+                            {uniqueGenres.map((genre) => (
+                            <option key={genre} value={genre}>
+                                {genre}
+                            </option>
+                            ))}
+                        </Select>
+                    </div>
+
+                    <div className="flex-1">
                         <label className="block text-sm font-medium text-[#374151] mb-2">Sort By</label>
                         <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                             <option value="title-asc">Title (A-Z)</option>
@@ -356,6 +409,8 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                             onClick={() => {
                             setYearFilter("")
                             setPublisherFilter("")
+                            setAuthorFilter("") 
+                            setGenreFilter("")  
                             setSortBy("title-asc")
                             }}
                             className="w-full"
@@ -448,7 +503,7 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                 ) : (
                     <tr>
                         <td colSpan={7} className="py-4 text-center text-[#444034]">
-                            {filteredbooks.length === 0 && (searchTerm || yearFilter || publisherFilter)
+                            {filteredbooks.length === 0 && (searchTerm || yearFilter || publisherFilter || authorFilter || genreFilter)
                             ? "No books found matching your criteria."
                             : "No books in the database."}      
                         </td>
