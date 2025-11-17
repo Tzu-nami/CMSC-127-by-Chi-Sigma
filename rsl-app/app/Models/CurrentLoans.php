@@ -19,6 +19,8 @@ class CurrentLoans extends Model
     //Choose which ones to display
     protected $fillable = [
         'TRANSACTION_ID',
+        'TRANSACTION_BORROWDATE',
+        'TRANSACTION_DUEDATE',
         'BOOK_ID',
         'BORROWER_ID',
         'STAFF_ID',

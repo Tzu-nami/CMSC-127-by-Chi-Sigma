@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\CurrentLoans;
 use App\Models\Transactions;
+use App\Models\Books;
+use App\Models\Borrowers;
+use App\Models\Staff;
 use Carbon\Carbon;
 
 class CurrentLoansController extends Controller
@@ -23,10 +26,17 @@ class CurrentLoansController extends Controller
                 ->orWhere('BOOK_ID', 'like', "%{$search}%");
 
         }); 
-        
         $currentLoans =$query->get();
+
+        $books = Books::all();
+        $borrowers = Borrowers::all();
+        $staff = Staff::all();
+
         return Inertia::render('CurrentLoans/currentloans-index', [
             'currentLoans' => $currentLoans,
+            'books' => $books,
+            'borrowers' => $borrowers,
+            'staff' => $staff,
 
             'filters'=>$request->only(['search']),
         ]);
@@ -42,22 +52,23 @@ class CurrentLoansController extends Controller
             'staff_id' => 'required|max:5|string',
         ]);
 
-        $borrowDate = Carbon::createFormFormat('Y-m-d', $validated['transaction_borrowdate']);
+        $borrowDate = Carbon::createFromFormat('Y-m-d', $validated['transaction_borrowdate']);
         $dueDate = $borrowDate->copy()->addDays(7);
+
+        Transactions::create([
+            'TRANSACTION_ID' => $validated['transaction_id'],
+            'TRANSACTION_BORROWDATE' => $borrowDate->format('Y-m-d'),
+            'TRANSACTION_DUEDATE' => $dueDate->format('Y-m-d'),
+        ]);
 
         // Create new current loan
         CurrentLoans::create([
             'TRANSACTION_ID' => $validated['transaction_id'],
             'TRANSACTION_BORROWDATE' => $borrowDate->format('Y-m-d'),
+            'TRANSACTION_DUEDATE' => $dueDate->format('Y-m-d'),
             'BOOK_ID' => $validated['book_id'],
             'BORROWER_ID' => $validated['borrower_id'],
             'STAFF_ID' => $validated['staff_id'],
-        ]);
-
-        Transactions::create([
-            'TRANSACTION_ID' => $validated['transaction_id'],
-            'TRANSACTION_BORROWDATE' => $validated['transaction_borrowdate'] -> format('Y-m-d'),
-            'TRANSACTION_DUEDATE' => $validated['transaction_borrowdate'] -> addDays(7) -> format('Y-m-d')
         ]);
 
         return redirect()->route('currentloans.index')->with('success', 'Current Loan added successfully!');
@@ -71,25 +82,26 @@ class CurrentLoansController extends Controller
             'staff_id' => 'required|max:5|string',
         ]);
 
-        $borrowDate = Carbon::createFormFormat('Y-m-d', $validated['transaction_borrowdate']);
+        $borrowDate = Carbon::createFromFormat('Y-m-d', $validated['transaction_borrowdate']);
         $dueDate = $borrowDate->copy()->addDays(7);
+
+        $transaction = Transactions::where('TRANSACTION_ID', $id)->first();
+        if ($transaction) {
+            $transaction->update([
+                'TRANSACTION_BORROWDATE' => $borrowDate -> format('Y-m-d'),
+                'TRANSACTION_DUEDATE' => $dueDate -> format('Y-m-d'),
+            ]);
+        }
 
         // Update current loan
         $currentLoan = CurrentLoans::where('TRANSACTION_ID', $id)->firstOrFail();
         $currentLoan->update([
             'TRANSACTION_BORROWDATE' => $borrowDate -> format('Y-m-d'),
+            'TRANSACTION_DUEDATE' => $dueDate->format('Y-m-d'),
             'BOOK_ID' => $validated['book_id'],
             'BORROWER_ID' => $validated['borrower_id'],
             'STAFF_ID' => $validated['staff_id'],
         ]);
-
-        $transaction = Transactions::where('TRANSACTION_ID', $id)->first();
-        if ($transaction) {
-            $transaction_update([
-                'TRANSACTION_BORROWDATE' => $borrowDate -> format('Y-m-d'),
-                'TRANSACTION_DUEDATE' => $dueDate -> format('Y-m-d'),
-            ]);
-        }
 
         return redirect()->route('currentloans.index')->with('success', 'Current Loan updated successfully!');
     }
