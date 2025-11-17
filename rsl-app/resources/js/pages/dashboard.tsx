@@ -16,15 +16,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export function Calendar18() {
-  const [date, setDate] = React.useState<Date | undefined>(
-    new Date(2025, 10, 16)
-  )
   return (
     <Calendar
         mode="single"
-        selected={date}
-        onSelect={setDate}
-        className="rounded-lg bg-card [--cell-size:--spacing(3)] md:[--cell-size:--spacing(7.5)]"
+        defaultMonth={new Date()}
+        //selected={date}
+        //onSelect={setDate}
+        classNames={{day: "pointer-events-none"}}
+        className="rounded-lg bg-card [--cell-size:--spacing(3)] md:[--cell-size:--spacing(7)]"
         buttonVariant="ghost"
     />
   )
