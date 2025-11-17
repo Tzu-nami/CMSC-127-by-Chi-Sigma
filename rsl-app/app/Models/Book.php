@@ -29,4 +29,10 @@ class Book extends Model
      * @var bool
      */
     public $timestamps = false;
+
+    public function currentLoans()
+        {
+            
+            return $this->hasMany('App\Models\CurrentLoan', 'book_id', 'BOOK_ID');
+        }
 }

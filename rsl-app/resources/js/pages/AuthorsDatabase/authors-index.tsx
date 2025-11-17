@@ -29,7 +29,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = ({ variant = 'default', size = 'default', className = '', children, ...props }: ButtonProps) => {
     const variants = {
         default: 'bg-[#8C9657] text-[#ffffff] hover:bg-[#444034]',
-        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb]',
+        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb] hover:text-[#444034]',
         ghost: 'bg-[transparent] text-[#374151] hover:bg-[#444034]',
     };
     const sizes = {
@@ -163,7 +163,7 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Authors Database" />
 
-            <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
+            <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">
                 
                 <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -198,11 +198,11 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                     <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
                         <thead className="bg-foreground">
                             <tr>
-                                <th className="px-4 py-2 border-b text-background rounded-tl-lg">Author ID</th>
-                                <th className="px-4 py-2 border-b text-background">Last Name</th>
-                                <th className="px-4 py-2 border-b text-background">First Name</th>
-                                <th className="px-4 py-2 border-b text-background rounded-tr-lg">Middle Initial</th>
-                                <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center" colSpan={2}>Actions</th>
+                                <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Author ID</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Last Name</th>
+                                <th className="px-4 py-2 border-b text-background text-center">First Name</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w-28">Actions</th>
                             </tr>
                         </thead>
 
@@ -211,12 +211,13 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                         {paginatedAuthors && paginatedAuthors.length > 0 ? (
                             paginatedAuthors.map((author, index) => (
                             <tr key={author.AUTHOR_ID || `author-${index}`} className="hover:bg-muted">
-                                        <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_LASTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_FIRSTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground">{author.AUTHOR_MIDDLEINITIAL}</td>
-                                        <td>
-                                            <EditModalForm
+                                        <td className="px-4 py-2 border-b text-foreground text-center">{author.AUTHOR_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground text-center">{author.AUTHOR_LASTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground text-center">{author.AUTHOR_FIRSTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground text-center">{author.AUTHOR_MIDDLEINITIAL}</td>
+                                        <td className= "border-b text-foreground text-center">
+                                            <div className="flex justify-center space-x-1">
+                                                <EditModalForm
                                                 title="Add New Author"
                                                 route="/authorsdatabase"
                                                 triggerVariant="outline"
@@ -232,13 +233,14 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                                                     { name: "author_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
                                                     { name: "author_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*"}
                                                 ]} />
-                                        </td>
-                                        <td>
+
                                             <DeleteForm
                                             route={`/authorsdatabase/${author.AUTHOR_ID}`}
                                             item={`Author: ${author.AUTHOR_FIRSTNAME} ${author.AUTHOR_LASTNAME}`}
                                             triggerVariant="outline"
                                             />
+                                            
+                                        </div>
                                         </td>
                                     </tr>
                                 ))

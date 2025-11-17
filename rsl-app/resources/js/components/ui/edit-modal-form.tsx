@@ -12,18 +12,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Pencil as PencilIcon } from "lucide-react";
+import { SelectDropdown } from "@/components/select-dropdown";
 
 interface Field {
-    name: string;
-    label: string;
-    type?: string;
-    placeholder?: string;
-    required: boolean;
-    maxLength: number;
-    pattern?: string;
-    readonly?: boolean;
+  name: string;
+  label: string;
+  type?: string;
+  placeholder?: string;
+  required: boolean;
+  maxLength?: number;
+  pattern?: string;
+  format?: string;
+  readonly?: boolean;
+  fieldType?: 'input' | 'select';
+  options?: Array<{ value: string; label: string }>;
+  autoCalculate?: {
+    basedOn: String;
+    addDays: number;
+  }
 }
-
 interface EditModalFormProps {
     title: string;
     route: string;
@@ -41,6 +48,35 @@ export const EditModalForm = ({
 
 
   const { data, setData, put, processing, errors, reset } = useForm(initialData || {});
+
+  // For automation of due date
+  const calculateDueDate = (dateString: string, days: number): string => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+    date.setDate(date.getDate() + days);
+
+    // Fix formatting to YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2,"0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  // Auto calculate
+  const handleFieldChange = (fieldName: string, value: string) => {
+    setData(fieldName, value);
+    
+    fields.forEach((field) => {
+      if (field.autoCalculate && field.autoCalculate.basedOn === fieldName) {
+        if (field.type ===  "date" && value) {
+          const calculatedDate = calculateDueDate(value, field.autoCalculate.addDays);
+          setData(field.name, calculatedDate);
+        }
+      }
+    });
+  };
 
   // Open confirmation dialog
   const submitForm = (e: React.FormEvent) => {
@@ -71,10 +107,14 @@ export const EditModalForm = ({
     {/* Edit Dialog */}
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={triggerVariant}>
-          <PencilIcon className="h-4 w-4 mr-2 text-blue-500" />
+        <Button
+          variant={triggerVariant}
+          className="p-2 h-auto w-auto bg-[#F0E7C6] hover:bg-[#444034] rounded-lg transition-colors duration-100 ease-in-out"
+        >
+          <PencilIcon className="h-5 w-5 text-[#8C9657] hover:text-[#F0E7C6]" />
         </Button>
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={submitForm}>
           <DialogHeader>
@@ -89,7 +129,25 @@ export const EditModalForm = ({
           <div className="grid gap-4 py-6 px-1">
             {fields.map((field) => (
             <div key={field.name} className="grid gap-2">
-              <label htmlFor={field.name} className="text-sm font-medium text-foreground"> {field.label} {field.required && <span className="text-red-500">*</span>} </label>
+              {field.fieldType === 'select' ? (
+                <SelectDropdown
+                  id={field.name}
+                  label={field.label}
+                  value={data[field.name]}
+                  onChange={(value) => handleFieldChange(field.name, value)}
+                  options={field.options || []}
+                  placeholder={field.placeholder || `Search ${field.label}...`}
+                  required={field.required}
+                  disabled={field.readonly}
+                  error={errors[field.name]}
+                  />
+              ) : (
+                
+              <>
+              <label htmlFor={field.name} className="text-sm font-medium text-foreground"> {field.label} {field.required && <span className="text-red-500">*</span>}
+              {field.autoCalculate && (<span className="text-xs text-gray-500 ml-2">
+                (Auto calculated: +{field.autoCalculate.addDays} This can be manually adjusted)
+              </span>)} </label>
               <input id={field.name}
                type={field.type || "text"} 
                placeholder={field.placeholder || ""}
@@ -101,8 +159,8 @@ export const EditModalForm = ({
                 if (field.type == "number"){
                     value = value.slice(0, field.maxLength);
                 }
-                setData(field.name, value)}
-               } 
+                handleFieldChange(field.name, value);
+                }} 
                 onKeyDown={(e) => {
                   if (field.type == "number"){
                     if (["e", "E", "-", "=", ".", ","].includes(e.key)) {
@@ -118,6 +176,8 @@ export const EditModalForm = ({
                pattern={field.pattern}
                />
               {errors[field.name] && (<p className="text-red-500">{errors[field.name]}</p>)}
+              </>
+              )}
             </div>
             ))}
           </div>

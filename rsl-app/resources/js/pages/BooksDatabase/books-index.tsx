@@ -32,7 +32,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = ({ variant = 'default', size = 'default', className = '', children, ...props }: ButtonProps) => {
     const variants = {
         default: 'bg-[#8C9657] text-[#ffffff] hover:bg-[#444034]',
-        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb]',
+        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb] hover:text-[#444034]',
         ghost: 'bg-[transparent] text-[#374151] hover:bg-[#444034]',
     };
     const sizes = {
@@ -92,7 +92,7 @@ const Tabs = ({ tabs, activeTab, onTabChange }: TabsProps) => (
                     className={`${tab.name === activeTab
                         ? 'border-[#8C9657] text-[#8C9657]'
                         : 'border-[transparent] text-[#6b7280] hover:text-[#374151] hover:border-[#d1d5db]'
-                        } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                        } whitespace-nowrap text-center py-4 px-1 border-b-2 font-medium text-sm`}
                 >
                     {tab.name}
                 </button>
@@ -209,8 +209,14 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
         {/*-- Active Tabs --*/}
         if (activeTab === 'Available') {
-            filtered = filtered.filter((book) => book.BOOK_COPIES > 0);
-        } // idk how to do the on loan yet
+            filtered = filtered.filter((book) => (book.BOOK_COPIES - (book.current_loans_count|| 0)) > 0);
+        } else if (activeTab === 'On Loan'){
+            filtered = filtered.filter((book) => {
+                const loaned = book.current_loans_count || 0;
+                const available = (book.BOOK_COPIES || 0) - loaned;
+                return loaned > 0 && available === 0;
+        } ); 
+        }
 
         {/*-- Year Filter --*/}
         if (yearFilter) {
@@ -218,9 +224,6 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
         }
 
         {/*-- Publisher Filter --*/}
-        if (yearFilter) {
-            filtered = filtered.filter((book => book.BOOK_YEAR.toString() === yearFilter))
-        }
 
         if (publisherFilter) {
             filtered = filtered.filter((book => book.BOOK_PUBLISHER.toString() === publisherFilter))
@@ -241,7 +244,10 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                 filtered.sort((a, b) => a.BOOK_YEAR - b.BOOK_YEAR)
                 break
             case "copies-available":
-                filtered.sort((a, b) => b.BOOK_COPIES - a.BOOK_COPIES)
+                filtered.sort((a, b) => 
+                    (b.BOOK_COPIES - (b.current_loans_count || 0)) - 
+                    (a.BOOK_COPIES - (a.current_loans_count || 0))
+                )
                 break
             default:
                 break
@@ -264,49 +270,54 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
         <Head title="Books Database" />
-        <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
+        <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">
 
             <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div className="relative w-full md:max-w-md">
-                        {/*-- Search Input --*/}
-                        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
-                        
-                        <Input 
-                            placeholder="Search by title, author, publisher..." 
-                            className="pl-9"
-                            value={searchTerm} 
-                            onChange={(e) => setSearchTerm(e.target.value)} 
-                        />
-                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-2 flex-grow">
+                        <div className="relative flex-grow">
+                            {/*-- Search Input --*/}
+                             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
+                                <Input 
+                                    placeholder="Search by title, author, publisher..." 
+                                    className="pl-9"
+                                    value={searchTerm} 
+                                    onChange={(e) => setSearchTerm(e.target.value)} 
+                                    />
+                        </div>
 
-                    {/*-- Filters --*/}
-                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => setShowMoreFilters(!showMoreFilters)}>
-                        <SlidersHorizontalIcon className="h-4 w-4 mr-2" />
-                        More Filters
-                    </Button>
+                        {/*-- Filters --*/}
+                        <Button 
+                            className="w-full sm:w-auto bg-[#8C9657] text-[#444034] hover:bg-[#444034] border-[#8C9657]"
+                            onClick={() => setShowMoreFilters(!showMoreFilters)}>
+                            <SlidersHorizontalIcon className="h-4 w-4 mr-2" />
+                                More Filters
+                        </Button>
 
-                    {/*-- Add New Book Modal --*/}
-                    <div className="w-full sm:w-auto">
-                        <CreateModalForm 
-                        title="Add New Book"
-                        route="/booksdatabase"
-                        fields={[
-                            { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" , required: true, maxLength: 5 },
-                            { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title", required: true, maxLength: 255 },
-                            { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year", required: true, maxLength: 4, pattern: "[0-9]*" },
-                            { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher", required: true, maxLength: 255 },
-                            { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*" },
-                        ]}
-                        />
-                    </div>
+                        {/*-- Add New Book Modal --*/}
+                        <div className="w-full sm:w-auto">
+                            <CreateModalForm 
+                            title="Add New Book"
+                            route="/booksdatabase"
+                            fields={[
+                                { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" , required: true, maxLength: 5 },
+                                { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title", required: true, maxLength: 255 },
+                                { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year", required: true, maxLength: 4, pattern: "[0-9]*" },
+                                { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher", required: true, maxLength: 255 },
+                                { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*" },
+                            ]}
+                            />
+                        </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
             
             {/*-- Filters section --*/}
             {showMoreFilters && (
-                <div className="px-4 sm:px-6 py-4 bg-[#f9fafb] border-b border-[#e5e7eb] flex flex-col sm:flex-row gap-4">
+                <div className="px-4 sm:px-6 py-4 bg-[#FFFDF6] border-b border-[#e5e7eb] flex flex-col sm:flex-row gap-4">
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-[#374151] mb-2">Year Published</label>
                         <Select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)}>
@@ -367,12 +378,12 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
             <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
                 <thead className="bg-foreground">
                 <tr>
-                    <th className="px-4 py-2 border-b text-background rounded-tl-lg">Book ID</th>
-                    <th className="px-4 py-2 border-b text-background">Title</th>
-                    <th className="px-4 py-2 border-b text-background">Year Published</th>
-                    <th className="px-4 py-2 border-b text-background">Publisher</th>
-                    <th className="px-4 py-2 border-b text-background">Available Copies</th>
-                    <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center" colSpan={2}>Actions</th>
+                    <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Book ID</th>
+                    <th className="px-4 py-2 border-b text-background text-center">Title</th>
+                    <th className="px-4 py-2 border-b text-background text-center">Year Published</th>
+                    <th className="px-4 py-2 border-b text-background text-center">Publisher</th>
+                    <th className="px-4 py-2 border-b text-background text-center">Available Copies</th>
+                    <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w=28">Actions</th>
                 </tr>
                 </thead>
 
@@ -382,16 +393,32 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                 {paginatedBooks && paginatedBooks.length > 0 ? ( 
                     paginatedBooks.map((book, index) => (
                         <tr key={book.BOOK_ID || `book-${index}`} className="hover:bg-muted">
-                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_ID}</td>
-                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_TITLE}</td>
-                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_YEAR}</td>
-                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{book.BOOK_PUBLISHER}</td>
-                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">
-                                <span className={book.BOOK_COPIES > 0 ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
-                                    {book.BOOK_COPIES}
-                                </span>
+                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{book.BOOK_ID}</td>
+                            <td className="px-4 py-2 border-b text-foreground max-w-[25ch] ">
+                                <div className="truncate" title={book.BOOK_TITLE}> 
+                                    {book.BOOK_TITLE}
+                                </div>
+                            </td>  
+                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{book.BOOK_YEAR}</td>
+                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{book.BOOK_PUBLISHER}</td>
+                            <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">
+                                {(() => {
+                                    const total = book.BOOK_COPIES || 0;
+                                    const loaned = book.current_loans_count || 0;
+                                            
+                                    const available = total - loaned; 
+                                            
+                                    const colorClass = available > 0 ? "text-[#444034]-600" : "text-red-600";
+                                            
+                                     return (
+                                            <span className={colorClass}>
+                                                {available} / {total} {/* This will show the correct "1/10" */}
+                                            </span>
+                                     );
+                                })()}
                             </td>
-                            <td>
+                            <td className= "border-b text-foreground text-center">
+                                <div className="flex justify-center space-x-1">
                                 <EditModalForm 
                                     title="Edit Book"
                                     triggerVariant="outline"
@@ -411,13 +438,14 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                                         { name: "book_copies", label: "Number of Copies", type:"number", required: true, maxLength: 5 },
                                     ]}
                                 />
-                            </td>
-                            <td>
+                            
+                            
                                 <DeleteForm 
                                     route={`/booksdatabase/${book.BOOK_ID}`}
                                     item={`Book: ${book.BOOK_TITLE}`}
                                     triggerVariant="outline"
                                 />
+                            </div>
                             </td>
                         </tr>
                     ))

@@ -23,4 +23,9 @@ class Books extends Model
         'BOOK_PUBLISHER',
         'BOOK_COPIES',
     ];
+
+    public function currentLoans()
+        {
+            return $this->hasMany('App\Models\CurrentLoans', 'book_id', 'BOOK_ID');
+        }
 }

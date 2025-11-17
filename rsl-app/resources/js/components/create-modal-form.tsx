@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { PlusIcon } from "lucide-react";
+import { SelectDropdown } from "@/components/select-dropdown";
 
 interface Field {
   name: string;
@@ -19,8 +20,16 @@ interface Field {
   type?: string;
   placeholder?: string;
   required: boolean;
-  maxLength: number;
+  maxLength?: number;
   pattern?: string;
+  format?: string;
+  readonly?: boolean;
+  fieldType?: 'input' | 'select';
+  options?: Array<{ value: string; label: string }>;
+  autoCalculate?: {
+    basedOn: String;
+    addDays: number;
+  }
 }
 
 interface CreateModalFormProps {
@@ -45,6 +54,35 @@ export const CreateModalForm = ({
   }, {} as Record<string, string>);
 
   const { data, setData, post, processing, errors, reset } = useForm(initialData || {});
+
+  // For automation of due date
+  const calculateDueDate = (dateString: string, days: number): string => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+    date.setDate(date.getDate() + days);
+
+    // Fix formatting to YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2,"0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  // Auto calculate
+  const handleFieldChange = (fieldName: string, value: string) => {
+    setData(fieldName, value);
+    
+    fields.forEach((field) => {
+      if (field.autoCalculate && field.autoCalculate.basedOn === fieldName) {
+        if (field.type ===  "date" && value) {
+          const calculatedDate = calculateDueDate(value, field.autoCalculate.addDays);
+          setData(field.name, calculatedDate);
+        }
+      }
+    });
+  };
 
   // Open confirmation dialog
   const submitForm = (e: React.FormEvent) => {
@@ -173,7 +211,25 @@ export const CreateModalForm = ({
           <div className="grid gap-4 py-6 px-1">
             {fields.map((field) => (
             <div key={field.name} className="grid gap-2">
-              <label htmlFor={field.name} className="text-sm font-medium text-foreground"> {field.label} {field.required && <span className="text-red-500">*</span>} </label>
+              {field.fieldType === 'select' ? (
+                <SelectDropdown
+                  id={field.name}
+                  label={field.label}
+                  value={data[field.name]}
+                  onChange={(value) => handleFieldChange(field.name, value)}
+                  options={field.options || []}
+                  placeholder={field.placeholder || `Search ${field.label}...`}
+                  required={field.required}
+                  disabled={field.readonly}
+                  error={errors[field.name]}
+                  />
+              ) : (
+              <>
+              <label htmlFor={field.name} className="text-sm font-medium text-foreground"> {field.label} {field.required && <span className="text-red-500">*</span>} 
+              {field.autoCalculate && (<span className="text-xs text-gray-500 ml-2">
+                (Auto calculated: +{field.autoCalculate.addDays} days)
+              </span>)} </label>
+
               <input id={field.name}
                type={field.type || "text"} 
                placeholder={field.placeholder || ""}
@@ -182,11 +238,11 @@ export const CreateModalForm = ({
                 // Brute force error handling for number limits
                 let value = e.target.value;
                 
-                if (field.type == "number"){
+                if (field.type === "number"){
                     value = value.slice(0, field.maxLength);
                 }
-                setData(field.name, value)}
-               }
+                handleFieldChange(field.name, value);
+                }}
                 onKeyDown={(e) => {
                 if (field.type == "number"){
                   if (["e", "E", "-", "=", ".", ","].includes(e.key)) {
@@ -194,13 +250,15 @@ export const CreateModalForm = ({
                     e.preventDefault();
                   }
                 }
-              }}  
+              }}
                className={`h-2 px-3 py-4 text-base rounded ${errors[field.name] ? "border-red-500 ring-red-500/50" : ""}`}
                required={field.required || false}
                maxLength={field.type !== "number" ? field.maxLength: undefined}
                pattern={field.pattern}
                />
               {errors[field.name] && (<p className="text-red-500">{errors[field.name]}</p>)}
+            </>
+              )}
             </div>
             ))}
           </div>

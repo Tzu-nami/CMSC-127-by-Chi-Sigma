@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Transactions;
+use Carbon\Carbon;
 
 class TransactionsDatabaseController extends Controller
 {
@@ -31,11 +32,11 @@ class TransactionsDatabaseController extends Controller
         // Check if all inputs are valid
         $validated = $request->validate([
             'transaction_id' => 'required|max:5|string|unique:transaction_data,TRANSACTION_ID',
-            'transaction_borrowdate'=> 'required|date_format:m/d/Y',
-            'transaction_duedate' => 'required|date_format:m/d/Y|after_or_equal:today'
+            'transaction_borrowdate'=> 'required|date_format:Y-m-d',
+            'transaction_duedate' => 'required|date_format:Y-m-d|after_or_equal:transaction_borrowdate'
         ]);
 
-        // Create new current loan
+        // Create new transaction
         Transactions::create([
             'TRANSACTION_ID' => $validated['transaction_id'],
             'TRANSACTION_BORROWDATE' => $validated['transaction_borrowdate'],
@@ -48,8 +49,8 @@ class TransactionsDatabaseController extends Controller
         // Check if all inputs are valid
         $validated = $request->validate([
             'transaction_id'=> 'required|max:5|string',
-            'transaction_borrowdate' => 'required|date_format:m/d/Y',
-            'transaction_duedate' => 'required|date_format:m/d/Y|after_or_equal:today'
+            'transaction_borrowdate' => 'required|date_format:Y-m-d',
+            'transaction_duedate' => 'required|date_format:Y-m-d|after_or_equal:transaction_borrowdate'
         ]);
 
         // Update transactions
@@ -61,5 +62,13 @@ class TransactionsDatabaseController extends Controller
         ]);
 
         return redirect()->route('transactionsdatabase.index')->with('success', 'Transaction updated successfully!');
+    }
+
+    public function destroy($id) {
+        // Find the transaction by ID and delete it
+        $book = Transactions::where('TRANSACTION_ID', $id)->firstOrFail();
+        $book->delete();
+
+        return redirect()->route('transactionsdatabase.index')->with('success', 'Transaction deleted successfully!');
     }
 }

@@ -29,7 +29,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = ({ variant = 'default', size = 'default', className = '', children, ...props }: ButtonProps) => {
     const variants = {
         default: 'bg-[#8C9657] text-[#ffffff] hover:bg-[#444034]',
-        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb]',
+        outline: 'border border-[#d1d5db] bg-[#ffffff] text-[#374151] hover:bg-[#f9fafb] hover:text-[#444034]',
         ghost: 'bg-[transparent] text-[#374151] hover:bg-[#444034]',
     };
     const sizes = {
@@ -161,7 +161,7 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Borrowers Database" />
 
-            <div className="bg-[#ffffff] shadow-sm rounded-lg overflow-hidden">
+            <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">
                 
                 <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -198,13 +198,13 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                     <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
                         <thead className="bg-foreground">
                             <tr>
-                                <th className="px-4 py-2 border-b text-background rounded-tl-lg">Borrower ID</th>
-                                <th className="px-4 py-2 border-b text-background">Last Name</th>
-                                <th className="px-4 py-2 border-b text-background">First Name</th>
-                                <th className="px-4 py-2 border-b text-background">Middle Initial</th>
-                                <th className="px-4 py-2 border-b text-background">Status</th>
-                                <th className="px-4 py-2 border-b text-background rounded-tr-lg">Contact Number</th>
-                                <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center" colSpan={2}>Actions</th>
+                                <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Borrower ID</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Last Name</th>
+                                <th className="px-4 py-2 border-b text-background text-center">First Name</th>
+                                <th className="px-4 py-2 border-b text-background text-center w-30">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Status</th>
+                                <th className="px-4 py-2 border-b text-background text-center ">Contact Number</th>
+                                <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w-28">Actions</th>
                             </tr>
                         </thead>
 
@@ -213,13 +213,15 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                         {paginatedBorrowers && paginatedBorrowers.length > 0 ? (
                             paginatedBorrowers.map((borrower, index) => (
                             <tr key={borrower.BORROWER_ID || `borrower-${index}`} className="hover:bg-muted">
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_LASTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_FIRSTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_MIDDLEINITIAL}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_STATUS}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{borrower.BORROWER_CONTACTNUMBER}</td>
-                                        <td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_LASTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_FIRSTNAME}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_MIDDLEINITIAL}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_STATUS}</td>
+                                        <td className="px-2 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_CONTACTNUMBER}</td>
+                                        
+                                        <td className="border-b text-foreground text-center">
+                                            <div className="flex justify-center space-x-1">
                                             <EditModalForm 
                                             title="Edit Borrower"
                                             triggerVariant="outline"
@@ -240,19 +242,22 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                                                 { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status", required: true, maxLength: 100 },
                                                 { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number", required: true, maxLength: 15, pattern: "[0-9+-]*"},
                                             ]} />
-                                        </td>
-                                        <td>
+                                        
+                                        
                                             <DeleteForm
                                             route={`/borrowersdatabase/${borrower.BORROWER_ID}`}
                                             item={`Borrower: ${borrower.BORROWER_FIRSTNAME} ${borrower.BORROWER_LASTNAME}`}
                                             triggerVariant="outline"
                                             />
-                                        </td>
+                                        
+                                        </div>
+                                         
+                                    </td>    
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                <td colSpan={5} className="py-4 text-center text-gray-500">
+                                <td colSpan={8} className="py-4 text-center text-gray-500">
                                     {}
                                     {filters.search ? 'No borrowers found for your search.' : 'No borrowers found.'}
                                 </td> 
