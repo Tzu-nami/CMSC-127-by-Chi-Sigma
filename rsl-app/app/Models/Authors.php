@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Models;
+use App\Models\Books;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Authors extends Model
 {
@@ -22,4 +25,16 @@ class Authors extends Model
         'AUTHOR_FIRSTNAME',
         'AUTHOR_MIDDLEINITIAL',
     ];
+
+        public function books(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Books::class,
+            'book_authors',
+            'author_id', 
+            'book_id',  
+            'AUTHOR_ID', 
+            'BOOK_ID'    
+        );
+    }
 }

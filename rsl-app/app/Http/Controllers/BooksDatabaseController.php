@@ -14,20 +14,42 @@ class BooksDatabaseController extends Controller
 
         $query = Books::query();
 
-        $query->when($request->input('search'), function ($query, $search) {
-            $query->where('BOOK_TITLE', 'like', "%{$search}%")
-                ->orWhere('BOOK_PUBLISHER', 'like', "%{$search}%")
-                ->orWhere('BOOK_ID', 'like', "%{$search}%")
-                ->orWhere('BOOK_YEAR', 'like', "%{$search}%");
-        }); 
+        $booksTable = (new Books)->getTable();
+
+        // Joins for Authors and Genres
+        $query->with([
+            'authors:AUTHOR_ID,AUTHOR_FIRSTNAME,AUTHOR_MIDDLEINITIAL,AUTHOR_LASTNAME',
+            'genres:GENRE_ID,GENRE_NAME',
+        ]);
 
         $query->withCount('currentLoans');
-        $books =$query->get();
+
+        $query->when($request->input('search'), function ($query, $search) use ($booksTable) {
+            // Group all search conditions in a parent 'where' to ensure 'OR' logic works correctly
+            $query->where(function($q) use ($search, $booksTable) {
+                $q->where("{$booksTable}.BOOK_TITLE", 'like', "%{$search}%")
+                    ->orWhere("{$booksTable}.BOOK_PUBLISHER", 'like', "%{$search}%")
+                    ->orWhere("{$booksTable}.BOOK_ID", 'like', "%{$search}%")
+                    ->orWhere("{$booksTable}.BOOK_YEAR", 'like', "%{$search}%")
+
+                    // CORRECTED: Use orWhereHas to search in related 'authors' table
+                    ->orWhereHas('authors', function ($authorQuery) use ($search) {
+                        $authorQuery->where('AUTHOR_FIRSTNAME', 'like', "%{$search}%")
+                                    ->orWhere('AUTHOR_MIDDLEINITIAL', 'like', "%{$search}%")
+                                    ->orWhere('AUTHOR_LASTNAME', 'like', "%{$search}%");
+                    })
+                    
+                    // CORRECTED: Use orWhereHas to search in related 'genres' table
+                    ->orWhereHas('genres', function ($genreQuery) use ($search) {
+                        $genreQuery->where('GENRE_NAME', 'like', "%{$search}%");
+                    });
+            });
+        });
+        $books = $query->get();
 
         return Inertia::render('BooksDatabase/books-index', [
             'books' => $books,
-
-            'filters'=>$request->only(['search']),
+            'filters' => $request->only(['search']),
         ]);
     }
 
