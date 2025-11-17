@@ -27,6 +27,12 @@ const authorColumns = [
     { key: 'AUTHOR_MIDDLEINITIAL', label: 'Middle Initial' }
 ];
 
+const genreColumns = [
+    { key: 'GENRE_ID', label: 'Genre ID' },
+    { key: 'GENRE_NAME', label: 'Genre Name' },
+    { key: 'GENRE_LOCATION', label: 'Location' }
+];
+
 const staffColumns = [
     { key: 'STAFF_ID', label: 'Staff ID' },
     { key: 'STAFF_LASTNAME', label: 'Last Name' },
@@ -61,9 +67,10 @@ interface SearchResultsProps {
     borrowers: any[];
     transactions: any[];
     currentloans: any[];
+    genres: any[];
 }
 
-export default function SearchResults({ query, books, authors, staff, borrowers, transactions, currentloans }: SearchResultsProps) {
+export default function SearchResults({ query, books, authors, staff, borrowers, transactions, currentloans, genres }: SearchResultsProps) {
     const getInitialTab = () => { // for rendering initial tab based on results
         // changed syntax to (prop || []) bcs white space page if prop is null (query not found)
         if ((books || []).length > 0) return 'books';
@@ -72,6 +79,7 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
         if ((borrowers || []).length > 0) return 'borrowers';
         if ((transactions || []).length > 0) return 'transactions';
         if ((currentloans || []).length > 0) return 'currentloans';
+        if ((genres || []).length > 0) return 'genres';
         return 'books'; // fallback
     };
 
@@ -121,6 +129,9 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
                             <TabsTrigger value="authors" className="flex-1">
                                 Authors ({authors.length})
                             </TabsTrigger>
+                            <TabsTrigger value="genres" className="flex-1">
+                                Genres ({genres.length})
+                            </TabsTrigger>
                             <TabsTrigger value="staff" className="flex-1">
                                 Staff ({staff.length})
                             </TabsTrigger>
@@ -138,6 +149,10 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
 
                         <TabsContent value="authors" className="space-y-4">
                             {renderTable(authors, authorColumns)}
+                        </TabsContent>
+
+                        <TabsContent value="genres" className="space-y-4">
+                            {renderTable(genres, genreColumns)}
                         </TabsContent>
 
                         <TabsContent value="staff" className="space-y-4">

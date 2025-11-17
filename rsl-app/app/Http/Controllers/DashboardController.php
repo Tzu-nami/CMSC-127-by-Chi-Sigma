@@ -7,6 +7,8 @@ use Inertia\Inertia;
 use App\Models\Books;
 use App\Models\Borrowers;
 use App\Models\Staff;
+use App\Models\Authors;
+use App\Models\Genres;
 class DashboardController extends Controller
 {
     public function index()
@@ -40,6 +42,8 @@ class DashboardController extends Controller
         $books = Books::all();
         $borrowers = Borrowers::all();
         $staff = Staff::all();
+        $authors = Authors::all();
+        $genres = Genres::all();
 
         return Inertia::render('dashboard', [
             'stats' => [
@@ -52,6 +56,8 @@ class DashboardController extends Controller
             'books' => $books,
             'borrowers' => $borrowers,
             'staff' => $staff,
+            'authors' => $authors,
+            'genres' => $genres,
         ]);
     }
 
@@ -104,6 +110,13 @@ class DashboardController extends Controller
             ->orWhere('BORROWER_ID', 'LIKE', '%' . $query . '%')
             ->get();
 
+        // search in genres table
+        $genres = DB::table('genre_data')
+            ->where('GENRE_NAME', 'LIKE', '%' . $query . '%')
+            ->orWhere('GENRE_LOCATION', 'LIKE', '%' . $query . '%')
+            ->orWhere('GENRE_ID', 'LIKE', '%' . $query . '%')
+            ->get();
+
         // search in transactions table
         $transactions = DB::table('transaction_data')
             ->where('TRANSACTION_ID', 'LIKE', '%' . $query . '%')
@@ -118,6 +131,7 @@ class DashboardController extends Controller
             'staff' => $staff,
             'borrowers' => $borrowers,
             'transactions' => $transactions,
+            'genres' => $genres,
         ]);
     }
 }
