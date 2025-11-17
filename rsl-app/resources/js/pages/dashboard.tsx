@@ -183,6 +183,15 @@ export default function Dashboard({
                                             fieldType: 'select' as const, 
                                             options: authorOptions 
                                         },
+                                        { 
+                                            name: "genre_id",
+                                            label: "Genre", 
+                                            type:"text", 
+                                            placeholder: "Select a genre", 
+                                            required: true, 
+                                            fieldType: 'select' as const, 
+                                            options: genreOptions 
+                                        },
                                         { name: "book_year", label: "Book Year", type:"number", placeholder: "Enter Book Year", required: true, maxLength: 4, pattern: "[0-9]*", fieldType: 'input' as const },
                                         { name: "book_publisher", label: "Book Publisher", type:"text", placeholder: "Enter Book Publisher", required: true, maxLength: 255, fieldType: 'input' as const },
                                         { name: "book_copies", label: "Number of Copies", type:"number", placeholder: "Enter number of copies", required: true, maxLength: 5, pattern: "[0-9]*", fieldType: 'input' as const },
