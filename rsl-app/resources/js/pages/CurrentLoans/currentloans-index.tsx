@@ -271,9 +271,9 @@ export default function CurrentLoansIndex( {currentLoans, books, borrowers, staf
                         <thead className="bg-foreground">
                             <tr>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Transaction ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center">Book ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center">Borrower ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center ">Staff ID</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Book</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Borrower</th>
+                                <th className="px-4 py-2 border-b text-background text-center ">Staff</th>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w-28">Actions</th>
                             </tr>
                         </thead>
