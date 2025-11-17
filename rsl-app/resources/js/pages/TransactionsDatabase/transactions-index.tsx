@@ -184,13 +184,13 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
 
                 {/*Display header of table*/}
                 <div className="p-6 overflow-x-auto">
-                    <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left rounded-b-lg">
+                    <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm   rounded-b-lg">
                         <thead className="bg-foreground">
                             <tr>
-                                <th className="px-4 py-2 border-b text-background rounded-tl-lg">Transaction ID</th>
-                                <th className="px-4 py-2 border-b text-background">Transaction Borrow Date</th>
-                                <th className="px-4 py-2 border-b text-background">Transaction Due Date</th>
-                                <th className="px-2 py-2 border-b text-background rounded-tr-lg text-center">Actions</th>
+                                <th className="px-4 py-2 border-b text-background text-center   rounded-tl-lg">Transaction ID</th>
+                                <th className="px-4 py-2 border-b text-background text-center  ">Transaction Borrow Date</th>
+                                <th className="px-4 py-2 border-b text-background text-center  ">Transaction Due Date</th>
+                                <th className="px-2 py-2 border-b text-background text-center   rounded-tr-lg">Actions</th>
                             </tr>
                         </thead>
 
@@ -199,9 +199,9 @@ export default function TransactionsDatabaseIndex( {transactions, filters}: { tr
                         {paginatedTransactions && paginatedTransactions.length > 0 ? (
                             paginatedTransactions.map((transaction, index) => (
                             <tr key={transaction.TRANSACTION_ID || `transactions-${index}`} className="hover:bg-muted">
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_BORROWDATE}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_DUEDATE}</td>
+                                        <td className="px-4 py-2 border-b text-foreground  whitespace-nowrap text-center">{transaction.TRANSACTION_ID}</td>
+                                        <td className="px-4 py-2 border-b text-foreground  whitespace-nowrap text-center">{transaction.TRANSACTION_BORROWDATE}</td>
+                                        <td className="px-4 py-2 border-b text-foreground  whitespace-nowrap text-center">{transaction.TRANSACTION_DUEDATE}</td>
                                         <td className="text-center">
                                             <div className="flex justify-center space-x-1">
                                                 <EditModalForm 
