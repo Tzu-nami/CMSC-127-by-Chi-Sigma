@@ -203,15 +203,6 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
 
     const getFilteredAndSortedBooks = () => {
         let filtered = books;
-        
-        {/*-- Search Term --*/}
-        if (searchTerm) {
-            filtered = filtered.filter(
-                (book) =>
-                book.BOOK_TITLE.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                book.BOOK_PUBLISHER.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
 
         {/*-- Active Tabs --*/}
         if (activeTab === 'Available') {
