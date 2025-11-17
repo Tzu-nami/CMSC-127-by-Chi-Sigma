@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-
+use App\Models\Books;
+use App\Models\Borrowers;
+use App\Models\Staff;
 class DashboardController extends Controller
 {
     public function index()
@@ -34,6 +36,10 @@ class DashboardController extends Controller
             ->orderBy('t.TRANSACTION_ID', 'desc') // kasi recent
             ->limit(7)
             ->get();
+        
+        $books = Books::all();
+        $borrowers = Borrowers::all();
+        $staff = Staff::all();
 
         return Inertia::render('dashboard', [
             'stats' => [
@@ -43,6 +49,9 @@ class DashboardController extends Controller
                 'totalBorrowers' => $totalBorrowers,
             ],
             'recentTransactions' => $recentTransactions,
+            'books' => $books,
+            'borrowers' => $borrowers,
+            'staff' => $staff,
         ]);
     }
 

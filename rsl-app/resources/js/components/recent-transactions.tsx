@@ -5,6 +5,7 @@ interface Transaction {
     BOOK_TITLE: string;
     BORROWER_FIRSTNAME: string;
     BORROWER_LASTNAME: string;
+    BORROWER_MIDDLEINITIAL: string;
 }
 
 interface RecentTransactionsProps {
@@ -20,7 +21,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                 <h3 className="text-lg font-semibold text-foreground">Recent Transactions</h3>
             </div>
 
-            {/* adds a horizontal scrollbar only when needed */}
+            {/* adds x scrollbar only when needed */}
             <div className="overflow-x-auto">
                 <table className="w-full table-fixed text-sm text-left">
                     <thead className="bg-foreground rounded-t-lg">
@@ -43,7 +44,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_ID}</td>
                                     <td className="px-4 py-2 border-b text-foreground truncate">{transaction.BOOK_TITLE}</td>
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">
-                                        {transaction.BORROWER_FIRSTNAME} {transaction.BORROWER_LASTNAME}
+                                        {transaction.BORROWER_LASTNAME}, {transaction.BORROWER_FIRSTNAME}
                                     </td>
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_BORROWDATE}</td>
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_DUEDATE}</td>

@@ -15,6 +15,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface Book {
+    BOOK_ID: string;
+    BOOK_TITLE: string;
+    BOOK_COPIES: number;
+}
+
+interface Borrower {
+    BORROWER_ID: string;
+    BORROWER_FIRSTNAME: string;
+    BORROWER_LASTNAME: string;
+}
+
+interface Staff {
+    STAFF_ID: string;
+    STAFF_FIRSTNAME: string;
+    STAFF_LASTNAME: string;
+}
+
 export function Calendar18() {
   return (
     <Calendar
@@ -33,6 +51,9 @@ export function Calendar18() {
 export default function Dashboard({
     stats,
     recentTransactions,
+    books,
+    borrowers,
+    staff,
 }: {
     stats: {
         totalBooks: number;
@@ -41,6 +62,9 @@ export default function Dashboard({
         totalBorrowers: number;
     };
     recentTransactions: any[];
+    books: Book[];
+    borrowers: Borrower[];
+    staff: Staff[];
 }) {
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -49,6 +73,22 @@ export default function Dashboard({
             router.get('/search', { q: query });
         }
     };
+
+    // from karl code
+    const bookOptions = books.map(book => ({
+        value: book.BOOK_ID,
+        label: `${book.BOOK_TITLE} -- ID: ${book.BOOK_ID} -- ${book.BOOK_COPIES} ${book.BOOK_COPIES === 1 ? 'copy' : 'copies'} available`,
+    }));
+
+    const borrowerOptions = borrowers.map(borrower => ({
+        value: borrower.BORROWER_ID,
+        label: `${borrower.BORROWER_LASTNAME}, ${borrower.BORROWER_FIRSTNAME} -- ID: ${borrower.BORROWER_ID}`,
+    }));
+
+    const staffOptions = staff.map(staff => ({
+        value: staff.STAFF_ID,
+        label: `${staff.STAFF_LASTNAME}, ${staff.STAFF_FIRSTNAME} -- ID: ${staff.STAFF_ID}`,
+    }));
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -78,7 +118,7 @@ export default function Dashboard({
                     <div className="bg-card rounded-lg border border-muted p-6 col-span-1">
                         <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
                         <div className="flex flex-col gap-3 justify-self-center">
-                            {/* CreateModalForm component instances. i will fix the layout later my brain is fried*/}
+                            {/* CreateModalForm component instances. layout fixed*/}
 
                             {/* quick actions subrow1: transaction*/}
                             <div className="flex items-center gap-2">
@@ -87,10 +127,15 @@ export default function Dashboard({
                                     title="Add New Current Loan"
                                     route="/currentloansdatabase"
                                     fields={[
-                                        { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                        { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                        { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                        { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5}
+                                        { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'input' as const},
+                                        { name: "transaction_borrowdate", label: "Date Borrowed", type:"date", placeholder: "", required: true, fieldType: 'input' as const },
+                                        { name: "transaction_duedate", label: "Due Date", type:"date", placeholder: "", required: true, autoCalculate: {
+                                            basedOn: "transaction_borrowdate",
+                                            addDays: 7
+                                        }},
+                                        { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: bookOptions },
+                                        { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: borrowerOptions },
+                                        { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: staffOptions }
                                     ]}
                                 />
                             </div>
