@@ -199,9 +199,7 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                         <thead className="bg-foreground">
                             <tr>
                                 <th className="px-4 py-2 border-b text-background rounded-tl-lg text-center">Staff ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center">Last Name</th>
-                                <th className="px-4 py-2 border-b text-background text-center">First Name</th>
-                                <th className="px-4 py-2 border-b text-background text-center w-30">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Staff Name</th>
                                 <th className="px-4 py-2 border-b text-background text-center">Job</th>
                                 <th className="px-4 py-2 border-b text-background rounded-tr-lg text-center w-28">Actions</th>
                             </tr>
@@ -213,9 +211,9 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                             paginatedStaffs.map((stf, index) => (
                             <tr key={stf.STAFF_ID || `staff-${index}`} className="hover:bg-muted">
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{stf.STAFF_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{stf.STAFF_LASTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{stf.STAFF_FIRSTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{stf.STAFF_MIDDLEINITIAL}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">
+                                            {stf.STAFF_LASTNAME}, {stf.STAFF_FIRSTNAME} {stf.STAFF_MIDDLEINITIAL}
+                                        </td>
                                         <td className="px-2 py-2 border-b text-foreground whitespace-nowrap text-center">{stf.STAFF_JOB}</td>
                                         
                                         <td className="border-b text-foreground text-center">
@@ -253,7 +251,7 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={7} className="py-4 text-center text-gray-500">
+                                    <td colSpan={4} className="py-4 text-center text-gray-500">
                                         {}
                                         {filters.search ? 'No Staffs found for your search.' : 'No staffs found.'}
                                     </td> 

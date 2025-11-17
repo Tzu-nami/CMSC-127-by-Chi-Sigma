@@ -267,9 +267,7 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                         <thead className="bg-foreground">
                             <tr>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Borrower ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center">Last Name</th>
-                                <th className="px-4 py-2 border-b text-background text-center">First Name</th>
-                                <th className="px-4 py-2 border-b text-background text-center w-30">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Borrower Name</th>
                                 <th className="px-4 py-2 border-b text-background text-center">Status</th>
                                 <th className="px-4 py-2 border-b text-background text-center ">Contact Number</th>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w-28">Actions</th>
@@ -282,9 +280,9 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                             paginatedBorrowers.map((borrower, index) => (
                             <tr key={borrower.BORROWER_ID || `borrower-${index}`} className="hover:bg-muted">
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_LASTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_FIRSTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_MIDDLEINITIAL}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">
+                                            {borrower.BORROWER_LASTNAME}, {borrower.BORROWER_FIRSTNAME} {borrower.BORROWER_MIDDLEINITIAL}
+                                        </td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_STATUS}</td>
                                         <td className="px-2 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_CONTACTNUMBER}</td>
                                         
@@ -325,7 +323,7 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                                 ))
                             ) : (
                                 <tr>
-                                <td colSpan={7} className="py-4 text-center text-gray-500">
+                                <td colSpan={5} className="py-4 text-center text-gray-500">
                                     {filteredBorrowers.length === 0 && (searchTerm || statusFilter)
                                     ? "No borrowers found matching your criteria."
                                     : "No borrowers in the database."}

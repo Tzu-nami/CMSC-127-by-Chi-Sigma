@@ -240,9 +240,7 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                         <thead className="bg-foreground">
                             <tr>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Author ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center">Last Name</th>
-                                <th className="px-4 py-2 border-b text-background text-center">First Name</th>
-                                <th className="px-4 py-2 border-b text-background text-center">Middle Initial</th>
+                                <th className="px-4 py-2 border-b text-background text-center">Author Name</th>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w-28">Actions</th>
                             </tr>
                         </thead>
@@ -253,9 +251,9 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                             paginatedAuthors.map((author, index) => (
                             <tr key={author.AUTHOR_ID || `author-${index}`} className="hover:bg-muted">
                                         <td className="px-4 py-2 border-b text-foreground text-center">{author.AUTHOR_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground text-center">{author.AUTHOR_LASTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground text-center">{author.AUTHOR_FIRSTNAME}</td>
-                                        <td className="px-4 py-2 border-b text-foreground text-center">{author.AUTHOR_MIDDLEINITIAL}</td>
+                                        <td className="px-4 py-2 border-b text-foreground text-center">
+                                            {author.AUTHOR_LASTNAME}, {author.AUTHOR_FIRSTNAME} {author.AUTHOR_MIDDLEINITIAL} 
+                                        </td>
                                         <td className= "border-b text-foreground text-center">
                                             <div className="flex justify-center space-x-1">
                                                 <EditModalForm
@@ -287,7 +285,7 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={5} className="py-4 text-center text-gray-500">
+                                    <td colSpan={3} className="py-4 text-center text-gray-500">
                                         {}
                                         {filters.search ? 'No authors found for your search.' : 'No authors found.'}
                                     </td> 

@@ -502,7 +502,7 @@ export default function BooksIndex({ books, filters }: { books: any[], filters:{
                     ))
                 ) : (
                     <tr>
-                        <td colSpan={7} className="py-4 text-center text-[#444034]">
+                        <td colSpan={7} className="py-4 text-center text-foreground">
                             {filteredbooks.length === 0 && (searchTerm || yearFilter || publisherFilter || authorFilter || genreFilter)
                             ? "No books found matching your criteria."
                             : "No books in the database."}      
