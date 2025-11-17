@@ -20,7 +20,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                 <h3 className="text-lg font-semibold text-foreground">Recent Transactions</h3>
             </div>
 
-            <div className="overflow-hidden">
+            <div>
                 <table className="min-w-full text-sm text-left rounded-t-lg">
                     <thead className="bg-foreground rounded-t-lg">
                         <tr>
@@ -44,7 +44,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                             transactions.map((transaction, index) => (
                                 <tr key={index} className="border-b border-muted hover:bg-muted">
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_ID}</td>
-                                    <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.BOOK_TITLE}</td>
+                                    <td className="px-4 py-2 border-b text-foreground truncate max-w-65">{transaction.BOOK_TITLE}</td>
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">
                                         {transaction.BORROWER_FIRSTNAME} {transaction.BORROWER_LASTNAME}
                                     </td>

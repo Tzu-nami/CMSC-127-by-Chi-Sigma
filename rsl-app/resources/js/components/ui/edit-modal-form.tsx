@@ -145,7 +145,7 @@ export const EditModalForm = ({
                 
               <>
               <label htmlFor={field.name} className="text-sm font-medium text-foreground"> {field.label} {field.required && <span className="text-red-500">*</span>}
-              {field.autoCalculate && (<span className="text-xs text-gray-500 ml-2">
+              {field.autoCalculate && (<span className="text-xs text-muted-foreground ml-2">
                 (Auto calculated: +{field.autoCalculate.addDays} This can be manually adjusted)
               </span>)} </label>
               <input id={field.name}

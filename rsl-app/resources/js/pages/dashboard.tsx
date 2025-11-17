@@ -24,7 +24,7 @@ export function Calendar18() {
         mode="single"
         selected={date}
         onSelect={setDate}
-        className="rounded-lg bg-card [--cell-size:--spacing(6)] md:[--cell-size:--spacing(8.5)]"
+        className="rounded-lg bg-card [--cell-size:--spacing(3)] md:[--cell-size:--spacing(7.5)]"
         buttonVariant="ghost"
     />
   )
@@ -57,7 +57,7 @@ export default function Dashboard({
             
             <div className="space-y-4 px-4 sm:px-6 lg:px-8">
                 <div className="justify-items-center pt-8 pb-3">
-                    <p className="text-3xl font-bold text-foreground">Welcome to the RS School Library Management System.</p>
+                    <p className="text-3xl font-bold text-foreground">Welcome to the MKNS School Library Management System.</p>
                 </div>
 
                 {/* -- ROW 1 : search bar -- */}
@@ -74,7 +74,7 @@ export default function Dashboard({
                 />
                 
                 {/* -- ROW 3 : transactions & calendar & quick actions (3 columns) -- */}
-                <div className="grid grid-cols-1 lg:grid-cols-6 gap-3 items-center">
+                <div className="grid lg:grid-cols-6 items-center">
                     {/* left column */}
                     <div className="bg-card rounded-lg border border-muted p-6 col-span-1">
                         <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
@@ -83,15 +83,15 @@ export default function Dashboard({
 
                             {/* quick actions subrow1: transaction*/}
                             <div className="flex items-center gap-2">
-                                <p className="text-sm text-foreground w-20">Transaction:</p>
-                                <CreateModalForm
-                                    title="Add New Transaction"
-                                    route="/transactionsdatabase"
+                                <p className="text-sm text-foreground w-20">New Loan:</p>
+                                <CreateModalForm 
+                                    title="Add New Current Loan"
+                                    route="/currentloansdatabase"
                                     fields={[
-                                        { name: "transaction_id", label: "Transaction ID", type: "text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
-                                        { name: "book_id", label: "Book ID", type: "text", placeholder: "e.g. B1Y25", required: true, maxLength: 5 },
-                                        { name: "borrower_id", label: "Borrower ID", type: "text", placeholder: "e.g. C1X24", required: true, maxLength: 5 },
-                                        { name: "staff_id", label: "Staff ID", type: "text", placeholder: "e.g. D1W23", required: true, maxLength: 5 }
+                                        { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                        { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                        { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
+                                        { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5}
                                     ]}
                                 />
                             </div>
@@ -169,7 +169,7 @@ export default function Dashboard({
 
                     {/* right column */}
                     <div className="col-span-1">
-                        <Calendar18 />
+                        <Calendar18/>
                     </div>
                 </div>
             </div>
