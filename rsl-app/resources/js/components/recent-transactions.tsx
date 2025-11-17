@@ -20,7 +20,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                 <h3 className="text-lg font-semibold text-foreground">Recent Transactions</h3>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-hidden">
                 <table className="min-w-full text-sm text-left rounded-t-lg">
                     <thead className="bg-foreground rounded-t-lg">
                         <tr>

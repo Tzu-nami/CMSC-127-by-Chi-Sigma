@@ -55,7 +55,7 @@ export default function Dashboard({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             
-            <div className="space-y-6 px-4 sm:px-6 lg:px-8">
+            <div className="space-y-4 px-4 sm:px-6 lg:px-8">
                 <div className="justify-items-center pt-8 pb-3">
                     <p className="text-3xl font-bold text-foreground">Welcome to the RS School Library Management System.</p>
                 </div>
@@ -74,11 +74,11 @@ export default function Dashboard({
                 />
                 
                 {/* -- ROW 3 : transactions & calendar & quick actions (3 columns) -- */}
-                <div className="grid grid-cols-1 lg:grid-cols-6 gap-5 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-6 gap-3 items-center">
                     {/* left column */}
                     <div className="bg-card rounded-lg border border-muted p-6 col-span-1">
                         <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-3 justify-self-center">
                             {/* CreateModalForm component instances. i will fix the layout later my brain is fried*/}
 
                             {/* quick actions subrow1: transaction*/}

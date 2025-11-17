@@ -41,7 +41,7 @@ interface CreateModalFormProps {
 }
 
 export const CreateModalForm = ({
-  title, route, fields, triggerLabel = "Add New",
+  title, route, fields, triggerLabel = "Add",
   }: CreateModalFormProps) => {
   // Check if modal is can be accessed
   const [open, setOpen] = useState(false);
