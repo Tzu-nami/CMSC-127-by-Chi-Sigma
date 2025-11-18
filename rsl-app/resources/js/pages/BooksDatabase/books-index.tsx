@@ -164,7 +164,7 @@ export default function BooksIndex({ books, authors, genres, filters }: { books:
     const tabOptions: Tab[] = [
         { name: 'All Books' },
         { name: 'Available' },
-        { name: 'On Loan' },
+        { name: 'Not Available' },
     ];
 
     {/*-- Search --*/}  
@@ -219,10 +219,11 @@ export default function BooksIndex({ books, authors, genres, filters }: { books:
         {/*-- Active Tabs --*/}
         if (activeTab === 'Available') {
             filtered = filtered.filter((book) => (book.BOOK_COPIES - (book.current_loans_count|| 0)) > 0);
-        } else if (activeTab === 'On Loan'){
+        } else if (activeTab === 'Not Available'){
             filtered = filtered.filter((book) => {
                 const loaned = book.current_loans_count || 0;
-                return loaned > 0;
+                const available = book.BOOK_COPIES || 0;
+                return loaned > 0 && available - loaned <= 0; // book copies are all loaned out
         } ); 
         }
 
