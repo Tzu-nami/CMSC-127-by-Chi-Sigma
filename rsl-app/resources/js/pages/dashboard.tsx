@@ -151,7 +151,8 @@ export default function Dashboard({
                                 <p className="text-sm text-foreground w-20">New Loan:</p>
                                 <CreateModalForm 
                                     title="Add New Current Loan"
-                                    route="/currentloansdatabase"
+                                    route="/currentloans"
+                                    triggerLabel="Add"
                                     fields={[
                                         { name: "transaction_id", label: "Transaction ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'input' as const},
                                         { name: "transaction_borrowdate", label: "Date Borrowed", type:"date", placeholder: "", required: true, fieldType: 'input' as const },
@@ -163,7 +164,7 @@ export default function Dashboard({
                                         { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: borrowerOptions },
                                         { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: staffOptions }
                                     ]}
-                                />
+                                    />
                             </div>
 
                             {/* quick actions subrow 2: book */}

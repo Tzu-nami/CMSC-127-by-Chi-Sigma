@@ -47,6 +47,7 @@ class CurrentLoansController extends Controller
         $validated = $request->validate([
             'transaction_id' => 'required|max:5|string|unique:current_loan,TRANSACTION_ID',
             'transaction_borrowdate' => 'required|date_format:Y-m-d',
+            'transaction_duedate' => 'required|date_format:Y-m-d|after_or_equal:transaction_borrowdate',
             'book_id'=> 'required|max:5|string',
             'borrower_id' => 'required|max:5|string',
             'staff_id' => 'required|max:5|string',
@@ -76,7 +77,8 @@ class CurrentLoansController extends Controller
     public function update(Request $request, $id) {
         // Check if all inputs are valid
         $validated = $request->validate([
-            'transaction_borrowdate' => 'required|date_format:Y-m-d', 
+            'transaction_borrowdate' => 'required|date_format:Y-m-d',
+            'transaction_duedate' => 'required|date_format:Y-m-d|after_or_equal:transaction_borrowdate',
             'book_id'=> 'required|max:5|string',
             'borrower_id' => 'required|max:5|string',
             'staff_id' => 'required|max:5|string',
