@@ -43,7 +43,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                                 <tr key={index} className="border-b border-muted hover:bg-muted">
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_ID}</td>
                                     <td className="px-4 py-2 border-b text-foreground truncate">{transaction.BOOK_TITLE}</td>
-                                    <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">
+                                    <td className="px-4 py-2 border-b text-foreground truncate">
                                         {transaction.BORROWER_LASTNAME}, {transaction.BORROWER_FIRSTNAME}
                                     </td>
                                     <td className="px-4 py-2 border-b text-foreground whitespace-nowrap">{transaction.TRANSACTION_BORROWDATE}</td>
