@@ -37,6 +37,7 @@ interface Author {
     AUTHOR_ID: string;
     AUTHOR_FIRSTNAME: string;
     AUTHOR_LASTNAME: string;
+    AUTHOR_MIDDLEINITIAL: string;
 }
 
 interface Genre {

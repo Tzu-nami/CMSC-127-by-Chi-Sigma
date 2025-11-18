@@ -164,7 +164,8 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                 borrower.BORROWER_CONTACTNUMBER.toLowerCase().includes(search)
             );
         });
-
+        
+        // apply status filter if selected
         if (statusFilter) {
             filteredBorrowers = filteredBorrowers.filter(
                 (borrower) => borrower.BORROWER_STATUS === statusFilter

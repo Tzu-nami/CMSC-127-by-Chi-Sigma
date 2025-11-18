@@ -222,8 +222,7 @@ export default function BooksIndex({ books, authors, genres, filters }: { books:
         } else if (activeTab === 'On Loan'){
             filtered = filtered.filter((book) => {
                 const loaned = book.current_loans_count || 0;
-                const available = (book.BOOK_COPIES || 0) - loaned;
-                return loaned > 0 && available === 0;
+                return loaned > 0;
         } ); 
         }
 
