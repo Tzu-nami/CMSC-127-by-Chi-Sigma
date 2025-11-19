@@ -53,12 +53,6 @@ const transactionColumns = [
     { key: 'TRANSACTION_DUEDATE', label: 'Due Date' },
 ];
 
-const currentloansColumns = [
-    { key: 'TRANSACTION_ID', label: 'Transaction ID' },
-    { key: 'BOOK_ID', label: 'Book ID' },
-    { key: 'BORROWER_ID', label: 'Borrower ID' },
-    { key: 'STAFF_ID', label: 'Staff ID' }
-];
 interface SearchResultsProps {
     query: string;
     books: any[];
@@ -70,7 +64,7 @@ interface SearchResultsProps {
     genres: any[];
 }
 
-export default function SearchResults({ query, books, authors, staff, borrowers, transactions, currentloans, genres }: SearchResultsProps) {
+export default function SearchResults({ query, books, authors, staff, borrowers, transactions, genres }: SearchResultsProps) {
     const getInitialTab = () => { // for rendering initial tab based on results
         // changed syntax to (prop || []) bcs white space page if prop is null (query not found)
         if ((books || []).length > 0) return 'books';
@@ -78,7 +72,6 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
         if ((staff || []).length > 0) return 'staff';
         if ((borrowers || []).length > 0) return 'borrowers';
         if ((transactions || []).length > 0) return 'transactions';
-        if ((currentloans || []).length > 0) return 'currentloans';
         if ((genres || []).length > 0) return 'genres';
         return 'books'; // fallback
     };

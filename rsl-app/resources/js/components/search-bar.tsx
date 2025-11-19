@@ -26,10 +26,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-            <button
-                type="submit"
-                className="px-4 py-2 bg-[#8C9657] text-white rounded-md hover:bg-[#444034] transition-colors"
-            >
+            <button type="submit" className="px-4 py-2 bg-[#8C9657] text-white rounded-md hover:bg-[#444034] transition-colors">
                 Search
             </button>
         </form>
