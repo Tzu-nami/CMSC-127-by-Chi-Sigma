@@ -71,7 +71,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPe
             <div className="text-sm text-[#6b7280]">
                 Showing {startItem} to {endItem} of {totalItems} results
             </div>
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 items-center">
                 <Button 
                     variant="outline"
                     size="sm"
