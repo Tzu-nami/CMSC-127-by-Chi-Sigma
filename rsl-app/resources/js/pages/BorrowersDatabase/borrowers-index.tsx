@@ -1,4 +1,4 @@
-import React,{ use, useEffect, useState } from 'react';
+import React,{ useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
@@ -84,7 +84,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPe
             <div className="text-sm text-[#6b7280]">
                 Showing {startItem} to {endItem} of {totalItems} results
             </div>
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 items-center">
                 <Button
                     variant="outline"
                     size="sm"
