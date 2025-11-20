@@ -13,8 +13,14 @@ class Genres extends Model
     protected $table = 'genre_data';
 
     protected $primaryKey = 'GENRE_ID';
+    //protected $keyType = 'int';
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'GENRE_ID',
+        'GENRE_NAME',
+    ];
 
     public function books(): BelongsToMany
     {

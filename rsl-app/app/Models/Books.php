@@ -15,6 +15,7 @@ class Books extends Model
     protected $table = 'books_data';
     protected $primaryKey = 'BOOK_ID';
     protected $keyType = 'string';
+    public $incrementing = false;
     public $timestamps = false; // REALLY REALLY IMPORTANT TO ADD THIS LINE
 
     //Choose which ones to display
@@ -34,8 +35,8 @@ class Books extends Model
         return $this->belongsToMany(
             Authors::class, 
             'book_authors',
-            'book_id',   
-            'author_id',
+            'BOOK_ID',   
+            'AUTHOR_ID',
             'BOOK_ID',   
             'AUTHOR_ID' );
     }
@@ -46,8 +47,8 @@ class Books extends Model
         return $this->belongsToMany(
             Genres::class, 
             'book_genre', 
-            'book_id',
-            'genre_id',  
+            'BOOK_ID',
+            'GENRE_ID',  
             'BOOK_ID',
             'GENRE_ID'
         );

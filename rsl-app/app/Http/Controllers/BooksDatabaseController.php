@@ -66,17 +66,22 @@ class BooksDatabaseController extends Controller
             'book_title'=> 'required|max:255|string',
             'book_year' => 'required|digits:4|min:1901|integer|max:' . date('Y'),
             'book_publisher' => 'required|max:255|string',
-            'book_copies' => 'required|integer|min:0'
+            'book_copies' => 'required|integer|min:0',
+            'author_id' => 'required|exists:author_data,AUTHOR_ID',
+            'genre_id' => 'required|exists:genre_data,GENRE_ID',
         ]);
 
         // Create new book
-        Books::create([
+        $book = Books::create([
             'BOOK_ID' => $validated['book_id'],
             'BOOK_TITLE' => $validated['book_title'],
             'BOOK_YEAR' => $validated['book_year'],
             'BOOK_PUBLISHER' => $validated['book_publisher'],
             'BOOK_COPIES' => $validated['book_copies'],
         ]);
+
+        $book->authors()->attach($validated['author_id']);
+        $book->genres()->attach($validated['genre_id']);
 
         return redirect()->route('booksdatabase.index')->with('success', 'Book added successfully!');
 
@@ -88,7 +93,9 @@ class BooksDatabaseController extends Controller
             'book_title'=> 'required|max:255|string',
             'book_year' => 'required|digits:4|min:1901|integer|max:' . date('Y'),
             'book_publisher' => 'required|max:255|string',
-            'book_copies' => 'required|integer|min:0'
+            'book_copies' => 'required|integer|min:0',
+            'author_id' => 'required|exists:author_data,AUTHOR_ID',
+            'genre_id' => 'required|exists:genre_data,GENRE_ID',
         ]);
 
         // Find the book by ID and update its details
@@ -100,11 +107,18 @@ class BooksDatabaseController extends Controller
             'BOOK_COPIES' => $validated['book_copies'],
         ]);
 
+        $book->authors()->sync([$validated['author_id']]);
+        $book->genres()->sync([$validated['genre_id']]);
+
         return redirect()->route('booksdatabase.index')->with('success', 'Book updated successfully!');
     }
     public function destroy($id) {
         // Find the book by ID and delete it
         $book = Books::where('BOOK_ID', $id)->firstOrFail();
+
+        $book->authors()->detach();
+        $book->genres()->detach();
+
         $book->delete();
 
         return redirect()->route('booksdatabase.index')->with('success', 'Book deleted successfully!');

@@ -299,9 +299,9 @@ export default function BooksIndex({ books, authors, genres, filters }: { books:
         label: `${author.AUTHOR_LASTNAME}, ${author.AUTHOR_FIRSTNAME} ${author.AUTHOR_MIDDLEINITIAL || ''} -- ID: ${author.AUTHOR_ID}`,
     }));
 
-    const genreOptions = uniqueGenres.map(genreName => ({
-        value: genreName,
-        label: genreName,
+    const genreOptions = genres.map(genre => ({
+        value: genre.GENRE_ID,
+        label: genre.GENRE_NAME,
     }));
 
     {/*-- pagination --*/}
