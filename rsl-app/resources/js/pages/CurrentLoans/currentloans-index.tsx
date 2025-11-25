@@ -270,7 +270,7 @@ export default function CurrentLoansIndex( {currentLoans, books, borrowers, staf
                         <thead className="bg-foreground">
                             <tr>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tl-lg">Transaction ID</th>
-                                <th className="px-4 py-2 border-b text-background text-center">Book</th>
+                                <th className="px-4 py-2 border-b text-background ">Book</th>
                                 <th className="px-4 py-2 border-b text-background text-center">Borrower</th>
                                 <th className="px-4 py-2 border-b text-background text-center ">Staff</th>
                                 <th className="px-4 py-2 border-b text-background text-center rounded-tr-lg w-28">Actions</th>
@@ -285,7 +285,7 @@ export default function CurrentLoansIndex( {currentLoans, books, borrowers, staf
                             // I changed AUTHOR_ID to TRANSACTION_ID as the unique key
                             <tr key={cLoans.TRANSACTION_ID || `currentLoans-${index}`} className="hover:bg-muted">
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{cLoans.TRANSACTION_ID}</td>
-                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{getBook(cLoans.BOOK_ID)}</td>
+                                        <td className="px-4 py-2 border-b text-foreground whitespace-nowrap truncate max-w-[30ch]" title = {getBook(cLoans.BOOK_ID)}>{getBook(cLoans.BOOK_ID)}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{getBorrower(cLoans.BORROWER_ID)}</td>
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{getStaff(cLoans.STAFF_ID)}</td>
                                         <td className= "border-b text-foreground text-center">
