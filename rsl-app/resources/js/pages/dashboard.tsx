@@ -173,13 +173,15 @@ export default function Dashboard({
                                 <CreateModalForm 
                                     title="Add New Book"
                                     route="/booksdatabase"
+                                    newAuthor={true}
+                                    newGenre={true}
+                                    triggerLabel="Add"
                                     fields={[
                                         { name: "book_id", label: "Book ID", type:"text", placeholder: "e.g. A1Z26" , required: true, maxLength: 5, fieldType: 'input' as const },
                                         { name: "book_title", label: "Book Title", type:"text", placeholder: "Enter Book Title", required: true, maxLength: 255, fieldType: 'input' as const },
                                         { 
                                             name: "author_id",
                                             label: "Author", 
-                                            type:"text", 
                                             placeholder: "Select an author", 
                                             required: true,
                                             fieldType: 'select' as const, 
@@ -188,7 +190,6 @@ export default function Dashboard({
                                         { 
                                             name: "genre_id",
                                             label: "Genre", 
-                                            type:"text", 
                                             placeholder: "Select a genre", 
                                             required: true, 
                                             fieldType: 'select' as const, 

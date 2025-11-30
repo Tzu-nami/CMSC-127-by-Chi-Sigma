@@ -21,7 +21,7 @@ class BooksDatabaseController extends Controller
         // Joins for Authors and Genres
         $query->with([
             'authors:AUTHOR_ID,AUTHOR_FIRSTNAME,AUTHOR_MIDDLEINITIAL,AUTHOR_LASTNAME',
-            'genres:GENRE_ID,GENRE_NAME',
+            'genres:GENRE_ID,GENRE_NAME,GENRE_LOCATION',
         ]);
 
         $query->withCount('currentLoans');
@@ -43,7 +43,8 @@ class BooksDatabaseController extends Controller
                     
                     // CORRECTED: Use orWhereHas to search in related 'genres' table
                     ->orWhereHas('genres', function ($genreQuery) use ($search) {
-                        $genreQuery->where('GENRE_NAME', 'like', "%{$search}%");
+                        $genreQuery->where('GENRE_NAME', 'like', "%{$search}%")
+                                    ->orWhere('GENRE_LOCATION', 'like', "%{$search}%");
                     });
             });
         });
@@ -67,9 +68,58 @@ class BooksDatabaseController extends Controller
             'book_year' => 'required|digits:4|min:1901|integer|max:' . date('Y'),
             'book_publisher' => 'required|max:255|string',
             'book_copies' => 'required|integer|min:0',
-            'author_id' => 'required|exists:author_data,AUTHOR_ID',
-            'genre_id' => 'required|exists:genre_data,GENRE_ID',
+
+            'create_new_author' => 'required|string',
+            'create_new_genre' =>  'required|string',
         ]);
+
+        $createNewAuthor = $request->create_new_author === 'true';
+        $createNewGenre = $request->create_new_genre === 'true';
+
+        return DB::transaction(function () use ($request, $createNewAuthor, $createNewGenre, $validated) {
+            if ($createNewAuthor) {
+                $request->validate([
+                    'new_author_id'  => 'required|integer|max:999999|unique:author_data,AUTHOR_ID',
+                    'new_author_firstname' => 'required|string|max:255',
+                    'new_author_lastname' => 'required|string|max:255',
+                    'new_author_middleinitial' => 'nullable|string|max:2',
+                ]);
+
+                Authors::create([
+                    'AUTHOR_ID' => $request->new_author_id,
+                    'AUTHOR_FIRSTNAME' => $request->new_author_firstname,
+                    'AUTHOR_LASTNAME' => $request->new_author_lastname,
+                    'AUTHOR_MIDDLEINITIAL' => $request->new_author_middleinitial,
+                ]);
+
+                $authorId = $request->new_author_id;
+            } else {
+                $request->validate([
+                    'author_id' => 'required|exists:author_data,AUTHOR_ID',
+                ]);
+                $authorId = $request->author_id;
+            }
+
+            if ($createNewGenre) {
+                $request->validate([
+                    'new_genre_id' => 'required|integer|min:7052000|max:9999999|unique:genre_data,GENRE_ID',
+                    'new_genre_name' => 'required|string|max:255',
+                    'new_genre_location' => 'nullable|string|max:255',
+                ]);
+
+                Genres::create([
+                    'GENRE_ID' => $request->new_genre_id,
+                    'GENRE_NAME' => $request->new_genre_name,
+                    'GENRE_LOCATION' => $request->new_genre_location,
+                ]);
+
+                $genreId = $request->new_genre_id;
+            } else {
+                $request->validate([
+                    'genre_id' => 'required|exists:genre_data,GENRE_ID',
+                ]);
+                $genreId = $request->genre_id;
+        }
 
         // Create new book
         $book = Books::create([
@@ -80,11 +130,11 @@ class BooksDatabaseController extends Controller
             'BOOK_COPIES' => $validated['book_copies'],
         ]);
 
-        $book->authors()->attach($validated['author_id']);
-        $book->genres()->attach($validated['genre_id']);
+        $book->authors()->attach($authorId);
+        $book->genres()->attach($genreId);
 
         return redirect()->route('booksdatabase.index')->with('success', 'Book added successfully!');
-
+        });
     }
 
     public function update(Request $request, $id) {
