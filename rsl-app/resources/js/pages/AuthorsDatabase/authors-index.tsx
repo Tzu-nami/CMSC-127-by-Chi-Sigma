@@ -153,7 +153,7 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
         const filteredAuthors = authors.filter((author) => {
             const search = searchTerm.toLowerCase();
             return (
-                author.AUTHOR_ID.toLowerCase().includes(search) ||
+                String(author.AUTHOR_ID).toLowerCase().includes(search) ||
                 author.AUTHOR_LASTNAME.toLowerCase().includes(search) ||
                 author.AUTHOR_FIRSTNAME.toLowerCase().includes(search) 
             );
