@@ -62,12 +62,15 @@ interface SearchResultsProps {
     transactions: any[];
     currentloans: any[];
     genres: any[];
+    allBooks: any[];
+    booksByAuthor: any[];
 }
 
-export default function SearchResults({ query, books, authors, staff, borrowers, transactions, genres }: SearchResultsProps) {
+export default function SearchResults({ query, books, authors, staff, borrowers, transactions, genres, allBooks, booksByAuthor }: SearchResultsProps) {
     const getInitialTab = () => { // for rendering initial tab based on results
         // changed syntax to (prop || []) bcs white space page if prop is null (query not found)
-        if ((books || []).length > 0) return 'books';
+        if ((allBooks || []).length > 0) return 'allBooks';
+        if ((booksByAuthor || []).length > 0) return 'booksByAuthor';
         if ((authors || []).length > 0) return 'authors';
         if ((staff || []).length > 0) return 'staff';
         if ((borrowers || []).length > 0) return 'borrowers';
@@ -79,7 +82,7 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
     const [activeTab, setActiveTab] = useState(getInitialTab); // set initial tab based on results. goes to where the result is found
     // function to render table
     const renderTable = (data: any[], columns: { key: string; label: string }[]) => {
-        if ((data || []).length === 0) {
+        if (data.length === 0) {
             return <p className="text-center text-foreground py-8">No results found</p>;
         }
         // render table
@@ -116,11 +119,14 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
                 <div className="bg-card rounded-lg p-6">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <TabsList className="mb-6">
-                            <TabsTrigger value="books" className="flex-1">
-                                Books ({books.length})
+                            <TabsTrigger value="allBooks" className="flex-1">
+                                All Books ({allBooks?.length || 0})
                             </TabsTrigger>
                             <TabsTrigger value="authors" className="flex-1">
                                 Authors ({authors.length})
+                            </TabsTrigger>
+                            <TabsTrigger value="booksByAuthor" className="flex-1">
+                                Books by Author ({booksByAuthor?.length || 0})
                             </TabsTrigger>
                             <TabsTrigger value="genres" className="flex-1">
                                 Genres ({genres.length})
@@ -135,9 +141,20 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
                                 Transactions ({transactions.length})
                             </TabsTrigger>
                         </TabsList>
-                        {/* the tables for each tab */}
-                        <TabsContent value="books" className="space-y-4">
-                            {renderTable(books, bookColumns)}
+
+                        {/* the tables for each tab. update: added books by author (query/the author) */}
+                        <TabsContent value="allBooks" className="mt-6 space-y-4">
+                            <div className="mb-4 text-sm text-muted-foreground">
+                                All books matching "{query}".
+                            </div>
+                            {renderTable(allBooks, bookColumns)}
+                        </TabsContent>
+
+                        <TabsContent value="booksByAuthor" className="mt-6 space-y-4">
+                            <div className="mb-4 text-sm text-muted-foreground">
+                                All Books written by author "{query}".
+                            </div>
+                            {renderTable(booksByAuthor, bookColumns)}
                         </TabsContent>
 
                         <TabsContent value="authors" className="space-y-4">

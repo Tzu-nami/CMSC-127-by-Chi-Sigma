@@ -72,6 +72,11 @@ class DashboardController extends Controller
                 'books' => [],
                 'borrowers' => [],
                 'transactions' => [],
+                'authors' => [],
+                'staff' => [],
+                'genres' => [],
+                'allBooks' => [],
+                'booksByAuthor' => [],
             ]);
         }
 
@@ -91,6 +96,31 @@ class DashboardController extends Controller
             ->orWhere('AUTHOR_MIDDLEINITIAL', 'LIKE', '%' . $query . '%')
             ->orWhere('AUTHOR_ID', 'LIKE', '%' . $query . '%')
             ->get();
+
+        $booksByAuthor = collect();
+        // get books written by the found authors
+        if ($authors->count() > 0) {
+            $authorIDs = $authors->pluck('AUTHOR_ID')->toArray();
+            // find the matching book ids in the book_authors 
+            $bookIDs = DB::table('book_authors')
+                ->whereIn('AUTHOR_ID', $authorIDs)
+                ->pluck('BOOK_ID')
+                ->toArray();
+
+            if(!empty($bookIDs)) {
+                // fetch the book details using those IDs
+                $booksByAuthor = DB::table('books_data')
+                    ->whereIn('BOOK_ID', $bookIDs)
+                    ->get();
+            }
+        }
+
+        $allBooks = collect($books)
+            ->merge($booksByAuthor)
+            ->unique('BOOK_ID')
+            ->values();
+
+        $allBooks = collect($books)->merge($booksByAuthor)->unique('BOOK_ID')->values();
 
         // search in staff table
         $staff = DB::table('staff_data')
@@ -128,6 +158,8 @@ class DashboardController extends Controller
             'query' => $query,
             'books' => $books,
             'authors' => $authors,
+            'allBooks' => $allBooks,
+            'booksByAuthor' => $booksByAuthor,
             'staff' => $staff,
             'borrowers' => $borrowers,
             'transactions' => $transactions,
