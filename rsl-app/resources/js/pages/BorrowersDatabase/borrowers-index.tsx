@@ -1,14 +1,7 @@
-import React,{ useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Borrowers Database',
-        href: '/borrowersdatabase',
-    },
-];
 import {
     Search as SearchIcon,
     ChevronLeft as ChevronLeftIcon,
@@ -18,6 +11,21 @@ import {
 import { CreateModalForm } from '@/components/create-modal-form';
 import { EditModalForm } from '@/components/ui/edit-modal-form';
 import { DeleteForm } from '@/components/ui/delete-form';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Borrowers Database',
+        href: '/borrowersdatabase',
+    },
+];
+
+// status options
+const STATUS_OPTIONS = [
+    { value: "Good", label: "Good" },
+    { value: "LOA", label: "LOA" },
+    { value: "Book overdue", label: "Book overdue" },
+    { value: "Did not pay fines", label: "Did not pay fines" },
+];
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'default' | 'outline' | 'ghost';
@@ -120,7 +128,7 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
 
     {/*-- Pagination --*/}
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10); // Fixed items per page
+    const [itemsPerPage, setItemsPerPage] = useState(10); 
 
     useEffect(() =>{
             const timerId = setTimeout(() => {
@@ -146,15 +154,10 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
         }, [filters.search]);
 
     useEffect(() => {
-            setCurrentPage(1); // Reset to first page on filter change
+            setCurrentPage(1); 
         }, [searchTerm, statusFilter, sortBy]);
     
-        // get unique statuses for filter dropdown
-        const uniqueStatuses = Array.from(
-            new Set(borrowers.map(b => b.BORROWER_STATUS))
-        ).sort();
-
-        // Filter borrowers based on search term
+        // filter borrowers based on search term
         let filteredBorrowers = borrowers.filter((borrower) => {
             const search = searchTerm.toLowerCase();
             return (
@@ -222,13 +225,13 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                             />
                         </div>
                         
-                        {/* status filter */}
+                        {/* -- updateed status filter -- */}
                         <div className="w-full md:w-48">
                             <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                                 <option value="">All Statuses</option>
-                                {uniqueStatuses.map((status) => (
-                                    <option key={status} value={status}>
-                                        {status}
+                                {STATUS_OPTIONS.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
                                     </option>
                                 ))}
                             </Select>
@@ -244,7 +247,7 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                             </Select>
                         </div>
 
-                        {/* create */}
+                        {/* -- create form w dropdown na status -- */}
                         <div className="flex-shrink-0">
                             <CreateModalForm 
                                 title="Add New Borrower"
@@ -254,7 +257,16 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                                     { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
                                     { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
                                     { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
-                                    { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status", required: true, maxLength: 100 },
+                                    
+                                    { 
+                                        name: "borrower_status", 
+                                        label: "Status", 
+                                        type: "text",
+                                        fieldType: "select" as const, 
+                                        options: STATUS_OPTIONS, 
+                                        required: true 
+                                    },
+                                    
                                     { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number", required: true, maxLength: 15, pattern: "[0-9+-]*"},
                                 ]}
                             />
@@ -275,7 +287,7 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                             </tr>
                         </thead>
 
-                    {/*Display data of table using map function in the array, index for future null values*/}
+                    {/*Display data of table*/}
                         <tbody> 
                         {paginatedBorrowers && paginatedBorrowers.length > 0 ? (
                             paginatedBorrowers.map((borrower, index) => (
@@ -284,11 +296,13 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">
                                             {borrower.BORROWER_LASTNAME}, {borrower.BORROWER_FIRSTNAME} {borrower.BORROWER_MIDDLEINITIAL}
                                         </td>
+                                        
                                         <td className="px-4 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_STATUS}</td>
                                         <td className="px-2 py-2 border-b text-foreground whitespace-nowrap text-center">{borrower.BORROWER_CONTACTNUMBER}</td>
                                         
                                         <td className="border-b text-foreground text-center">
                                             <div className="flex justify-center space-x-1">
+                                            {/* yes updated */}
                                             <EditModalForm 
                                             title="Edit Borrower"
                                             triggerVariant="outline"
@@ -306,10 +320,19 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                                                 { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
                                                 { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
                                                 { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
-                                                { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status", required: true, maxLength: 100 },
+                                                
+                                                // dropdown nalang jusko poh
+                                                { 
+                                                    name: "borrower_status", 
+                                                    label: "Status", 
+                                                    type: "text", 
+                                                    fieldType: "select" as const, 
+                                                    options: STATUS_OPTIONS, 
+                                                    required: true 
+                                                },
+                                                
                                                 { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number", required: true, maxLength: 15, pattern: "[0-9+-]*"},
                                             ]} />
-                                        
                                         
                                             <DeleteForm
                                             route={`/borrowersdatabase/${borrower.BORROWER_ID}`}
@@ -350,4 +373,3 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
         </AppLayout>
     );
 }
-
