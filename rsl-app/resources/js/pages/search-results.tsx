@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -11,26 +11,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// column display for each table
+// --- COLUMN DEFINITIONS ---
 const bookColumns = [
     { key: 'BOOK_ID', label: 'Book ID' },
     { key: 'BOOK_TITLE', label: 'Book Title' },
     { key: 'BOOK_YEAR', label: 'Year' },
     { key: 'BOOK_PUBLISHER', label: 'Publisher' },
     { key: 'BOOK_COPIES', label: 'Copies' }
-];
-
-const authorColumns = [
-    { key: 'AUTHOR_ID', label: 'Author ID' },
-    { key: 'AUTHOR_LASTNAME', label: 'Last Name' },
-    { key: 'AUTHOR_FIRSTNAME', label: 'First Name' },
-    { key: 'AUTHOR_MIDDLEINITIAL', label: 'Middle Initial' }
-];
-
-const genreColumns = [
-    { key: 'GENRE_ID', label: 'Genre ID' },
-    { key: 'GENRE_NAME', label: 'Genre Name' },
-    { key: 'GENRE_LOCATION', label: 'Location' }
 ];
 
 const staffColumns = [
@@ -55,49 +42,65 @@ const transactionColumns = [
 
 interface SearchResultsProps {
     query: string;
-    books: any[];
     authors: any[];
     staff: any[];
     borrowers: any[];
     transactions: any[];
-    currentloans: any[];
+    currentloans: any[]; 
     genres: any[];
     allBooks: any[];
     booksByAuthor: any[];
+    booksByGenre: any[];
 }
 
-export default function SearchResults({ query, books, authors, staff, borrowers, transactions, genres, booksByAuthor }: SearchResultsProps) {
-    const getInitialTab = () => { // for rendering initial tab based on results
-        // changed syntax to (prop || []) bcs white space page if prop is null (query not found)
-        if ((books || []).length > 0) return 'books';
-        if ((authors || []).length > 0) return 'authors';
-        if ((booksByAuthor || []).length > 0) return 'booksByAuthor';
-        if ((staff || []).length > 0) return 'staff';
-        if ((borrowers || []).length > 0) return 'borrowers';
-        if ((transactions || []).length > 0) return 'transactions';
-        if ((genres || []).length > 0) return 'genres';
-        return 'books'; // fallback
+export default function SearchResults({query = '', allBooks = [], authors = [], staff = [], borrowers = [], transactions = [], genres = [], booksByAuthor = [], booksByGenre = [] }: SearchResultsProps) {
+    // NAGWWHITE SCREEN KASI bwiset
+    const AllBooks = allBooks || [];
+    const Authors = authors || [];
+    const Staff = staff || [];
+    const Borrowers = borrowers || [];
+    const Transactions = transactions || [];
+    const Genres = genres || [];
+    const BooksByAuthor = booksByAuthor || [];
+    const BooksByGenre = booksByGenre || [];
+
+    // determine initial tab based on available data
+    const getInitialTab = () => { 
+        // arranged by priority sino una niya bubuksan
+        if (Authors.length > 0) return 'authors';
+        if (Genres.length > 0) return 'genres';
+        if (AllBooks.length > 0) return 'allBooks';
+        if (Staff.length > 0) return 'staff';
+        if (Borrowers.length > 0) return 'borrowers';
+        if (Transactions.length > 0) return 'transactions';
+        return 'allBooks'; // fallback
     };
 
-    const [activeTab, setActiveTab] = useState(getInitialTab); // set initial tab based on results. goes to where the result is found
+    const [activeTab, setActiveTab] = useState(getInitialTab); // use function to set initial state
+
+    // useEffect to update active tab if data changes
+    useEffect(() => {setActiveTab(getInitialTab());}, [AllBooks, Staff, Borrowers, Transactions, Authors, Genres, query]);
+    
     // function to render table
     const renderTable = (data: any[], columns: { key: string; label: string }[]) => {
-        if (data.length === 0) {
-            return <p className="text-center text-foreground py-8">No results found</p>;
+        // double check data exists
+        const realData = data || [];
+
+        if (realData.length === 0) {
+            return <p className="text-center text-muted-foreground py-4 italic">No results found</p>;
         }
-        // render table
         return (
-            <div className="overflow-x-auto rounded-t-lg">
-                <table className="min-w-full border border-gray-200 divide-y divide-gray-200 text-sm text-left">
+            <div className="overflow-x-auto rounded-md border border-muted mt-2">
+                <table className="min-w-full divide-y divide-border text-sm text-left">
                     <thead className="bg-foreground text-background rounded-t-lg">
                         <tr>
                             {columns.map(col => <th className="px-6 py-1 font-medium" key={col.key}>{col.label}</th>)}
                         </tr>
                     </thead>
-                    <tbody>
-                        {data.map((row, index) => (
-                        <tr key={index}>
-                            {columns.map(col => <td className="px-6 py-1 whitespace-nowrap text-foreground" key={col.key}>{row[col.key]}</td>)}
+                    <tbody className="divide-y divide-border bg-card">
+                        {realData.map((row, index) => (
+                        <tr key={index} className="hover:bg-muted/50 transition-colors">
+                            {columns.map(col => <td className="px-6 py-3 whitespace-nowrap text-foreground" key={col.key}>{row[col.key]}</td>)}
                         </tr>
                         ))}
                     </tbody>
@@ -105,75 +108,119 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
             </div>
         );
     };
-    // main render
+
+    // display
+    const renderContent = () => {
+        // handling collision of scenarios: author found and borrower or staff found
+        return (
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full rounded-sm">
+                <div className="overflow-x-auto pb-2">
+                    <TabsList className="inline-flex h-auto w-full justify-start gap-2 bg-transparent p-0">
+                        {/* scenario 1: standard triggers */}
+                        <TabsTrigger value="allBooks" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
+                            All Books ({AllBooks.length})
+                        </TabsTrigger>
+                        {/* scenario 2: author found triggers */}
+                        {Authors.length > 0 && (
+                            <TabsTrigger value="authors" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
+                                Author ({Authors.length})
+                            </TabsTrigger>
+                        )}
+                        {/* scenario 3: genre found triggers */}
+                        {Genres.length > 0 && (
+                            <TabsTrigger value="genres" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
+                                Genre ({Genres.length})
+                            </TabsTrigger>
+                        )}
+                        <TabsTrigger value="staff" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
+                            Staff ({Staff.length})
+                        </TabsTrigger>
+                        <TabsTrigger value="borrowers" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
+                            Borrowers ({Borrowers.length})
+                        </TabsTrigger>
+                        <TabsTrigger value="transactions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
+                            Transactions ({Transactions.length})
+                        </TabsTrigger>                     
+                    </TabsList>
+                </div>
+
+                {/* --- CONTENT AREAAAAA RAGHHHHHHHH --- */}
+
+                {/* scenario 1 content: author found, print books too */}
+                <TabsContent value="authors" className="mt-6 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <div className="bg-muted/10 rounded-lg p-6 shadow-sm">
+                        <h2 className="text-2xl font-bold text-accent mb-1">Author Found</h2>
+                        <div className="bg-card rounded-md border p-4 space-y-2">
+                            {Authors.map((author) => (
+                                <div key={author.AUTHOR_ID}>
+                                    <h3 className="text-xl font-bold">{author.AUTHOR_FIRSTNAME} {author.AUTHOR_LASTNAME}</h3>
+                                    <p className="text-sm text-muted-foreground">Author ID: {author.AUTHOR_ID}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-semibold mb-3 border-b pb-2">
+                            Books by {Authors[0]?.AUTHOR_FIRSTNAME} {Authors[0]?.AUTHOR_LASTNAME}
+                        </h3>
+                        {renderTable(BooksByAuthor, bookColumns)}
+                    </div>
+                </TabsContent>
+
+                {/* scenario 2 content: genre found, print books under that genre */}
+                <TabsContent value="genres" className="mt-6 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <div className="bg-muted/10 shadow-sm rounded-lg p-6">
+                        <h2 className="text-2xl font-bold text-accent mb-1">Genre Found</h2>
+                        <div className="bg-card rounded-md border p-4 space-y-2">
+                            {Genres.map((genre) => (
+                                <div key={genre.GENRE_ID}>
+                                    <h3 className="text-xl font-bold capitalize">{genre.GENRE_NAME}</h3>
+                                    <p className="text-sm text-muted-foreground">Location: {genre.GENRE_LOCATION}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-semibold mb-3 border-b pb-2">
+                            Books in {Genres[0]?.GENRE_NAME}
+                        </h3>
+                        {renderTable(BooksByGenre, bookColumns)}
+                    </div>
+                </TabsContent>
+
+                {/* standard content */}
+                <TabsContent value="allBooks" className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <h2 className="text-2xl font-bold text-accent mb-1">Books Found</h2>
+                    {renderTable(AllBooks, bookColumns)}
+                </TabsContent>
+                <TabsContent value="staff" className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <h2 className="text-2xl font-bold text-accent mb-1">Staff Found</h2>
+                    {renderTable(Staff, staffColumns)}
+                </TabsContent>
+                <TabsContent value="borrowers" className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <h2 className="text-2xl font-bold text-accent mb-1">Borrowers Found</h2>
+                    {renderTable(Borrowers, borrowerColumns)}
+                </TabsContent>
+                <TabsContent value="transactions" className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <h2 className="text-2xl font-bold text-accent mb-1">Transactions Found</h2>
+                    {renderTable(Transactions, transactionColumns)}
+                </TabsContent>
+            </Tabs>
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Search Results for "${query}"`} />
+            <Head title={`Search: ${query}`} />
             
-            <div className="space-y-6">
-                <div className="bg-card rounded-lg border border-muted p-6">
-                    <h1 className="text-3xl font-bold text-foreground mb-2">Search Results</h1>
-                    <p className="text-foreground dark:text-background">Results for: <span className="font-semibold text-accent">{query}</span></p>
-                </div>
-                {/* tabs for different categories */}
+            <div className="space-y-6 px-4 sm:px-6 lg:px-8 py-6">
                 <div className="bg-card rounded-lg p-6">
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                        <TabsList className="mb-6">
-                            <TabsTrigger value="books" className="flex-1">
-                                All Books ({books?.length || 0})
-                            </TabsTrigger>
-                            <TabsTrigger value="authors" className="flex-1">
-                                Authors ({authors.length})
-                            </TabsTrigger>
-                            <TabsTrigger value="booksByAuthor" className="flex-1">
-                                Books by Author ({booksByAuthor?.length || 0})
-                            </TabsTrigger>
-                            <TabsTrigger value="genres" className="flex-1">
-                                Genres ({genres.length})
-                            </TabsTrigger>
-                            <TabsTrigger value="staff" className="flex-1">
-                                Staff ({staff.length})
-                            </TabsTrigger>
-                            <TabsTrigger value="borrowers" className="flex-1">
-                                Borrowers ({borrowers.length})
-                            </TabsTrigger>
-                            <TabsTrigger value="transactions" className="flex-1">
-                                Transactions ({transactions.length})
-                            </TabsTrigger>
-                        </TabsList>
+                    <h1 className="text-3xl font-bold text-foreground mb-2">Search Results</h1>
+                    <p className="text-muted-foreground">For: <span className="font-semibold text-accent">"{query}"</span></p>
+                </div>
 
-                        {/* the tables for each tab. update: added books by author (query/the author) */}
-                        <TabsContent value="books" className="mt-6 space-y-4">
-                            <div className="mb-4 text-sm text-muted-foreground">
-                                All books matching "{query}".
-                            </div>
-                            {renderTable(books, bookColumns)}
-                        </TabsContent>
-
-                        <TabsContent value="booksByAuthor" className="mt-6 space-y-4">
-                            {renderTable(booksByAuthor, bookColumns)}
-                        </TabsContent>
-
-                        <TabsContent value="authors" className="space-y-4">
-                            {renderTable(authors, authorColumns)}
-                        </TabsContent>
-
-                        <TabsContent value="genres" className="space-y-4">
-                            {renderTable(genres, genreColumns)}
-                        </TabsContent>
-
-                        <TabsContent value="staff" className="space-y-4">
-                            {renderTable(staff, staffColumns)}
-                        </TabsContent>
-
-                        <TabsContent value="borrowers" className="space-y-4">
-                            {renderTable(borrowers, borrowerColumns)}
-                        </TabsContent>
-
-                        <TabsContent value="transactions" className="space-y-4">
-                            {renderTable(transactions, transactionColumns)}
-                        </TabsContent>
-                    </Tabs>
+                <div className="bg-card rounded-lg border border-border p-6 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    {renderContent()}
                 </div>
             </div>
         </AppLayout>

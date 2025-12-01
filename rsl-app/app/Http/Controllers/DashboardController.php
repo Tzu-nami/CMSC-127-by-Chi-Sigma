@@ -77,6 +77,7 @@ class DashboardController extends Controller
                 'genres' => [],
                 'allBooks' => [],
                 'booksByAuthor' => [],
+                'booksByGenre'
             ]);
         }
 
@@ -106,21 +107,40 @@ class DashboardController extends Controller
                 ->whereIn('AUTHOR_ID', $authorIDs)
                 ->pluck('BOOK_ID')
                 ->toArray();
-
+            
+            // fetch the book details using those IDs
             if(!empty($bookIDs)) {
-                // fetch the book details using those IDs
                 $booksByAuthor = DB::table('books_data')
                     ->whereIn('BOOK_ID', $bookIDs)
                     ->get();
             }
         }
 
-        $allBooks = collect($books)
-            ->merge($booksByAuthor)
-            ->unique('BOOK_ID')
-            ->values();
+        // search in genres table
+        $genres = DB::table('genre_data')
+            ->where('GENRE_NAME', 'LIKE', '%' . $query . '%')
+            ->orWhere('GENRE_LOCATION', 'LIKE', '%' . $query . '%')
+            ->orWhere('GENRE_ID', 'LIKE', '%' . $query . '%')
+            ->get();
 
-        $allBooks = collect($books)->merge($booksByAuthor)->unique('BOOK_ID')->values();
+        $booksByGenre = [];
+        if ($genres->count() > 0) {
+            $genreIDs = $genres->pluck('GENRE_ID')->toArray();
+            // find the matching book ids in the book_genre 
+            $bookIDsByGenre = DB::table('book_genre')
+                ->whereIn('GENRE_ID', $genreIDs)
+                ->pluck('BOOK_ID')
+                ->toArray();
+            
+            // fetch the book details using those IDs
+            if(!empty($bookIDsByGenre)) {
+                $booksByGenre = DB::table('books_data')
+                    ->whereIn('BOOK_ID', $bookIDsByGenre)
+                    ->get();
+            }
+        }
+
+        $allBooks = $books;
 
         // search in staff table
         $staff = DB::table('staff_data')
@@ -140,13 +160,6 @@ class DashboardController extends Controller
             ->orWhere('BORROWER_ID', 'LIKE', '%' . $query . '%')
             ->get();
 
-        // search in genres table
-        $genres = DB::table('genre_data')
-            ->where('GENRE_NAME', 'LIKE', '%' . $query . '%')
-            ->orWhere('GENRE_LOCATION', 'LIKE', '%' . $query . '%')
-            ->orWhere('GENRE_ID', 'LIKE', '%' . $query . '%')
-            ->get();
-
         // search in transactions table
         $transactions = DB::table('transaction_data')
             ->where('TRANSACTION_ID', 'LIKE', '%' . $query . '%')
@@ -158,12 +171,13 @@ class DashboardController extends Controller
             'query' => $query,
             'books' => $books,
             'authors' => $authors,
-            'allBooks' => $allBooks,
+            'genres' => $genres,
             'booksByAuthor' => $booksByAuthor,
+            'booksByGenre' => $booksByGenre,
+            'allBooks' => $allBooks,
             'staff' => $staff,
             'borrowers' => $borrowers,
             'transactions' => $transactions,
-            'genres' => $genres,
         ]);
     }
 }
