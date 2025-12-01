@@ -30,6 +30,22 @@ const DetailRow = ({ label, value, highlight }: { label: string, value: string |
 export default function BookDetailsModal({ book, open, onOpenChange }: BookDetailsModalProps) {
     if (!book) return null; 
 
+    // check if we have a pre-made string (from Search) OR an array (from Books DB)
+    
+    // for authors
+    const authorDisplay = book.author_names 
+        ? book.author_names 
+        : (book.authors && book.authors.length > 0)
+            ? book.authors.map((a: any) => `${a.AUTHOR_FIRSTNAME} ${a.AUTHOR_LASTNAME}`).join(', ')
+            : "Unknown Author";
+
+    // for genres
+    const genreDisplay = book.genre_names
+        ? book.genre_names
+        : (book.genres && book.genres.length > 0)
+            ? book.genres.map((g: any) => g.GENRE_NAME).join(', ')
+            : "Uncategorized";
+
     const total = book.BOOK_COPIES || 0;
     const loaned = book.current_loans_count || 0;
     const available = total - loaned;
@@ -47,10 +63,11 @@ export default function BookDetailsModal({ book, open, onOpenChange }: BookDetai
 
                 <div className="grid gap-4 pt-4">
                     <div className="space-y-3">
-                        <DetailRow label="Author(s)" value={book.author_names} />
+                        <DetailRow label="Author(s)" value={authorDisplay} />
                         <DetailRow label="Year Published" value={book.BOOK_YEAR} />
                         <DetailRow label="Publisher" value={book.BOOK_PUBLISHER} />
-                        <DetailRow label="Genre(s)" value={book.genre_names} />
+                        <DetailRow label="Genre(s)" value={genreDisplay} />
+                        
                         <DetailRow 
                             label="Availability" 
                             value={`${available} / ${total}`} 
@@ -58,7 +75,6 @@ export default function BookDetailsModal({ book, open, onOpenChange }: BookDetai
                         />
                     </div>
                 </div>
-
             </DialogContent>
         </Dialog>
     );

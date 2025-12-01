@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import BookDetailsModal from '@/components/book-details-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -46,7 +47,6 @@ interface SearchResultsProps {
     staff: any[];
     borrowers: any[];
     transactions: any[];
-    currentloans: any[]; 
     genres: any[];
     allBooks: any[];
     booksByAuthor: any[];
@@ -54,7 +54,7 @@ interface SearchResultsProps {
 }
 
 export default function SearchResults({query = '', allBooks = [], authors = [], staff = [], borrowers = [], transactions = [], genres = [], booksByAuthor = [], booksByGenre = [] }: SearchResultsProps) {
-    // NAGWWHITE SCREEN KASI bwiset
+    // NAGWWHITE SCREEN KASI bwiset .
     const AllBooks = allBooks || [];
     const Authors = authors || [];
     const Staff = staff || [];
@@ -64,16 +64,18 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
     const BooksByAuthor = booksByAuthor || [];
     const BooksByGenre = booksByGenre || [];
 
+    const [selectedBook, setSelectedBook] = useState<any | null>(null);
+
     // determine initial tab based on available data
     const getInitialTab = () => { 
         // arranged by priority sino una niya bubuksan
+        if (AllBooks.length > 0) return 'allBooks';
         if (Authors.length > 0) return 'authors';
         if (Genres.length > 0) return 'genres';
-        if (AllBooks.length > 0) return 'allBooks';
         if (Staff.length > 0) return 'staff';
         if (Borrowers.length > 0) return 'borrowers';
         if (Transactions.length > 0) return 'transactions';
-        return 'allBooks'; // fallback
+        return 'allBooks'; // fallback or default
     };
 
     const [activeTab, setActiveTab] = useState(getInitialTab); // use function to set initial state
@@ -100,7 +102,22 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
                     <tbody className="divide-y divide-border bg-card">
                         {realData.map((row, index) => (
                         <tr key={index} className="hover:bg-muted/50 transition-colors">
-                            {columns.map(col => <td className="px-6 py-3 whitespace-nowrap text-foreground" key={col.key}>{row[col.key]}</td>)}
+                            {columns.map(col => (
+                                <td className="px-6 py-3 whitespace-nowrap text-foreground" key={col.key}>
+                                    {/* check if this is book */}
+                                    {col.key === 'BOOK_TITLE' ? (
+                                        <button
+                                            onClick={() => setSelectedBook(row)}
+                                            className="truncate max-w-[40ch] text-left text-foreground hover:text-accent hover:underline hover:cursor-pointer"
+                                            title={row.BOOK_TITLE}
+                                        >
+                                            {row[col.key]}
+                                        </button>
+                                    ) : (
+                                        row[col.key]
+                                    )}
+                                </td>
+                            ))}
                         </tr>
                         ))}
                     </tbody>
@@ -120,6 +137,7 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
                         <TabsTrigger value="allBooks" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
                             All Books ({AllBooks.length})
                         </TabsTrigger>
+
                         {/* scenario 2: author found triggers */}
                         {Authors.length > 0 && (
                             <TabsTrigger value="authors" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
@@ -223,6 +241,18 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
                     {renderContent()}
                 </div>
             </div>
+
+            {selectedBook && (
+                <BookDetailsModal
+                    book={selectedBook}
+                    open={!!selectedBook} 
+                    onOpenChange={(open) => {
+                        if (!open) {
+                        setSelectedBook(null); 
+                    }
+                }}
+                />
+            )}
         </AppLayout>
     );
 }

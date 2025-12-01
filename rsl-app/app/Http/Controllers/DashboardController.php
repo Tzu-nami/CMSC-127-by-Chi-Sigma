@@ -69,103 +69,101 @@ class DashboardController extends Controller
         if (strlen($query) < 2) {
             return Inertia::render('search-results', [
                 'query' => $query,
-                'books' => [],
-                'borrowers' => [],
-                'transactions' => [],
-                'authors' => [],
-                'staff' => [],
-                'genres' => [],
-                'allBooks' => [],
-                'booksByAuthor' => [],
-                'booksByGenre'
+                'books' => [], 'authors' => [], 'staff' => [], 'borrowers' => [],
+                'transactions' => [], 'genres' => [], 'allBooks' => [], 
+                'booksByAuthor' => [], 'booksByGenre' => []
             ]);
         }
 
-        // search in books table
-        $books = DB::table('books_data')
-            ->where('BOOK_TITLE', 'LIKE', '%' . $query . '%')
-            ->orWhere('BOOK_YEAR', 'LIKE', '%' . $query . '%')
-            ->orWhere('BOOK_PUBLISHER', 'LIKE', '%' . $query . '%')
-            ->orWhere('BOOK_COPIES', 'LIKE', '%' . $query . '%')
-            ->orWhere('BOOK_ID', 'LIKE', '%' . $query . '%')
-            ->get();
+        // base query for books with author and genre names
+        $baseBookQuery = DB::table('books_data')
+            ->select('books_data.*')
+            // fetch author names
+            ->addSelect([
+                'author_names' => DB::table('book_authors')
+                    ->join('author_data', 'book_authors.AUTHOR_ID', '=', 'author_data.AUTHOR_ID')
+                    ->whereColumn('book_authors.BOOK_ID', 'books_data.BOOK_ID')
+                    ->select(DB::raw("GROUP_CONCAT(CONCAT(author_data.AUTHOR_FIRSTNAME, ' ', author_data.AUTHOR_LASTNAME) SEPARATOR ', ')"))
+                    ->limit(1)
+            ])
+            // fetch genre names
+            ->addSelect([
+                'genre_names' => DB::table('book_genre')
+                    ->join('genre_data', 'book_genre.GENRE_ID', '=', 'genre_data.GENRE_ID')
+                    ->whereColumn('book_genre.BOOK_ID', 'books_data.BOOK_ID')
+                    ->select(DB::raw("GROUP_CONCAT(genre_data.GENRE_NAME SEPARATOR ', ')"))
+                    ->limit(1)
+            ]);
 
-        // search in authors table
+
+        // author search
         $authors = DB::table('author_data')
             ->where('AUTHOR_LASTNAME', 'LIKE', '%' . $query . '%')
             ->orWhere('AUTHOR_FIRSTNAME', 'LIKE', '%' . $query . '%')
-            ->orWhere('AUTHOR_MIDDLEINITIAL', 'LIKE', '%' . $query . '%')
-            ->orWhere('AUTHOR_ID', 'LIKE', '%' . $query . '%')
             ->get();
 
-        $booksByAuthor = collect();
-        // get books written by the found authors
+        $booksByAuthor = [];
         if ($authors->count() > 0) {
-            $authorIDs = $authors->pluck('AUTHOR_ID')->toArray();
-            // find the matching book ids in the book_authors 
-            $bookIDs = DB::table('book_authors')
-                ->whereIn('AUTHOR_ID', $authorIDs)
+            $authorIds = $authors->pluck('AUTHOR_ID')->toArray();
+            $bookIds = DB::table('book_authors')
+                ->whereIn('AUTHOR_ID', $authorIds)
                 ->pluck('BOOK_ID')
                 ->toArray();
-            
-            // fetch the book details using those IDs
-            if(!empty($bookIDs)) {
-                $booksByAuthor = DB::table('books_data')
-                    ->whereIn('BOOK_ID', $bookIDs)
+                
+            if(!empty($bookIds)) {
+                // use the base query to get the damn names
+                $booksByAuthor = $baseBookQuery->clone()
+                    ->whereIn('books_data.BOOK_ID', $bookIds)
                     ->get();
             }
         }
 
-        // search in genres table
+        // genre search
         $genres = DB::table('genre_data')
             ->where('GENRE_NAME', 'LIKE', '%' . $query . '%')
-            ->orWhere('GENRE_LOCATION', 'LIKE', '%' . $query . '%')
-            ->orWhere('GENRE_ID', 'LIKE', '%' . $query . '%')
             ->get();
 
         $booksByGenre = [];
         if ($genres->count() > 0) {
-            $genreIDs = $genres->pluck('GENRE_ID')->toArray();
-            // find the matching book ids in the book_genre 
-            $bookIDsByGenre = DB::table('book_genre')
-                ->whereIn('GENRE_ID', $genreIDs)
+            $genreIds = $genres->pluck('GENRE_ID')->toArray();
+            $bookIds = DB::table('book_genre') 
+                ->whereIn('GENRE_ID', $genreIds)
                 ->pluck('BOOK_ID')
                 ->toArray();
-            
-            // fetch the book details using those IDs
-            if(!empty($bookIDsByGenre)) {
-                $booksByGenre = DB::table('books_data')
-                    ->whereIn('BOOK_ID', $bookIDsByGenre)
+
+            if(!empty($bookIds)) {
+                // use the base query to get the damn names
+                $booksByGenre = $baseBookQuery->clone()
+                    ->whereIn('books_data.BOOK_ID', $bookIds)
                     ->get();
             }
         }
 
-        $allBooks = $books;
+        // book title search
+        $books = $baseBookQuery->clone()
+            ->where(function($q) use ($query) {
+                $q->where('BOOK_TITLE', 'LIKE', '%' . $query . '%')
+                  ->orWhere('BOOK_YEAR', 'LIKE', '%' . $query . '%')
+                  ->orWhere('BOOK_ID', 'LIKE', '%' . $query . '%');
+            })
+            ->get();
 
-        // search in staff table
+        // staff search
         $staff = DB::table('staff_data')
             ->where('STAFF_LASTNAME', 'LIKE', '%' . $query . '%')
-            ->orWhere('STAFF_FIRSTNAME', 'LIKE', '%' . $query . '%')
-            ->orWhere('STAFF_MIDDLEINITIAL', 'LIKE', '%' . $query . '%')
-            ->orWhere('STAFF_ID', 'LIKE', '%' . $query . '%')
             ->get();
 
-        // search in borrowers table
+        // borrower search
         $borrowers = DB::table('borrower_data')
             ->where('BORROWER_LASTNAME', 'LIKE', '%' . $query . '%')
-            ->orWhere('BORROWER_FIRSTNAME', 'LIKE', '%' . $query . '%')
-            ->orWhere('BORROWER_MIDDLEINITIAL', 'LIKE', '%' . $query . '%')
-            ->orWhere('BORROWER_STATUS', 'LIKE', '%' . $query . '%')
-            ->orWhere('BORROWER_CONTACTNUMBER', 'LIKE', '%' . $query . '%')
-            ->orWhere('BORROWER_ID', 'LIKE', '%' . $query . '%')
             ->get();
 
-        // search in transactions table
+        // transaction search
         $transactions = DB::table('transaction_data')
             ->where('TRANSACTION_ID', 'LIKE', '%' . $query . '%')
-            ->orWhere('TRANSACTION_BORROWDATE', 'LIKE', '%' . $query . '%')
-            ->orWhere('TRANSACTION_DUEDATE', 'LIKE', '%' . $query . '%')
             ->get();
+
+        $allBooks = $books; 
 
         return Inertia::render('search-results', [
             'query' => $query,
