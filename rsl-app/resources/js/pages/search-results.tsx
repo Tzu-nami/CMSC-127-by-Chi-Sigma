@@ -66,12 +66,12 @@ interface SearchResultsProps {
     booksByAuthor: any[];
 }
 
-export default function SearchResults({ query, books, authors, staff, borrowers, transactions, genres, allBooks, booksByAuthor }: SearchResultsProps) {
+export default function SearchResults({ query, books, authors, staff, borrowers, transactions, genres, booksByAuthor }: SearchResultsProps) {
     const getInitialTab = () => { // for rendering initial tab based on results
         // changed syntax to (prop || []) bcs white space page if prop is null (query not found)
-        if ((allBooks || []).length > 0) return 'allBooks';
-        if ((booksByAuthor || []).length > 0) return 'booksByAuthor';
+        if ((books || []).length > 0) return 'books';
         if ((authors || []).length > 0) return 'authors';
+        if ((booksByAuthor || []).length > 0) return 'booksByAuthor';
         if ((staff || []).length > 0) return 'staff';
         if ((borrowers || []).length > 0) return 'borrowers';
         if ((transactions || []).length > 0) return 'transactions';
@@ -119,8 +119,8 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
                 <div className="bg-card rounded-lg p-6">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <TabsList className="mb-6">
-                            <TabsTrigger value="allBooks" className="flex-1">
-                                All Books ({allBooks?.length || 0})
+                            <TabsTrigger value="books" className="flex-1">
+                                All Books ({books?.length || 0})
                             </TabsTrigger>
                             <TabsTrigger value="authors" className="flex-1">
                                 Authors ({authors.length})
@@ -143,17 +143,14 @@ export default function SearchResults({ query, books, authors, staff, borrowers,
                         </TabsList>
 
                         {/* the tables for each tab. update: added books by author (query/the author) */}
-                        <TabsContent value="allBooks" className="mt-6 space-y-4">
+                        <TabsContent value="books" className="mt-6 space-y-4">
                             <div className="mb-4 text-sm text-muted-foreground">
                                 All books matching "{query}".
                             </div>
-                            {renderTable(allBooks, bookColumns)}
+                            {renderTable(books, bookColumns)}
                         </TabsContent>
 
                         <TabsContent value="booksByAuthor" className="mt-6 space-y-4">
-                            <div className="mb-4 text-sm text-muted-foreground">
-                                All Books written by author "{query}".
-                            </div>
                             {renderTable(booksByAuthor, bookColumns)}
                         </TabsContent>
 
