@@ -120,7 +120,7 @@ export default function Dashboard({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             
-            <div className="space-y-4 px-4 sm:px-6 lg:px-8">
+            <div className="space-y-4 px-4 sm:px-6 lg:px-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <div className="justify-items-center pt-8 pb-3">
                     <p className="text-3xl font-bold text-foreground">Welcome to the MKNS School Library Management System.</p>
                 </div>
