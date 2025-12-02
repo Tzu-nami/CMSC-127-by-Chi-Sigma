@@ -148,19 +148,29 @@ class DashboardController extends Controller
             })
             ->get();
 
-        // staff search
+        // search in staff table
         $staff = DB::table('staff_data')
             ->where('STAFF_LASTNAME', 'LIKE', '%' . $query . '%')
+            ->orWhere('STAFF_FIRSTNAME', 'LIKE', '%' . $query . '%')
+            ->orWhere('STAFF_MIDDLEINITIAL', 'LIKE', '%' . $query . '%')
+            ->orWhere('STAFF_ID', 'LIKE', '%' . $query . '%')
             ->get();
 
-        // borrower search
+        // search in borrowers table
         $borrowers = DB::table('borrower_data')
             ->where('BORROWER_LASTNAME', 'LIKE', '%' . $query . '%')
+            ->orWhere('BORROWER_FIRSTNAME', 'LIKE', '%' . $query . '%')
+            ->orWhere('BORROWER_MIDDLEINITIAL', 'LIKE', '%' . $query . '%')
+            ->orWhere('BORROWER_STATUS', 'LIKE', '%' . $query . '%')
+            ->orWhere('BORROWER_CONTACTNUMBER', 'LIKE', '%' . $query . '%')
+            ->orWhere('BORROWER_ID', 'LIKE', '%' . $query . '%')
             ->get();
 
-        // transaction search
+        // search in transactions table
         $transactions = DB::table('transaction_data')
             ->where('TRANSACTION_ID', 'LIKE', '%' . $query . '%')
+            ->orWhere('TRANSACTION_BORROWDATE', 'LIKE', '%' . $query . '%')
+            ->orWhere('TRANSACTION_DUEDATE', 'LIKE', '%' . $query . '%')
             ->get();
 
         $allBooks = $books; 
@@ -168,12 +178,12 @@ class DashboardController extends Controller
         return Inertia::render('search-results', [
             'query' => $query,
             'books' => $books,
+            'allBooks' => $allBooks,
             'authors' => $authors,
             'genres' => $genres,
+            'staff' => $staff,
             'booksByAuthor' => $booksByAuthor,
             'booksByGenre' => $booksByGenre,
-            'allBooks' => $allBooks,
-            'staff' => $staff,
             'borrowers' => $borrowers,
             'transactions' => $transactions,
         ]);

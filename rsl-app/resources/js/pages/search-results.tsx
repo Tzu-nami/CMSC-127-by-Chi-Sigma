@@ -128,7 +128,7 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
 
     // display
     const renderContent = () => {
-        // handling collision of scenarios: author found and borrower or staff found
+        // handling collision of scenarios: author found or borrower or staff found
         return (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full rounded-sm">
                 <div className="overflow-x-auto pb-2">
@@ -212,7 +212,7 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
                     {renderTable(AllBooks, bookColumns)}
                 </TabsContent>
                 <TabsContent value="staff" className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                    <h2 className="text-2xl font-bold text-accent mb-1">Staff Found</h2>
+                    <h2 className="text-2xl font-bold text-accent mb-1">Staffs Found</h2>
                     {renderTable(Staff, staffColumns)}
                 </TabsContent>
                 <TabsContent value="borrowers" className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">

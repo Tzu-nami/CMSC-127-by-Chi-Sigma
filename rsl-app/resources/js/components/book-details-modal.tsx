@@ -30,11 +30,11 @@ const DetailRow = ({ label, value, highlight }: { label: string, value: string |
 export default function BookDetailsModal({ book, open, onOpenChange }: BookDetailsModalProps) {
     if (!book) return null; 
 
-    // check if we have a pre-made string (from Search) OR an array (from Books DB)
+    // check if we have a pre-made string (from search) OR an array (from books db)
     
     // for authors
     const authorDisplay = book.author_names 
-        ? book.author_names 
+        ? book.author_names // from search results
         : (book.authors && book.authors.length > 0)
             ? book.authors.map((a: any) => `${a.AUTHOR_FIRSTNAME} ${a.AUTHOR_LASTNAME}`).join(', ')
             : "Unknown Author";
