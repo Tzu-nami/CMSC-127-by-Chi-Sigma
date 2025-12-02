@@ -30,11 +30,11 @@ const DetailRow = ({ label, value, highlight }: { label: string, value: string |
 export default function BookDetailsModal({ book, open, onOpenChange }: BookDetailsModalProps) {
     if (!book) return null; 
 
-    // check if we have a pre-made string (from search) OR an array (from books db)
+    // check if we have a pre-made string (from Search) OR an array (from Books DB)
     
     // for authors
     const authorDisplay = book.author_names 
-        ? book.author_names // from search results
+        ? book.author_names 
         : (book.authors && book.authors.length > 0)
             ? book.authors.map((a: any) => `${a.AUTHOR_FIRSTNAME} ${a.AUTHOR_LASTNAME}`).join(', ')
             : "Unknown Author";
@@ -54,7 +54,7 @@ export default function BookDetailsModal({ book, open, onOpenChange }: BookDetai
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[400px]">
                 <DialogHeader className="mt-4"> 
-                    <DialogTitle className="text-lg font-semibold leading-snug text-foreground break-words">
+                    <DialogTitle className="text-lg font-semibold leading-snug text-foreground break-all">
                         {book.BOOK_TITLE}
                     </DialogTitle>
                 </DialogHeader>
