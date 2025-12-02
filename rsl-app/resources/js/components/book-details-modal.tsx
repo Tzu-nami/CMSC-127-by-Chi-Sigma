@@ -54,7 +54,7 @@ export default function BookDetailsModal({ book, open, onOpenChange }: BookDetai
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[400px]">
                 <DialogHeader className="mt-4"> 
-                    <DialogTitle className="text-lg font-semibold leading-snug text-foreground break-all">
+                    <DialogTitle className="text-lg font-semibold leading-snug text-foreground break-words">
                         {book.BOOK_TITLE}
                     </DialogTitle>
                 </DialogHeader>
