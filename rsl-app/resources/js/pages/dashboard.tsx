@@ -116,6 +116,13 @@ export default function Dashboard({
         label: `${staff.STAFF_LASTNAME}, ${staff.STAFF_FIRSTNAME} -- ID: ${staff.STAFF_ID}`,
     }));
 
+    const STATUS_OPTIONS = [
+        { value: "Good", label: "Good" },
+        { value: "LOA", label: "LOA" },
+        { value: "Book overdue", label: "Book overdue" },
+        { value: "Did not pay fines", label: "Did not pay fines" },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -228,7 +235,16 @@ export default function Dashboard({
                                         { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
                                         { name: "borrower_firstname", label: "First Name", type:"text", placeholder: "Enter First Name", required: true, maxLength: 255, pattern: "[^0-9]*" },
                                         { name: "borrower_middleinitial", label: "Middle Initial", type:"text", placeholder: "Enter Middle Initial", required: false, maxLength: 2, pattern: "[^0-9]*" },
-                                        { name: "borrower_status", label: "Choose a status", type:"text", placeholder: "Enter a status", required: true, maxLength: 100 },
+                                        
+                                        { 
+                                            name: "borrower_status", 
+                                            label: "Status", 
+                                            type: "text",
+                                            fieldType: "select" as const, 
+                                            options: STATUS_OPTIONS, 
+                                            required: true 
+                                        },
+                                        
                                         { name: "borrower_contactnumber", label: "Contact Number", type:"text", placeholder: "Enter Contact Number", required: true, maxLength: 15, pattern: "[0-9+-]*"},
                                     ]}
                                 />

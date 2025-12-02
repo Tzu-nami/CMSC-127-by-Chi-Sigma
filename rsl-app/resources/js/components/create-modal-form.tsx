@@ -95,7 +95,7 @@ export const CreateModalForm = ({
     create_new_genre: "false",
   };
 
-  const { data, setData, post, processing, errors, reset } = useForm(additionalData || {});
+const { data, setData, post, processing, errors, reset, transform } = useForm(additionalData || {});
 
   // For automation of due date
   const calculateDueDate = (dateString: string, days: number): string => {
@@ -133,34 +133,38 @@ export const CreateModalForm = ({
   };
 
   // Check and confirm submission
+// Check and confirm submission
 const confirmSubmit = () => {
-  const payload: Record<string, any> = {
-    ...data,
-    create_new_author: showNewAuthorFields ? 'true' : 'false',
-    create_new_genre: showNewGenreFields ? 'true' : 'false',
-  };
+  // 1. Use transform to modify the data payload just before submitting
+  transform((data) => {
+    const payload: Record<string, any> = {
+      ...data,
+      create_new_author: showNewAuthorFields ? 'true' : 'false',
+      create_new_genre: showNewGenreFields ? 'true' : 'false',
+    };
 
-  // Check if new author or genre fields are shown
-  if (showNewAuthorFields) {
-    payload.new_author_id = data.new_author_id;
-    payload.new_author_firstname = data.new_author_firstname;
-    payload.new_author_lastname = data.new_author_lastname;
-    payload.new_author_middleinitial = data.new_author_middleinitial;
-  } else {
-    payload.author_id = data.author_id;
-  }
+    if (showNewAuthorFields) {
+      payload.new_author_id = data.new_author_id;
+      payload.new_author_firstname = data.new_author_firstname;
+      payload.new_author_lastname = data.new_author_lastname;
+      payload.new_author_middleinitial = data.new_author_middleinitial;
+    } else {
+      payload.author_id = data.author_id;
+    }
 
-  if (showNewGenreFields) {
-    payload.new_genre_id = data.new_genre_id;
-    payload.new_genre_name = data.new_genre_name;
-    payload.new_genre_location = data.new_genre_location;
-  } else {
-    payload.genre_id = data.genre_id;
-  }
+    if (showNewGenreFields) {
+      payload.new_genre_id = data.new_genre_id;
+      payload.new_genre_name = data.new_genre_name;
+      payload.new_genre_location = data.new_genre_location;
+    } else {
+      payload.genre_id = data.genre_id;
+    }
 
-  router.post(route, payload, {
-    onStart: () => {
-    },
+    return payload;
+  });
+
+  // 2. Use the 'post' method from useForm, NOT router.post
+  post(route, {
     onSuccess: () => {
       reset();
       setOpen(false);
@@ -169,6 +173,7 @@ const confirmSubmit = () => {
       setShowNewGenreFields(false);
     },
     onError: () => {
+      // The 'errors' object in useForm updates automatically here
       setConfirmation(false);
       setOpen(true);
     },
@@ -477,6 +482,7 @@ const confirmSubmit = () => {
                       onChange={(e) =>
                         handleFieldChange(field.name, e.target.value)
                       }
+                      readOnly={field.readonly}
                       maxLength={field.type !== "number" ? field.maxLength : undefined}
                       className={`h-10 px-3 py-2 rounded border ${
                         errors[field.name] ? "border-red-500 ring-red-500/50" : ""
