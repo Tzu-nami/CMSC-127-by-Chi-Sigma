@@ -133,9 +133,8 @@ const { data, setData, post, processing, errors, reset, transform } = useForm(ad
   };
 
   // Check and confirm submission
-// Check and confirm submission
 const confirmSubmit = () => {
-  // 1. Use transform to modify the data payload just before submitting
+  // Modify the data before submitting
   transform((data) => {
     const payload: Record<string, any> = {
       ...data,
@@ -163,7 +162,6 @@ const confirmSubmit = () => {
     return payload;
   });
 
-  // 2. Use the 'post' method from useForm, NOT router.post
   post(route, {
     onSuccess: () => {
       reset();
@@ -172,8 +170,8 @@ const confirmSubmit = () => {
       setShowNewAuthorFields(false);
       setShowNewGenreFields(false);
     },
+    // For error handling
     onError: () => {
-      // The 'errors' object in useForm updates automatically here
       setConfirmation(false);
       setOpen(true);
     },
