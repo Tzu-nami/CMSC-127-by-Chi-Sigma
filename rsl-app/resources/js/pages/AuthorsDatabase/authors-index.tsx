@@ -195,10 +195,11 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Authors Database" />
             <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">                
-                <div className="p-4 sm:p-6 border-b border-muted">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                         
-                        <div className="relative w-full md:max-w-xs">
+                        <div  className="flex flex-col sm:flex-row gap-2 flex-grow" >
+                            <div className="relative flex-grow">
                             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground" />
                             <Input
                                 placeholder="Search by name, ID..." // Shorter placeholder
@@ -206,6 +207,7 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
+                            </div>
                         </div>
                         
                         {/* ++ ADD THIS: Sort dropdown ++ */}
@@ -223,6 +225,7 @@ export default function AuthorsIndex( {authors, filters}: { authors: any[], filt
                             <CreateModalForm 
                                 title="Add New Author"
                                 route="/authorsdatabase"
+                                triggerLabel='Add New Author'
                                 fields={[
                                     { name: "author_id", label: "Author ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
                                     { name: "author_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },

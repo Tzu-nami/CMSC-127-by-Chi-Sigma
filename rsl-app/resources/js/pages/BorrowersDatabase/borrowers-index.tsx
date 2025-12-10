@@ -212,10 +212,10 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
             <Head title="Borrowers Database" />
             <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">
                 <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                         
                         {/* -- Search Bar -- */}
-                        <div className="relative w-full md:max-w-xs">
+                        <div className="relative flex-grow">
                             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground" />
                             <Input
                                 placeholder="Search by name, ID, contact..."
@@ -252,6 +252,7 @@ export default function BorrowersIndex( {borrowers, filters}: { borrowers: any[]
                             <CreateModalForm 
                                 title="Add New Borrower"
                                 route="/borrowersdatabase"
+                                triggerLabel='Add New Borrower'
                                 fields={[
                                     { name: "borrower_id", label: "Borrower ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
                                     { name: "borrower_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },

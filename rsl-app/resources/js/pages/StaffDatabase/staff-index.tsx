@@ -192,9 +192,9 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
             <div className="bg-[#FFFDF6] shadow-sm rounded-lg overflow-hidden">
                 
                 <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                         
-                        <div className="relative w-full md:max-w-md">
+                        <div className="relative flex-grow">
                             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
                             <Input
                                 placeholder="Search by name, ID, contact number..."
@@ -220,6 +220,7 @@ export default function StaffIndex( {staff, filters}: { staff: any[], filters:{s
                         <CreateModalForm 
                             title="Add New Staff"
                             route="/staffdatabase"
+                            triggerLabel='Add New Staff'
                             fields={[
                                 { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5 },
                                 { name: "staff_lastname", label: "Last Name", type:"text", placeholder: "Enter Last Name", required: true, maxLength: 255, pattern: "[^0-9]*" },

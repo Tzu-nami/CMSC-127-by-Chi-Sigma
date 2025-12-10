@@ -233,7 +233,8 @@ export default function CurrentLoansIndex( {currentLoans, books, borrowers, staf
                 <div className="p-4 sm:p-6 border-b border-[#e5e7eb]">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         
-                        <div className="relative w-full md:max-w-md">
+                        <div className="flex flex-col sm:flex-row gap-2 flex-grow" >
+                            <div className="relative flex-grow">
                             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b7280]" />
                             <Input
                                 placeholder="Search by name, ID, contact number..."
@@ -260,6 +261,7 @@ export default function CurrentLoansIndex( {currentLoans, books, borrowers, staf
                                 { name: "staff_id", label: "Staff ID", type:"text", placeholder: "e.g. A1Z26", required: true, maxLength: 5, fieldType: 'select' as const, options: staffOptions }
                             ]}
                             />
+                        </div>
                         </div>
                     </div>
                 </div>
