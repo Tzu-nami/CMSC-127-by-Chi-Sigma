@@ -476,7 +476,7 @@ export default function BooksIndex({ books, authors, genres, filters }: { books:
                 </tr>
                 </thead>
 
-                {/*-- Display data of table using map function in the array, index for future null values. Filtered function applied. --*/}
+                {/*-- Display data of table using map function in the array, index for future null values. Filtered function already applied. --*/}
                 <tbody>
                 {/*-- changed to paginatedBooks --*/}
                 {paginatedBooks && paginatedBooks.length > 0 ? ( 

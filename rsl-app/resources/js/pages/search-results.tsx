@@ -32,7 +32,8 @@ const borrowerColumns = [
     { key: 'BORROWER_ID', label: 'Borrower ID' },
     { key: 'BORROWER_LASTNAME', label: 'Last Name' },
     { key: 'BORROWER_FIRSTNAME', label: 'First Name' },
-    { key: 'BORROWER_MIDDLEINITIAL', label: 'Middle Initial' }
+    { key: 'BORROWER_MIDDLEINITIAL', label: 'Middle Initial' },
+    { key : 'BORROWER_STATUS', label: 'Status' }
 ];
 
 const transactionColumns = [
@@ -49,11 +50,9 @@ interface SearchResultsProps {
     transactions: any[];
     genres: any[];
     allBooks: any[];
-    booksByAuthor: any[];
-    booksByGenre: any[];
 }
 
-export default function SearchResults({query = '', allBooks = [], authors = [], staff = [], borrowers = [], transactions = [], genres = [], booksByAuthor = [], booksByGenre = [] }: SearchResultsProps) {
+export default function SearchResults({query = '', allBooks = [], authors = [], staff = [], borrowers = [], transactions = [], genres = [] }: SearchResultsProps) {
     // NAGWWHITE SCREEN KASI bwiset .
     const AllBooks = allBooks || [];
     const Authors = authors || [];
@@ -61,8 +60,6 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
     const Borrowers = borrowers || [];
     const Transactions = transactions || [];
     const Genres = genres || [];
-    const BooksByAuthor = booksByAuthor || [];
-    const BooksByGenre = booksByGenre || [];
 
     const [selectedBook, setSelectedBook] = useState<any | null>(null);
 
@@ -128,16 +125,15 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
 
     // display
     const renderContent = () => {
-        // handling collision of scenarios: author found and borrower or staff found
+        // handling collision of scenarios: author found or borrower or staff found
         return (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full rounded-sm">
                 <div className="overflow-x-auto pb-2">
                     <TabsList className="inline-flex h-auto w-full justify-start gap-2 bg-transparent p-0">
-                        {/* scenario 1: standard triggers */}
+                        {/* scenario 1 : book triggers priority */}
                         <TabsTrigger value="allBooks" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
                             All Books ({AllBooks.length})
                         </TabsTrigger>
-
                         {/* scenario 2: author found triggers */}
                         {Authors.length > 0 && (
                             <TabsTrigger value="authors" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
@@ -150,6 +146,7 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
                                 Genre ({Genres.length})
                             </TabsTrigger>
                         )}
+                        {/* all others */}
                         <TabsTrigger value="staff" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-input bg-background px-4 py-2">
                             Staff ({Staff.length})
                         </TabsTrigger>
@@ -164,55 +161,60 @@ export default function SearchResults({query = '', allBooks = [], authors = [], 
 
                 {/* --- CONTENT AREAAAAA RAGHHHHHHHH --- */}
 
-                {/* scenario 1 content: author found, print books too */}
+                {/* scenario 2 content: author found, print books too */}
                 <TabsContent value="authors" className="mt-6 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <div className="bg-muted/10 rounded-lg p-6 shadow-sm">
-                        <h2 className="text-2xl font-bold text-accent mb-1">Author Found</h2>
-                        <div className="bg-card rounded-md border p-4 space-y-2">
+                        <h2 className="text-2xl font-bold text-accent mb-4">Authors Found</h2>
+                        <div className="space-y-12">
                             {Authors.map((author) => (
-                                <div key={author.AUTHOR_ID}>
-                                    <h3 className="text-xl font-bold">{author.AUTHOR_FIRSTNAME} {author.AUTHOR_LASTNAME}</h3>
-                                    <p className="text-sm text-muted-foreground">Author ID: {author.AUTHOR_ID}</p>
+                                <div key={author.AUTHOR_ID} className="border-b border-border/50 pb-8 last:border-0 last:pb-0">
+                                    <div className="bg-card rounded-md border p-4 mb-4">
+                                        <h3 className="text-xl font-bold">{author.AUTHOR_FIRSTNAME} {author.AUTHOR_LASTNAME}</h3>
+                                        <p className="text-sm text-muted-foreground">Author ID: {author.AUTHOR_ID}</p>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-lg font-semibold mb-2 text-foreground/80">
+                                            Books by {author.AUTHOR_FIRSTNAME} {author.AUTHOR_LASTNAME}
+                                        </h4>
+                                        {renderTable(author.books, bookColumns)}
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <div>
-                        <h3 className="text-lg font-semibold mb-3 border-b pb-2">
-                            Books by {Authors[0]?.AUTHOR_FIRSTNAME} {Authors[0]?.AUTHOR_LASTNAME}
-                        </h3>
-                        {renderTable(BooksByAuthor, bookColumns)}
-                    </div>
                 </TabsContent>
 
-                {/* scenario 2 content: genre found, print books under that genre */}
+                {/* scenario 3 content: genre found, print books under that genre */}
                 <TabsContent value="genres" className="mt-6 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <div className="bg-muted/10 shadow-sm rounded-lg p-6">
-                        <h2 className="text-2xl font-bold text-accent mb-1">Genre Found</h2>
-                        <div className="bg-card rounded-md border p-4 space-y-2">
+                        <h2 className="text-2xl font-bold text-accent mb-4">Genres Found</h2>
+                        <div className="space-y-12">
                             {Genres.map((genre) => (
-                                <div key={genre.GENRE_ID}>
-                                    <h3 className="text-xl font-bold capitalize">{genre.GENRE_NAME}</h3>
-                                    <p className="text-sm text-muted-foreground">Location: {genre.GENRE_LOCATION}</p>
+                                <div key={genre.GENRE_ID} className="border-b border-border/50 pb-8 last:border-0 last:pb-0">
+                                    <div className="bg-card rounded-md border p-4 mb-4">
+                                        <h3 className="text-xl font-bold capitalize">{genre.GENRE_NAME}</h3>
+                                        <p className="text-sm text-muted-foreground">Location: {genre.GENRE_LOCATION}</p>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-lg font-semibold mb-2 text-foreground/80">
+                                            Books in {genre.GENRE_NAME}
+                                        </h4>
+                                        {renderTable(genre.books, bookColumns)}
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <div>
-                        <h3 className="text-lg font-semibold mb-3 border-b pb-2">
-                            Books in {Genres[0]?.GENRE_NAME}
-                        </h3>
-                        {renderTable(BooksByGenre, bookColumns)}
-                    </div>
                 </TabsContent>
 
-                {/* standard content */}
+                {/* scenario 1 content */}
                 <TabsContent value="allBooks" className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <h2 className="text-2xl font-bold text-accent mb-1">Books Found</h2>
                     {renderTable(AllBooks, bookColumns)}
                 </TabsContent>
+                {/* all others content */}
                 <TabsContent value="staff" className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                    <h2 className="text-2xl font-bold text-accent mb-1">Staff Found</h2>
+                    <h2 className="text-2xl font-bold text-accent mb-1">Staffs Found</h2>
                     {renderTable(Staff, staffColumns)}
                 </TabsContent>
                 <TabsContent value="borrowers" className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
